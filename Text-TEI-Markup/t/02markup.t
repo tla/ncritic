@@ -38,7 +38,7 @@ is( $title_child[0]->textContent, "\x{053A}\x{0561}\x{0574}\x{0561}\x{0576}\x{05
 like( $titles[0]->textContent, qr/Tara L Andrews/, "found transcriber" );
 
 my @body = $root->getElementsByTagName( 'body' );
-my $body = @body[0];
+my $body = $body[0];
 ok( $body, "found text body" );
 my @div = $body->getElementsByTagName( 'div' );
 is( scalar @div, 1, "found right number of paragraphs" );
@@ -75,7 +75,7 @@ is( $supplied[0]->textContent, "\x{545}", "pass-through content preserved" );
 my $word_xml;
 ok( $word_xml = word_tag_wrap( $xml ), "word-wrap what we have" );
 @body = $root->getElementsByTagName( 'body' );
-$body = @body[0];
+$body = $body[0];
 ok( $body, "found text body" );
 my @words = $body->getElementsByTagName( 'w' );
 is( scalar @words, 33, "found correct number of simple words" );

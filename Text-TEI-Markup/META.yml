@@ -17,4 +17,4 @@ no_index:
 requires:
   XML::LibXML: 0
   perl: 5.008003
-version: 0.1
+version: 1.0

@@ -6,7 +6,7 @@ use Encode;
 use Exporter 'import';
 use XML::LibXML;
 
-$VERSION = '0.1';
+$VERSION = '1.0';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
