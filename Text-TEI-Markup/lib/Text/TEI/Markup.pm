@@ -267,8 +267,8 @@ sub to_xml {
 	next if /^\s*$/;
 	s/^\s*//;
 	
-	if( /^=(HEAD|BODY)/ ) {
-	    $inbody = ( $1 eq 'BODY' );
+	if( /^=BODY/ ) {
+	    $inbody = 1;
 	    # Have we found a responsible person?
 	    unless( exists $opts{'resp'} ) {
 		warn "No responsible person specified for edits!";
@@ -294,7 +294,7 @@ sub to_xml {
 	    # Send it to the parser.
 	    my $line;
 	    ## TODO: Upgrade to perl 5.10 to get state variables.
-	    ( $line, $in_div, $in_p ) = process_line( $_, $in_div, $in_p, %opts );
+	    ( $line, $in_div, $in_p ) = _process_line( $_, $in_div, $in_p, %opts );
 	    $main_xml .= $line;
 	}
     }
@@ -321,7 +321,7 @@ sub to_xml {
     return $tmpl;
 }
 
-sub process_line {
+sub _process_line {
     my( $line, $in_div, $in_p, %opts ) = @_;
     chomp $line;
     
