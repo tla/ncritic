@@ -78,11 +78,7 @@
           </seg>
           <w>ծովեզերաց</w>
           <w>և</w>
-          <w>զկղզիս</w>
-          <seg type="word"><expan>նոցա</expan>,</seg>
-          <lb/>
-          <pb n="153"/>
-          <w>նք</w>
+          <seg type="word">զկղզի<lb/><pb n="153"/>նք</seg>
           <seg type="word">զմանկութի<ex resp="#tla">ւն</ex></seg>
           <seg type="word">յարիութե<ex resp="#tla">ան</ex>ն</seg>
           <w>ի</w>
