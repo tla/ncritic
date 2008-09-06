@@ -10,6 +10,7 @@ lib/Text/TEI/Markup.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
+README
 t/01dependencies.t
 t/02markup.t
 t/99-pod-coverage.t
@@ -17,4 +18,3 @@ t/99-pod.t
 t/data/test.txt
 t/data/test_nowrap.xml
 t/data/test_wrap.xml
-test.pl
