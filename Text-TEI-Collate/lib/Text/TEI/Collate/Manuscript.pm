@@ -124,22 +124,15 @@ sub _read_paragraphs {
 	# original order.  I bet XPath can handle that.
 	my $xpc = XML::LibXML::XPathContext->new( $element );
 	$xpc->registerNs( 'tei', $element->namespaceURI );
-	if( my $desc = $xpc->find( '//tei:w | //tei:seg' ) ) {
-	    # Do nothing yet
-	    print STDERR "hey the expression works.\n";
-	}	
-	if( $pg->getElementsByTagName( 'w' ) ) {
-	    foreach my $c ( $pg->childNodes() ) {
-		my $word_str;
-		if( $c->nodeName eq 'w' ) {
-		    $word_str = $c->textContent;
-		} elsif ( $c->nodeName eq 'seg' &&
-			  $c->getAttribute( 'type' ) eq 'word' ) {
-		    # Trickier.  Need to parse the component tags.
-		    my $word = _get_text_from_node( $c );
-		} # if node is word or seg
-		push( @words, ( Text::TEI::Collate::Word->new( 'string' => $c->textContent,
-							       'canonizer' => $self->{'canonizer'} ) ) );
+	if( my @wordnodes = $xpc->findnodes( '//tei:w | //tei:seg' ) ) {
+	    foreach my $c ( @wordnodes ) {
+		next if $c->nodeName eq 'seg' 
+		    && $c->getAttribute( 'type' ) ne 'word';
+		# Trickier.  Need to parse the component tags.
+		my $word = _get_text_from_node( $c );
+		push( @words, 
+		      Text::TEI::Collate::Word->new( 'string' => $word,
+				     'canonizer' => $self->{'canonizer'} ) );
 	    }
 	} else {  # if w / seg tags don't exist
 	    # We have to split the words by whitespace.
@@ -189,13 +182,11 @@ sub _get_text_from_node {
 	    $text .= $tagtxt;
 	}
     }
-    # Sanity check
+    # If this is in a w tag, strip all the whitespace.
     if( $node->nodeName eq 'w'
 	|| ( $node->nodeName eq 'seg' 
-	     && $node->getAttribute( 'type' ) eq 'word' ) 
-	&& $text =~ /\s+/ ) {
-	warn "Extracted text =$text= containing space from word element\n "
-	    . $node->toString();
+	     && $node->getAttribute( 'type' ) eq 'word' ) ) {
+	$text =~ s/\s+//g;
     }
     return $text;
 }
