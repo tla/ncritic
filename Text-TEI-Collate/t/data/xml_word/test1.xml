@@ -81,7 +81,10 @@
         </seg>
         <w>եղելոցն։</w>
         <w>և</w>
-        <seg type="word">նեղո<expan><seg type="word">թե<ex resp="#tla">ան</ex>ս</seg><w>այսոցիկ՝</w><w>զոր</w></expan>վասն^</seg>
+        <seg type="word">նեղութե<ex resp="#tla">ան</ex>ս</seg>
+        <w>այսոցիկ՝</w>
+        <w>զոր</w>
+        <seg type="word"><expan>վասն</expan></seg>
         <w>մեղաց</w>
         <seg type="word">կր<lb/>եաց</seg>
         <w>տունն</w>
