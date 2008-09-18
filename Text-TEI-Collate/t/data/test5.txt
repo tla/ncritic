@@ -1,9 +1,9 @@
 =HEAD
 Author:Մատթէոս Ուռհայեցի
 Title:Ժամանակագրութիւն
-Location:Vienna
-Library:Mekhitarist Library
-Manuscript_Number:574
+Settlement:Vienna
+Repository:Mekhitarist Library
+Idno:574
 Pages:pp. 264բ-276ա
 =BODY
 § ## began on p. 250բ ##

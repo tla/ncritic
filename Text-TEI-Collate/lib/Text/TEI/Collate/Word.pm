@@ -42,6 +42,8 @@ sub evaluate_word {
     my $self = shift;
     my $word = shift;
 
+    $word = '' unless defined $word;
+
     # Preserve the original word, weird orthography and all.
     if( $self->original_form ) {
 	warn "Called evaluate_word on an object that already has a word";
@@ -100,7 +102,22 @@ sub word {
     if( defined $form ) {
 	$self->{'word'} = $form;
     }
-    return $self->{'word'};
+    return ( $self->placeholder ? $self->placeholder : $self->{'word'} );
+}
+
+=head2 printable
+
+Passes either the canonical form or the placeholder string of the word.
+
+=cut
+
+sub printable {
+    my $wordobj = shift;
+    if( $wordobj->placeholder ) {
+	return $wordobj->placeholder;
+    } else {
+	return $wordobj->canonical_form;
+    }
 }
 
 =head2 original_form
@@ -181,6 +198,18 @@ sub canonizer {
 	$self->{'canonizer'} = $punct;
     }
     return $self->{'canonizer'};
+}
+
+=head2 placeholder
+
+If this word is a placeholder, returns the type (e.g. __DIV__).
+Otherwise returns undef.
+
+=cut
+
+sub placeholder {
+    my $self = shift;
+    return exists $self->{'placeholder'} ? $self->{'placeholder'} : undef;
 }
 
 ## Subs for marking a word as a base, a true variant, or a grammatical /

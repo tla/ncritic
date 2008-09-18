@@ -91,15 +91,20 @@ sub new {
     
     unless( defined $self->{distance_sub} ) {
 	# Use the default.
-	use Text::WagnerFischer qw( distance );
-	$self->{distance_sub} = &Text::WagnerFischer::distance;
+	my $rc = eval { require Text::WagnerFischer };
+	if( $rc ) {
+	    $self->{distance_sub} = &Text::WagnerFischer::distance;
+	} else {
+	    warn "No edit distance subroutine passed; default Text::WagnerFischer::distance unavailable.  Cannot initialize collator.";
+	    return undef;
+	}
     }
-
+    
     # Initialize the "transpositions" array.  This will be a set of
     # tuples giving the length and start-item of any word
     # transpositions we find.
     $self->{'transpositions'} = {};
-
+    
     if( my $b = $self->{'binmode'} ) {
 	binmode STDERR, ":$b";
     }
@@ -199,24 +204,8 @@ sub align {
 # Small utility to get a string out of an array of word objects.
 sub _stripped_words {
     my $text = shift;
-    my @words = map { $_->word } @$text;
+    my @words = map { defined $_->placeholder ? $_->placeholder : $_->word } @$text;
     return @words;
-}
-
-# The object that should be used to pad the arrays.  Default here is a
-# word object with an empty string.
-sub new_word {
-    my $self = shift;
-    my $string = shift;
-    my $msobj = shift;
-    $string = '' unless $string;
-    my $word = Text::TEI::Collate::Word->new( string => $string,
-					 not_punct => $self->{not_punct},
-					 accents => $self->{accents},
-					 canonizer => $self->{canonizer},
-					 manuscript => $msobj,
-	);
-    return $word;
 }
 
 sub empty_word {
@@ -224,7 +213,7 @@ sub empty_word {
     unless( defined $self->{'null_word'} 
 	    && ref( $self->{'null_word'} ) eq 'Text::TEI::Collate::Word' ) {
 	# Make a null word and save it.
-	$self->{'null_word'} = $self->new_word();
+	$self->{'null_word'} = Text::TEI::Collate::Word->new( string => '' );
     }
     return $self->{'null_word'};
 }
@@ -456,11 +445,11 @@ sub _get_transposition {
     }
 }
 
-# Take a word sources, and extract the words from it into an array.
-# Return the array.  Word sources can be strings or IO::File
-# filehandles.
-# TODO: filter for, e.g., punctuation stripping.  Right now it is hard-
-# coded to strip Armenian punctuation.
+# Take a word source and convert it into a manuscript object with a
+# list of word objects.  The following sources are supported:
+# - plaintext files
+# - XML::LibXML::Documents
+# - filehandles
 
 sub extract_words {
     my $self = shift;
@@ -468,155 +457,55 @@ sub extract_words {
 
     my @words;
 
-    if( $self->{'TEI'} ) {
-	# The wordsource should either be a filehandle with XML
-	# on the other end, or an XML::LibXML::Document.
-	my $docroot;
-	if( ref( $wordsource ) eq 'IO::File' ) {
+    # The wordsource should either be a filename or an
+    # XML::LibXML::Document.
+
+    my $docroot;
+    
+    # Now we have either a filehandle or an XML doc.
+    if( !ref( $wordsource ) ) {  # Assume it's a filename.
+	if( $self->{'TEI'} ) {
 	    my $parser = XML::LibXML->new();
-	    my $doc = $parser->parse_fh( $wordsource );
-	    $docroot = $doc->getDocumentRoot;
-	} else {
-	    $docroot = $wordsource->getDocumentRoot;
-	}
-	
-	# We have the doc.  Get the manuscript data out.
-	my @msnodes = $docroot->getElementsByTagName( 'msDesc' );
-	my $ms_obj;
-	if( @msnodes ) {
-	    $ms_obj = Text::TEI::Collate::Manuscript->new( 'xml' => $msnodes[0] );
-	} else {
-	    warn "Could not find manuscript description in doc; creating generic manuscript";
-	    $ms_obj = Text::TEI::Collate::Manuscript->new(
-		'identifier' => 'Unknown ms',
-		);
-	}
-	push( @{$self->{'manuscripts'}}, $ms_obj );
-
-
-	# Now get the words.
-	# Assume for now one body text
-	my @teitext = $docroot->getElementsByTagName( 'text' );
-	if( @teitext ) {
-	    # Strip out the words.
-	    # TODO: this could use spec consultation.
-	    my @divs = $teitext[0]->getElementsByTagName( 'div' );
-	    foreach( @divs ) {
-		my $place_str;
-		if( my $n = $_->getAttribute( 'n' ) ) {
-		    $place_str = '__DIV_' . $n . '__';
-		} else {
-		    $place_str = '__DIV__';
-		}
-		push( @words, $self->_new_placeholder( $place_str ) );
-		push( @words, $self->_read_paragraphs( $_ ) );
-	    }  # foreach <div/>
-
-	    # But maybe we don't have any divs.  Just paragraphs.
-	    unless( @divs ) {
-		push( @words, $self->_read_paragraphs( $teitext[0] ) );
+	    my $doc;
+	    eval { $doc = $parser->parse_file( $wordsource ); };
+	    unless( $doc ) {
+		warn "Failed to parse file $wordsource into valid XML; reading no words";
+		return @words;
 	    }
-		    
+	    $docroot = $doc->documentElement;
 	} else {
-	    warn "No text in document '" . $ms_obj->identifier . "!";
-	}
-    } else {  
-	## No XML, just plain words.
-	my @raw_words;
-	if( ref( $wordsource ) eq 'IO::File' ) {
-	    # It's a filehandle, not a string.  Roleplay accordingly.
-	    while( <$wordsource> ) {
-		chomp;
-		push( @raw_words, split );
+	    # It's a plaintext file.  Put it all in a string.
+	    my $binmode = "<:" . $self->{'binmode'};
+	    my $rc = open( INFILE, $binmode, $wordsource );
+	    unless( $rc ) {
+		warn "Failed to open file $wordsource; reading no words";
+		return @words;
 	    }
-	    
-	} else {
-	    @raw_words = split( /\s+/, $wordsource );
+	    my @lines = <INFILE>;
+	    close INFILE;
+	    $docroot = join( '', @lines );
 	}
+    } elsif ( ref( $wordsource ) eq 'XML::LibXML::Document' ) { # A LibXML object
+	$docroot = $wordsource->getDocumentRoot;
+	if( $docroot->nodeName eq 'TEI' ) {
+	    # If we have been passed a TEI XML object, it's fair to assume 
+	    # the user wants TEI parsing.
+	    $self->{'TEI'} = 1;
+	}
+    } else {   
+	warn "Unrecognized object $wordsource; reading no words";
+	return @words;
+    }
+
+    # We have the XML doc.  Get the manuscript data out.
+    my $parse_input = $self->{'TEI'} ? 'xmldesc' : 'text_string';
+    my $ms_obj = Text::TEI::Collate::Manuscript->new( $parse_input => $docroot );
     
-	foreach my $w ( @raw_words ) {
-	    my $w_obj = $self->new_word( $w );
-	    # For now, skip "words" that are nothing but punctuation.
-	    next if( length( $w_obj->original_form ) > 0 
-		     && length( $w_obj->word ) == 0 );
-	    
-	    push( @words, $w_obj );
-	}
-    
-    }
-    return \@words;
+    # Now get the words.
+    # Assume for now one body text
+    return $ms_obj->words;
 }
 
-sub _read_paragraphs {
-    my( $self, $element, $msobj ) = @_;
-
-    my @words;
-    my @pgraphs = $element->getElementsByTagName( 'p' );
-    return () unless @pgraphs;
-    foreach my $pg( @pgraphs ) {
-	push( @words, $self->_new_placeholder( '__PG__', $msobj ) );
-	# Are the words tagged?  If so, suck them out.
-	if( $pg->getElementsByTagName( 'w' ) ) {
-	    # We need <w/>, but we also need <seg/>, and in their
-	    # original order.
-	    foreach my $c ( $pg->childNodes() ) {
-		if( $c->nodeName eq 'w' ) {
-		    push( @words, $self->_new_word( $c->textContent, $msobj ) );
-		} elsif ( $c->nodeName eq 'seg' &&
-			  $c->getAttribute( 'type' ) eq 'word' ) {
-		    # Trickier.  Need to parse the tags.
-		    my $word = $self->_get_text_from_node( $c );
-		    push( @words, $self->_new_word( $word, $msobj ) );
-		} # if node is word or seg
-	    }
-	} else {  # if w / seg tags don't exist
-	    # We have to split the words by whitespace.
-	    my $string = $self->_get_text_from_node( $pg );
-	    my @raw_words = split( /\s+/, $string );
-	    foreach my $w ( @raw_words ) {
-		my $w_obj = $self->new_word( $w, $msobj );
-		# For now, skip "words" that are nothing but punctuation.
-		next if( length( $w_obj->original_form ) > 0 
-			 && length( $w_obj->word ) == 0 );
-		
-		push( @words, $w_obj );
-	    }
-	}
-    }
-
-    return @words;
-}
-
-# Given a node, whether a paragraph or a word, reconstruct the text
-# string that ought to come out.  If it is a word or a seg, sanity
-# check it for lack of spaces.
-sub _get_text_from_node {
-    my( $self, $node ) = @_;
-    my $text;
-    foreach my $c ($node->childNodes() ) {
-	if( ref( $c ) eq 'XML::LibXML::Text' ) {
-	    $text .= $c->textContent;
-	} elsif( $c->nodeName eq 'num' 
-		 && defined $c->getAttribute( 'value' ) ) {
-	    # Push the number.
-	    $text .= $c->getAttribute( 'value' );
-	} elsif ( $c->nodeName eq 'del'
-		  || $c->textContent eq '' ) {
-	    next;
-	} else {
-	    $text .= $c->textContent;
-	}
-    }
-    # Sanity check
-    if( $node->nodeName eq 'w'
-	|| ( $node->nodeName eq 'seg' 
-	     && $node->getAttribute( 'type' ) eq 'word' ) 
-	&& $text =~ /\s+/ ) {
-	warn "Extracted text =$text= containing space from word element\n "
-	    . $node->toString();
-    }
-    return $text;
-}
 
 
 # match_and_align_words: Do the fuzzy matching necessary to roughly
