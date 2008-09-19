@@ -80,11 +80,12 @@ sub _init_from_xml {
     # collation of "Nth text in this manuscript", or of "all texts in
     # this manuscript against each other."
     my @words;
-    my @teitext = $xmlobj->getElementsByTagName( 'text' );
-    if( @teitext ) {
+    my @textnodes = $xmlobj->getElementsByTagName( 'text' );
+    my $teitext = $textnodes[0];
+    if( $teitext ) {
 	# Strip out the words.
 	# TODO: this could use spec consultation.
-	my @divs = $teitext[0]->getElementsByTagName( 'div' );
+	my @divs = $teitext->getElementsByTagName( 'div' );
 	foreach( @divs ) {
 	    my $place_str;
 	    if( my $n = $_->getAttribute( 'n' ) ) {
@@ -99,7 +100,7 @@ sub _init_from_xml {
 	
 	# But maybe we don't have any divs.  Just paragraphs.
 	unless( @divs ) {
-	    push( @words, _read_paragraphs( $self, $teitext[0] ) );
+	    push( @words, _read_paragraphs( $self, $teitext ) );
 	}
     } else {
 	warn "No text in document '" . $self->{'identifier'} . "!";
@@ -119,25 +120,29 @@ sub _read_paragraphs {
     foreach my $pg( @pgraphs ) {
 	push( @words, Text::TEI::Collate::Word->new( placeholder => '__PG__', 
 						     canonizer => $self->{'canonizer'} ) );
-	# Are the words tagged?  If so, suck them out.
-	# We need <w/>, but we also need <seg/>, and in their
-	# original order.  I bet XPath can handle that.
-	my $xpc = XML::LibXML::XPathContext->new();
+	# If there are any #text nodes that are direct children of
+	# this paragraph, the whole thing needs to be processed.
+	my $xpc = XML::LibXML::XPathContext->new( $pg );
 	$xpc->registerNs( 'tei', $pg->namespaceURI );
-	if( my @wordnodes = $xpc->findnodes( 'tei:w | tei:seg', $pg ) ) {
-	    foreach my $c ( @wordnodes ) {
-		next if $c->nodeName eq 'seg' 
-		    && $c->getAttribute( 'type' ) ne 'word';
-		# Trickier.  Need to parse the component tags.
-		my $word = _get_text_from_node( $c );
-		push( @words, 
-		      Text::TEI::Collate::Word->new( 'string' => $word,
-				     'canonizer' => $self->{'canonizer'} ) );
-	    }
-	} else {  # if w / seg tags don't exist
+	
+	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
 	    push( @words, _split_words( $self, $string ) );
+	} else {  # if everything is wrapped in w / seg tags
+	    # Get the text of each node
+	    foreach my $c ( $pg->childNodes() ) {
+		# Trickier.  Need to parse the component tags.
+		my $text = _get_text_from_node( $c );
+		# Some of the nodes might come back with multiple words.
+		# TODO: make a better check for this
+		my @textwords = split( /\s+/, $text );
+		foreach( @textwords ) {
+		    push( @words, 
+			  Text::TEI::Collate::Word->new( 'string' => $_,
+				 'canonizer' => $self->{'canonizer'} ) );
+		}
+	    }
 	}
     }
 
@@ -172,15 +177,20 @@ sub _get_text_from_node {
 		  || ref( $c ) eq 'XML::LibXML::Comment' ) {
 	    next;
 	} else {
-	    # A text node, or some other tag.
-	    my $tagtxt = $c->textContent;
+	    my $tagtxt;
+	    if( ref( $c ) eq 'XML::LibXML::Text' ) {
+		# A text node.
+		$tagtxt = $c->textContent;
+	    } else {
+		$tagtxt = _get_text_from_node( $c );
+	    }
 	    if( $strip_leading_space ) {
 		$tagtxt =~ s/^[\s\n]+//s;
 		# Unset the flag as soon as we see non-whitespace.
 		$strip_leading_space = 0 if $tagtxt;
 	    }
 	    $text .= $tagtxt;
-	}
+	} 
     }
     # If this is in a w tag, strip all the whitespace.
     if( $node->nodeName eq 'w'
