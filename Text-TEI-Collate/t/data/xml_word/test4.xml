@@ -138,10 +138,8 @@
             <num value="502">ԵՃԲ</num>
           </seg>
           <w>եղև</w>
-          <w>ահ</w>
         </hi>
-        <lb/>
-        <w>աւոր</w>
+          <w><hi>ահ</hi><lb/>աւոր</w>
         <w>նշան</w>
         <w>և</w>
         <seg type="word">սոսկ<ex resp="#tla">ա</ex>լի,</seg>
