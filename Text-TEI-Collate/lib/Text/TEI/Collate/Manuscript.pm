@@ -122,9 +122,9 @@ sub _read_paragraphs {
 	# Are the words tagged?  If so, suck them out.
 	# We need <w/>, but we also need <seg/>, and in their
 	# original order.  I bet XPath can handle that.
-	my $xpc = XML::LibXML::XPathContext->new( $element );
-	$xpc->registerNs( 'tei', $element->namespaceURI );
-	if( my @wordnodes = $xpc->findnodes( '//tei:w | //tei:seg' ) ) {
+	my $xpc = XML::LibXML::XPathContext->new();
+	$xpc->registerNs( 'tei', $pg->namespaceURI );
+	if( my @wordnodes = $xpc->findnodes( 'tei:w | tei:seg', $pg ) ) {
 	    foreach my $c ( @wordnodes ) {
 		next if $c->nodeName eq 'seg' 
 		    && $c->getAttribute( 'type' ) ne 'word';
