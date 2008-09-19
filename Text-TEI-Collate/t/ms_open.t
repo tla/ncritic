@@ -8,6 +8,8 @@ use Text::TEI::Collate::Manuscript;
 use XML::LibXML;
 
 binmode STDOUT, ":utf8";
+binmode STDERR, ":utf8";
+eval { binmode $DB::OUT, ":utf8"; };
 
 # Find the test files.
 my $dirname = dirname( $0 );
@@ -17,7 +19,7 @@ my $testdir_xmlfull = "$dirname/data/xml_word";
 
 # Open the plaintext files and try to make a manuscript object from them.
 my %sigla = ();
-my @wordcount = ( 180, 183, 178, 176, 252 );
+my @wordcount = ( 181, 183, 178, 182, 263 );
 my @ph_count = ( 2, 3, 3, 2, 3 );
 my %xml_wordcount;
 opendir( PLAIN, $testdir_plain ) or die "Could not open plaintext file dir: $@";
@@ -38,7 +40,7 @@ while( my $fn = readdir( PLAIN ) ) {
     ok( !defined( $sigla{$ms_obj->sigil()} ), "sigil not already in use" );
     $sigla{$ms_obj->sigil()} = $fn;
     is( scalar @{$ms_obj->words}, $wordcount[$idx++], "file has correct number of words" );
-    push( @text, $ms_obj->words ) if $idx == 5;
+    push( @text, $ms_obj->words ) if $idx == 4;
 }
 close PLAIN;
 
@@ -65,8 +67,9 @@ while ( my $fn = readdir( XML ) ) {
     is( scalar @placeholders, $ph_count[$idx], "Word list has correct number of division placeholders" );
     is( scalar @{$ms_obj->words}, $wordcount[$idx++] + scalar @placeholders, "Manuscript has correct number of words" );
     my @real_words = grep { !($_->placeholder) } @{$ms_obj->words};
-    push( @text, \@real_words ) if $idx == 5;
+    push( @text, \@real_words ) if $idx == 4;
 }
+close XML;
 
 %sigla = ();
 $idx = 0;
@@ -76,7 +79,7 @@ while ( my $fn = readdir( XMLFULL ) ) {
     # Parse the file
     my $xmlparser = XML::LibXML->new();
     my $doc;
-    eval { $doc = $xmlparser->parse_file( "$testdir_xml/$fn" )->documentElement(); };
+    eval { $doc = $xmlparser->parse_file( "$testdir_xmlfull/$fn" )->documentElement(); };
     ok( defined $doc, "parsed the XML file $fn" );
     my $ms_obj = Text::TEI::Collate::Manuscript->new( 'xmldesc' => $doc );
     is( $ms_obj->identifier, $ids[$idx], "Manuscript has correct ID" );
@@ -86,16 +89,17 @@ while ( my $fn = readdir( XMLFULL ) ) {
 
     # Do we have words?
     my @placeholders = grep { $_->placeholder } @{$ms_obj->words};
+    my $words = scalar @{$ms_obj->words};
     is( scalar @placeholders, $ph_count[$idx], "Word list has correct number of division placeholders" );
-    is( scalar @{$ms_obj->words}, $wordcount[$idx++] + scalar @placeholders, "Manuscript has correct number of words" );
+    is( $words, $wordcount[$idx++] + scalar @placeholders, "Manuscript has $words words" );
     my @real_words = grep { !($_->placeholder) } @{$ms_obj->words};
-    push( @text, \@real_words ) if $idx == 5;
+    push( @text, \@real_words ) if $idx == 4;
 }
+close XMLFULL;
 
 # foreach my $i ( 0 .. $#{$text[0]} ) {
-#     my $w1 = $text[0]->[$i]->original_form;
-#     my $w2 = $text[1]->[$i]->original_form;
-#     printf( "%-20s%-20s\n", $w1, $w2 );
+#     my $w1 = $i < scalar @{$text[0]} ? $text[0]->[$i]->original_form : '';
+#     my $w2 = $i < scalar @{$text[1]} ? $text[1]->[$i]->original_form : '';
+#     my $w3 = $i < scalar @{$text[2]} ? $text[2]->[$i]->original_form : '';
+#     printf( "%-20s%-20s%-20s\n", $w1, $w2, $w3 );
 # }
-
-# TODO: sigil definition in manuscript XML
