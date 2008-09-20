@@ -132,20 +132,19 @@ have yet to describe.
 sub align {
     my( $self, @texts ) = @_;
 
-    my @word_chars;
-    my %VARIANTS;
+    my @manuscripts;
     foreach ( @texts ) {
 	# Break down each text into word-object arrays.
-	push( @word_chars, $self->extract_words( $_ ) );
+	push( @manuscripts, $self->read_manuscript_source( $_ ) );
     }
 
     # This will hold many arrays, one for each collated text.  Each member
     # array will be a list of word objects.  We will eventually return it.
     my @result_array;
 
-    if( scalar( @word_chars ) == 1 ) {
+    if( scalar( @manuscripts ) == 1 ) {
 	# That was easy then.
-	return @word_chars;
+	return @manuscripts;
     }
 
     # At this point we have an array of arrays.  Each member array
@@ -155,10 +154,11 @@ sub align {
 
     # The first file becomes the base, for now.
     # TODO: Work parsimony info into the choosing of a base
-    my $base_text = shift @word_chars;
+    my @ms_texts = map { $_->words } @manuscripts;
+    my $base_text = shift @ms_texts;
 
-    for ( 0 .. $#word_chars ) {
-	my $text = $word_chars[$_];
+    for ( 0 .. $#ms_texts ) {
+	my $text = $ms_texts[$_];
 	print STDERR "Beginning run of build_array for text " . ($_+2) . "\n"
 	    if $self->{debug};
 	my( $result1, $result2 ) = $self->build_array( $base_text, $text );
@@ -193,12 +193,18 @@ sub align {
 
 	# If there is another text to come, generate the new base text by 
 	# flattening result2 onto the back of result1, filling in the gaps.
-	if( $_ < $#word_chars ) {
-	    $base_text = $self->generate_base( \%VARIANTS, $result1, $result2 );
+	if( $_ < $#ms_texts ) {
+	    $base_text = $self->generate_base( $result1, $result2 );
 	}
     }
 
-    return ( \%VARIANTS, @result_array );
+    # Take the contents of @result_array and put them back into the
+    # manuscripts.
+
+    foreach my $i ( 0 .. $#result_array ) {
+	$manuscripts[$i]->replace_words( $result_array[$i] );
+    }
+    return @manuscripts;
 }
 
 # Small utility to get a string out of an array of word objects.
@@ -247,7 +253,7 @@ sub build_array {
 	    my @base_wlist = @{$base_text}[$diff->Range( 1 )];
 	    my @new_wlist = @{$text}[$diff->Range( 2 )];
 
-	    # Match them up.  This will create the links between aligned words.
+	    # Match them up.
 	    my( $aligned1, $aligned2 ) = $self->match_and_align_words( \@base_wlist, \@new_wlist );
 	    
 	    # Push it all on.
@@ -257,34 +263,6 @@ sub build_array {
     }
 
     return( \@base_result, \@new_result );
-}
-
-my $varprint = 0;
-sub print_link {
-    # Debug method
-    my( $w1, $w2 ) = @_;
-    if( $varprint == 1 ) {
-	print STDERR "Linking " . $w1->word . " / ";
-	my $sc1 = scalar( $w1 );
-	$sc1 =~ s/Text::TEI::Collate::Word=HASH//;
-	print STDERR $sc1 . " to " . $w2->word . " / ";
-	my $sc2 = scalar( $w2 );
-	$sc2 =~ s/Text::TEI::Collate::Word=HASH//;
-	print STDERR "$sc2\n";
-    }
-}
-sub print_variant {
-    # Debug method
-    my( $w1, $w2 ) = @_;
-    if ( $varprint == 1 ) {
-	print STDERR "Adding variant of " . $w1->word . " / ";
-	my $sc1 = scalar( $w1 );
-	$sc1 =~ s/Text::TEI::Collate::Word=HASH//;
-	print STDERR $sc1 . " to be " . $w2->word . " / ";
-	my $sc2 = scalar( $w2 );
-	$sc2 =~ s/Text::TEI::Collate::Word=HASH//;
-	print STDERR "$sc2\n";
-    }
 }
 
 ## Diff handling functions.  Used in build_array and in match_and_align_words.  
@@ -304,11 +282,6 @@ sub _handle_diff_same {
 	if $self->{debug} > 2;
     push( @$base_result, @base_wlist );
     push( @$new_result, @new_wlist );
-    # Create the links between words.
-    foreach my $i ( 0 .. $#base_wlist ) {
-	print_link( $base_wlist[$i], $new_wlist[$i] );
-	$base_wlist[$i]->add_link( $new_wlist[$i] );
-    }
 }
 
 sub _handle_diff_interpolation {
@@ -335,11 +308,6 @@ sub _handle_diff_interpolation {
 
 sub generate_base {
     my $self = shift;
-    my $variants = shift;
-    unless( ref( $variants ) eq 'HASH' ) {
-	unshift( @_, $variants );
-	$variants = undef;
-    }
     my @texts = @_;
 
     # Error checking: are they all the same length?
@@ -352,8 +320,7 @@ sub generate_base {
     }
 
     # Get busy.  Take a word from T0 if it's there; otherwise take a word
-    # from T1, otherwise T2, etc.  Record the variants if we have a hash
-    # in which to do so.
+    # from T1, otherwise T2, etc.  
     my @new_base;
     foreach my $idx ( 0 .. $length-1 ) {
 	my $word = $self->empty_word;  # We should never end up using this
@@ -362,55 +329,6 @@ sub generate_base {
 	foreach my $col ( 0 .. $width - 1 ) {
 	    if( $texts[$col]->[$idx]->word() ne '' ) {
 		$word = $texts[$col]->[$idx];
-		if( defined $variants ) {
-		    # Look through the rest of the arrays at this index,
-		    # comparing the words, and record as variants any
-		    # non-matching ones.  Any matching ones should already
-		    # be linked for previous runs.  Ideally we would link
-		    
-		    # TODO: Add test for similar-word link existence
-		    foreach my $rcol ( $col+1 .. $width-1 ) {
-			my $rword = $texts[$rcol]->[$idx];
-			# Ignore a blank column word.
-			next if $rword eq $self->empty_word;
-			# See if the word is already linked to our word.
-			next if grep( $_ eq $rword, @{$word->get_links} ) == 1;
-			# When we trust the linking, we can dispense with the
-			# re-run of the distance sub, i.e. this next if statement.
-			if( !( $self->_is_near_word_match( $word, $rword ) ) ) {
-			    # It is a variant.  Is it already there?
-			    $variants->{scalar( $word )} = [] 
-				unless defined $variants->{scalar( $word )};
-			    # See if we already have it.
-			    my @list = @{$variants->{scalar( $word )}};
-			    if( grep( $_ eq $rword, @list ) == 0 ) {
-				# We have to match against what is
-				# already in list, and link rword if
-				# it matches something there.
-				my $matched = 0;
-				foreach my $lword( @list ) {
-				    if( $self->_is_near_word_match( $rword, $lword ) ) {
-					print_link( $lword, $rword );
-					$lword->add_link( $rword );
-					$matched = 1;
-					last;
-				    }
-				}
-				unless( $matched ) {
-				    # It's a new variant.  What fun.  Add it here
-				    # and link future similar variants to it.
-				    print_variant( $word, $rword );
-				    push( @list, $rword );
-				}
-				$variants->{scalar( $word )} = \@list;
-			    } # else it's already in the list; no action
-			} elsif( $rword->word ne '' ) { # endif not_near_word_match
-			    # Not linked, but a near match.  Scream.
-			    warn( "Word " . $rword->word . "is an unlinked near match to "
-				  . $word->word . "at row $idx" );
-			}
-		    }
-		}  ## endif defined $variants
 		last;
 	    }
 	}
@@ -449,9 +367,8 @@ sub _get_transposition {
 # list of word objects.  The following sources are supported:
 # - plaintext files
 # - XML::LibXML::Documents
-# - filehandles
 
-sub extract_words {
+sub read_manuscript_source {
     my $self = shift;
     my $wordsource = shift;
 
@@ -498,12 +415,16 @@ sub extract_words {
     }
 
     # We have the XML doc.  Get the manuscript data out.
-    my $parse_input = $self->{'TEI'} ? 'xmldesc' : 'text_string';
-    my $ms_obj = Text::TEI::Collate::Manuscript->new( $parse_input => $docroot );
+    my $parse_input = $self->{'TEI'} ? 'xmldesc' : 'plaintext';
+    my $ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'type' => $parse_input,
+	'source' => $docroot,
+	'canonizer' => $self->{'canonizer'} 
+	);
     
     # Now get the words.
     # Assume for now one body text
-    return $ms_obj->words;
+    return $ms_obj;
 }
 
 
@@ -543,9 +464,10 @@ sub match_and_align_words {
     # convince Algorithm::Diff that approximate string matches are
     # matches.  We will use substitute arrays for this.
     my( @index_array1, @index_array2 );
-    # Array 1 is A-Z
+    # Array 1 has alpha strings
     foreach( 0 .. $#words1 ) { push( @index_array1, _return_alpha_string( $_ ) ) };
-    # Array 2 starts as 0-9; this will change
+    # Array 2 starts with numeric strings; this will change as
+    # matches are found.
     foreach( 0 .. $#words2 ) { push( @index_array2, $_ ) };
 
     foreach my $curr_idx ( 0 .. $#words1 ) {
@@ -559,6 +481,8 @@ sub match_and_align_words {
 	    # corresponding indices, if they aren't the same.
 	    
 	    my $dist = &$distance( $w, $w2 );
+	    print STDERR "Distance on $w / $w2 is $dist\n"
+		if $self->{'debug'} > 3;
 	    $best_distance = $dist unless defined $best_distance;
 	    $best_idx = $curr_idx2 unless defined $best_idx;
 	    if( $dist < $best_distance ) {

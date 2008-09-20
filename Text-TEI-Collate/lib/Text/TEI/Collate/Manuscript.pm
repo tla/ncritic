@@ -24,24 +24,33 @@ sub new {
     my $proto = shift;
     my %opts = @_;
     my $class = ref( $proto ) || $proto;
-    my $self = {};
-    if( exists $opts{'xmldesc'} ) {
-	my $xml = delete $opts{'xmldesc'};
-        $self = _init_from_xml( $xml );
+    my $self = { 'sigil' => undef,
+		 'identifier' => 'Unidentified ms',
+		 'auto_sigla' => 1,
+		 'canonizer' => undef,
+		 'type' => 'plaintext',
+		 %opts,
+    };
+    bless $self, $class;
+
+    my $type = delete $self->{'type'};
+    die "Cannot initialize manuscript without XML or string text"     
+	unless( $type =~ /^(xmldesc|plaintext)$/ );
+    my $source = delete $self->{'source'};
+    die "Cannot initialize manuscript without a data source"
+	unless defined $source;
+    
+    if( $type eq 'xmldesc' ) {
+        $self->_init_from_xml( $source );
 	unless( exists $self->{'sigil'} ) {
 	    # TODO: how to specify sigla?
 	    # warn "No sigil assigned!  Assigning automatic sigil.";
 	    $self->{'auto_sigla'} = 1;
 	}
-    } elsif( exists $opts{'text_string'} ) {
-	    my $str = delete $opts{'text_string'};
-	    $self = _init_from_string( $str, %opts );
-	    
     } else {
-	die "Cannot initialize manuscript without XML or string text";
+	    $self->_init_from_string( $source );
     }
 
-    bless $self, $class;
     $self->auto_assign_sigil() if $self->{'auto_sigla'};
     $assigned_sigla{$self->{'sigil'}} = 1;
 
@@ -49,8 +58,7 @@ sub new {
 }
 
 sub _init_from_xml {
-    my( $xmlobj ) = @_;
-    my $self = {};
+    my( $self, $xmlobj ) = @_;
     unless( $xmlobj->nodeName eq 'TEI' ) {
 	warn "Manuscript initialization needs a TEI document!";
 	return;
@@ -95,20 +103,18 @@ sub _init_from_xml {
 	    }
 	    push( @words, Text::TEI::Collate::Word->new( placeholder => $place_str,
 							 canonizer => $self->{'canonizer'} ) );
-	    push( @words, _read_paragraphs( $self, $_ ) );
+	    push( @words, $self->_read_paragraphs( $_ ) );
 	}  # foreach <div/>
 	
 	# But maybe we don't have any divs.  Just paragraphs.
 	unless( @divs ) {
-	    push( @words, _read_paragraphs( $self, $teitext ) );
+	    push( @words, $self->_read_paragraphs( $teitext ) );
 	}
     } else {
 	warn "No text in document '" . $self->{'identifier'} . "!";
     }
     
     $self->{'words'} = \@words;
-    
-    return $self;
 }
 
 sub _read_paragraphs {
@@ -128,7 +134,7 @@ sub _read_paragraphs {
 	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
-	    push( @words, _split_words( $self, $string ) );
+	    push( @words, $self->_split_words( $string ) );
 	} else {  # if everything is wrapped in w / seg tags
 	    # Get the text of each node
 	    foreach my $c ( $pg->childNodes() ) {
@@ -217,14 +223,7 @@ sub _split_words {
 }
 
 sub _init_from_string {
-    my( $str, %opts ) = @_;
-    my $self = { 'sigil' => undef,
-		 'identifier' => 'Unidentified ms',
-		 'auto_sigla' => 1,
-		 'canonizer' => undef,
-		 %opts,
-    };
-
+    my( $self, $str ) = @_;
     # Do we have a sigil?
     unless( $self->{'auto_sigla'} 
 	    || $self->{'sigil'} ) {
@@ -233,7 +232,7 @@ sub _init_from_string {
     }
 
     # Now look at the string.
-    my @words = _split_words( $self, $str );
+    my @words = $self->_split_words( $str );
     $self->{'words'} = \@words;
 
     return $self;
@@ -277,6 +276,15 @@ sub words {
     my $self = shift;
     return ( exists $self->{'words'} 
 	     && ref( $self->{'words'} ) eq 'ARRAY' ) ? $self->{'words'} : undef;
+}
+
+sub replace_words {
+    my ( $self, $newtext ) = @_;
+    unless( ref $newtext eq 'ARRAY' ) {
+	warn "New text $newtext not an array ref; not replacing";
+	return;
+    }
+    $self->{'words'} = $newtext;
 }
 
 my $end_msg = 'get a printing press already';

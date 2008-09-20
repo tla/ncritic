@@ -251,48 +251,6 @@ sub is_error {
     return $self->{'is_error'};
 }
 
-sub add_ms {
-    my $self = shift;
-    my $new_ms = shift;
-    if( ref( $new_ms ) ne 'Text::TEI::Collate::Manuscript' ) {
-	warn( "Object $new_ms is not a manuscript; not adding" );
-	return;
-    }
-    if( defined $self->{mss} ) {
-	push( @{$self->{mss}}, $new_ms );
-    } else {
-	$self->{mss} = [ $new_ms ];
-    }
-}
-
-sub in_mss {
-    my $self = shift;
-    return $self->{mss} if defined $self->{mss};
-    return [];
-}
-
-sub add_link {
-    my $self = shift;
-    my $new_link = shift;
-    if( ref( $new_link) ne 'Text::TEI::Collate::Word'
-	|| $new_link->word eq '' ) {
-	warn "Object $new_link is not a non-empty word; not linking";
-	return;
-    }
-    if( defined $self->{links} ) {
-	push( @{$self->{links}}, $new_link );
-    } else {
-	$self->{links} = [ $new_link ];
-    }
-}
-
-sub get_links {
-    my $self = shift;
-    return $self->{links} if defined $self->{links};
-    return [];
-}
-
-
 1; 
 
 
