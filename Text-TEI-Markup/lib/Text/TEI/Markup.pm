@@ -6,7 +6,7 @@ use Encode;
 use Exporter 'import';
 use XML::LibXML;
 
-$VERSION = '1.0';
+$VERSION = '1.2';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
@@ -114,7 +114,7 @@ Your input file should then begin something like this:
  myinitials:tla
  myname:Tara L Andrews
  =BODY
- The real text begins here.
+ The ^real^ text b\e\gins +(above)t+here.
  ...
 
 
@@ -133,11 +133,29 @@ sigil list is:
     'abbr' => [ '{', '}' ],
     'num' => '%',
     'pb' => [ '[', ']' ],
+    'cb' => '|',
     'hi' => '*',
     );
 
 Non-identical matched sets of sigla (e.g. '{}' for abbreviations)
 should be specified in a listref, as seen here.
+
+The "add" and "del" sigils have an extra convenience feature -
+anything that appears in parentheses immediately after the add/del
+opening sigil ( + or - in the examples above) will get added as an
+attribute.  If the string in parentheses has no '=' sign in it, the
+attribute for the "add" tag will be "place", and the attribute for the
+"del" tag will be "type".  Ergo:
+
+ +(margin)This is an addition+-(overwrite)and a deletion- to the sentence.
+
+will get translated to
+
+ <add place="margin">This is an addition</add> 
+ <del type="overwrite">and a deletion</del> to the sentence.
+
+This behavior ought to be more configurable and/or flexible; make it
+worth my while.
 
 Whitespace is only significant at the end of lines.  If a line which
 contains non-tag text (i.e. words) ends in whitespace, it is assumed
@@ -218,6 +236,7 @@ my %SIGILS = (
     'abbr' => [ '{', '}' ],
     'num' => '%',
     'pb' => [ '[', ']' ],
+    'cb' => '|',
     'hi' => '*',
     # 'head' => "\x{86}",
     );
@@ -354,12 +373,20 @@ sub _process_line {
     # Add and delete tags.  Do this first so that we do not stomp later
     # instances of the dash (e.g. in XML comments).
     while( $line =~ m|([-+])(\(([^\)]+)\))?(.*?)\1|g ) {
-	my( $op, $where, $word ) = ( $1, $3, $4 );
+	my( $op, $attr, $word ) = ( $1, $3, $4 );
 	#  Calculate starting position.
 	my $pos = pos( $line ) - ( length( $word ) + 2 );
-	$pos -= ( length( $where ) + 2 ) if $where;
+	$pos -= ( length( $attr ) + 2 ) if $attr;
+	# Figure out what the attribute string, if any, should be.
+	my $attr_str;
+	if( $attr && $attr =~ /\=/ ) {
+	    $attr_str = $attr;
+	} elsif ( $attr ) {
+	    $attr_str = ( $op eq '+' ? "place" : "type" ) 
+		. "=\"$attr\"";
+	}
 	my $interp_str = '<' . ( $op eq '+' ? 'add' : 'del' )
-	    . ( $where ? " place=\"$where\"" : '' )
+	    . ( $attr_str ? " $attr_str" : '' )
 	    . ">$word</" . ( $op eq '+' ? 'add' : 'del' ) . '>';
 	substr( $line, $pos, pos( $line ) - $pos, $interp_str );
     }
@@ -377,21 +404,27 @@ sub _process_line {
 	
 	$line =~ s|\Q$tag_open\E(.*?)\Q$tag_close\E|_open_tag( $tag, $1, \%opts ) . "</$tag>"|ge;
     } 
+
+    # Standalone tags that aren't special cases.  Currently only cb.
+    foreach my $tag ( qw( cb ) ) {
+	my $tag_sig = $sigils->{$tag};	
+	$line =~ s|\Q$tag_sig\E|"<$tag/>"|ge;
+    } 
+    
     
     # Page breaks.  Defined by the delimiters, plus an optional
     # page/folio number & recto/verso indicator, on a line by itself.
     # Of course other languages may use other sigils to indicate recto
     # verso, so do not look for 'r' and 'v' specifically.
-    my $pg_sig = $sigils->{'pb'};
-    my ( $pg_open, $pg_close );
-    if( ref( $pg_sig ) eq 'ARRAY' ) {
-	( $pg_open, $pg_close ) = @$pg_sig;
+    my $pb_sig = $sigils->{'pb'};
+    my ( $pb_open, $pb_close );
+    if( ref( $pb_sig ) eq 'ARRAY' ) {
+	( $pb_open, $pb_close ) = @$pb_sig;
     } else {
-	$pg_open = $pg_sig;
-	$pg_close = $pg_sig;
+	$pb_open = $pb_sig;
+	$pb_close = $pb_sig;
     }
-    $line =~ s|^\Q$pg_open\E(\d+(.)?)\Q$pg_close\E\s*$|<pb n=\"$1\"/>|;
-
+    $line =~ s|^\Q$pb_open\E(\d+(.)?)\Q$pb_close\E\s*$|<pb n=\"$1\"/>|;
     
     # XML comments.  Convert ## text ## to <!-- text -->
     my $com_sig = $sigils->{'comment'};
@@ -402,15 +435,14 @@ sub _process_line {
 	$com_open = $com_close = $com_sig;
     }
     $line =~ s|\Q$com_open\E(.*?)\Q$com_close\E|<!--$1-->|g;
-    
 
     # Finally, every line with text outside an XML tag must have a line
-    # break.  Any lb tag should be inside a p or div tag.
+    # break.  Any lb tag should be inside a cb, p, or div tag.
     my $testline = $line;
     $testline =~ s/<[^>]*>//g;
     if( $testline =~ /\S/ ) {
 	no warnings 'uninitialized';
-	$line =~ s!(</p>|</div>)?$!<lb/>$1!;
+	$line =~ s!(</p>|</div>|<cb/>)?$!<lb/>$1!;
     }	
 
     # Return the expanded line.
