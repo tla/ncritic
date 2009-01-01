@@ -140,9 +140,16 @@ sub _read_paragraphs {
 	    foreach my $c ( $pg->childNodes() ) {
 		# Trickier.  Need to parse the component tags.
 		my $text = _get_text_from_node( $c );
+		unless( defined $text ) {
+		    print STDERR "WARNING: no text in node " . $c->nodeName 
+			. "\n" unless $c->nodeName eq 'lb';
+		    next;
+		}
 		# Some of the nodes might come back with multiple words.
 		# TODO: make a better check for this
 		my @textwords = split( /\s+/, $text );
+		print STDERR "DEBUG: space found in element node "
+		    . $c->nodeName . "\n" if scalar @textwords > 1;
 		foreach( @textwords ) {
 		    push( @words, 
 			  Text::TEI::Collate::Word->new( 'string' => $_,
