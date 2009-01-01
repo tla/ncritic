@@ -9,7 +9,7 @@ use XML::LibXML;
 
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
-eval { binmode $DB::OUT, ":utf8"; };
+eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
 # Find the test files.
 my $dirname = dirname( $0 );

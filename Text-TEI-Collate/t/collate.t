@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use lib 't/lib';
 use File::Basename;
 use Test::More 'no_plan';
 use Text::WagnerFischer::Armenian qw( distance );
