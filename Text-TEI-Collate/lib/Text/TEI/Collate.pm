@@ -262,6 +262,8 @@ sub build_array {
 	}	
     }
 
+    $self->check_gaps( \@base_result, \@new_result );
+
     return( \@base_result, \@new_result );
 }
 
@@ -427,7 +429,168 @@ sub read_manuscript_source {
     return $ms_obj;
 }
 
+# check_gaps: Run some heuristics on the new finished array, looking
+# for orphan words in a sea of undefs.  Try to find a contiguous home
+# for them.
 
+sub check_gaps {
+    my $self = shift;
+    my( $base, $new ) = @_;
+    
+    # Will need some state vars.
+    my @seq;
+    my $last_def = 0;
+    my $ctr = 0;
+    foreach my $idx ( 0 .. $#{$new} ) {
+	if( $new->[$idx] eq $self->empty_word ) {
+	    if( $last_def ) {
+		$last_def = 0;
+		push( @seq, "word_$ctr" . '_' . ($idx-1) );
+		$ctr = 1;
+	    } else {
+		$ctr++;
+	    }
+	} else {
+	    if( $last_def ) {
+		$ctr++;
+	    } else {
+		$last_def = 1;
+		push( @seq, "empty_$ctr" . '_' . ($idx-1) ) if $idx > 0;
+		$ctr = 1;
+	    }
+	}
+    }
+	
+    print STDERR "Check_array gave seq @seq\n" if $self->{'debug'};
+    # Looking for empty_big, word_small, empty_big sequence.
+    my @orphans;
+    my $last_orphan_idx;
+    foreach my $idx( 0 .. $#seq ) {
+	my( $stat, $mag, $colidx ) = split( /_/, $seq[$idx] );
+	next if $stat eq 'empty';
+	# b is before, a is after
+	my $before = $idx > 0 ? $seq[$idx-1] : '';
+	my( $bstat, $bmag, $b_colidx ) = split( /_/, $before );
+	my $after = $idx < $#seq ? $seq[$idx+1] : '';
+	my( $astat, $amag, $a_colidx ) = split( /_/, $after );
+	if( $mag < 3 && 
+	    ( $bstat eq '' || ( $bstat eq 'empty' && $bmag / $mag >= 4 ) ) &&
+	    ( $astat eq '' || ( $astat eq 'empty' && $amag / $mag >= 4 ) ) ) {
+	    # Disregard "orphans" that are sectioning markers.
+	    my @words = _stripped_words( 
+		[ $self->_wordlist_slice( $new, $seq[$idx] ) ] );
+	    next if grep( /^__.*__$/, @words ) == scalar @words;
+	    # Talk about it.
+	    print STDERR "Found orphan at index $colidx: entries are " .
+		join( ' ', $seq[$idx-1], $seq[$idx], $seq[$idx+1] ) . "\n"
+		if $self->{'debug'} > 1;
+	    if( $last_orphan_idx && $last_orphan_idx == $idx - 2 ) {
+		# It's probably the same orphan.  Add it to the last
+		# datastructure.
+		my $curr = pop( @orphans );
+		push( @{$curr->{'words'}}, $seq[$idx] );
+		$curr->{'after'} = $after;
+		push( @orphans, $curr );
+	    } else {
+		push( @orphans, { 'before' => $before,
+				  'words' => [$seq[$idx]],
+				  'after' => $after } );
+	    }
+	    $last_orphan_idx = $idx;
+	}
+    }
+
+    if( $self->{'debug'} ) {
+	foreach( @orphans ) {
+	    print STDERR "Orphan group is " . join(' ', @{$_->{'words'}} ) 
+		. "\n";
+	}
+    }
+
+    # Now.  For each of the orphan groups, smush the words back
+    # together and look for a match closer to home, first at the next
+    # block of words and then at the previous block (if any.)
+
+    foreach( @orphans ) {
+	my @orphaned_words;
+	foreach my $block ( @{$_->{'words'}} ) {
+	    push( @orphaned_words, $self->_wordlist_slice( $new, $block ) );
+	}
+	
+	# First try the after.
+	my $better_match = undef;
+	my $base_entry = '';  # Must construct this to use convenience fn.
+	if( $_->{'after'} ) {
+	    # Within this block $idx refers to the end of the 'after' gap.
+	    my( $kind, $size, $idx ) = split( /_/, $_->{'after'} );
+	    # Grab the base around that index, and pad it out with a few
+	    # extra words.
+	    my @base_words = 
+		@{$base}[ ($idx - 4 - scalar @orphaned_words) .. ($idx) ];
+	    $base_entry = 'base_' . scalar( @base_words ) . "_$idx";
+	    print STDERR "Will try new alignment on words " 
+		. join( ' ', _stripped_words( \@orphaned_words ) ) . ' and ' 
+		. join( ' ', _stripped_words( \@base_words ) ) . "\n"
+		if $self->{'debug'};
+
+	    my( $rematch_base, $rematch_new, $quality ) = $self->match_and_align_words( \@base_words, \@orphaned_words, 1 );
+	    if( $quality > 49 ) {
+		print STDERR "...match has quality $quality; will fix the array with this\n" if $self->{'debug'};
+		$better_match = [ $rematch_base, $rematch_new ];
+	    }
+	}
+	if( !$better_match && $_->{'before'} ) {
+	    my( $kind, $size, $idx ) = split( /_/, $_->{'before'} );
+	    # Here, $idx is the last index of the previous gap.  Move it
+	    # to the end of the previous chunk of text.
+	    $idx = $idx - $size;
+	    my @base_words = @{$base}[ ($idx+1) .. 
+				       ($idx+scalar(@orphaned_words)+4) ];
+	    $base_entry = 'base_' . scalar( @base_words ) . '_'
+		. ( $idx+scalar(@orphaned_words)+4 );
+	    print STDERR "Will try next new alignment on words " 
+		. join( ' ', _stripped_words( \@orphaned_words ) ) . ' and ' 
+		. join( ' ', _stripped_words( \@base_words ) ) . "\n"
+		if $self->{'debug'};
+	    my( $rematch_base, $rematch_new, $quality ) = $self->match_and_align_words( \@base_words, \@orphaned_words, 1 );
+	    if( $quality > 49 ) {
+		print STDERR "...match has quality $quality; will fix the array with this\n" if $self->{'debug'};
+		$better_match = [ $rematch_base, $rematch_new ];
+	    }
+	}
+
+	if( $better_match ) {
+	    # Fix the array!  First blank out all the orphans from this set.
+	    foreach my $block( @{$_->{'words'}} ) {
+		$self->_wordlist_slice( $new, $block, 'empty' );
+	    }
+	    # Now splice in the better match.
+	    $self->_wordlist_slice( $base, $base_entry, $better_match->[0] );
+	    $self->_wordlist_slice( $new, $base_entry, $better_match->[1] );
+	} else {
+	    print STDERR "...No better match found; leaving as is\n"
+		if $self->{'debug'};
+	}
+    }
+	    
+}
+
+sub _wordlist_slice {
+    my $self = shift;
+    my( $list, $entry, $replace ) = @_;
+    my( $toss, $size, $idx ) = split( /_/, $entry );
+    if( $replace ) {
+	my @repl_array;
+	if( $replace eq 'empty' ) {
+	    @repl_array = ( $self->empty_word ) x $size;
+	} elsif( ref $replace eq 'ARRAY' ) {
+	    @repl_array = @$replace;
+	}
+	splice( @$list, $idx-$size+1, $size, @repl_array );
+    } else {
+	return @{$list}[ ($idx-$size+1) .. $idx ];
+    }
+}
 
 # match_and_align_words: Do the fuzzy matching necessary to roughly
 # align two columns (i.e. arrays) of words.  Takes two word arrays;
@@ -436,7 +599,7 @@ sub read_manuscript_source {
 	    
 sub match_and_align_words {
     my $self = shift;
-    my( $set1, $set2 ) = @_;
+    my( $set1, $set2, $return_quality ) = @_;
 
     # Resolve what string comparison algorithm we ought to be using.
     my $distance;
@@ -470,19 +633,47 @@ sub match_and_align_words {
     # matches are found.
     foreach( 0 .. $#words2 ) { push( @index_array2, $_ ) };
 
+    my $matched = 0;
     foreach my $curr_idx ( 0 .. $#words1 ) {
 	my $w = $words1[$curr_idx]->word();
+	my $wplus = $w . ( defined( $words1[$curr_idx+1] ) 
+			   ? $words1[$curr_idx+1]->word() : '' );
 	my $best_distance;
 	my $best_idx;
 
 	foreach my $curr_idx2 ( 0 .. $#words2 ) {
 	    my $w2 = $words2[$curr_idx2]->word();
+	    my $w2plus = $w2 . ( defined( $words2[$curr_idx2+1] ) 
+			   ? $words2[$curr_idx2+1]->word() : '' );
 	    # See if $w best matches $w2.  If so, record the
 	    # corresponding indices, if they aren't the same.
 	    
 	    my $dist = &$distance( $w, $w2 );
 	    print STDERR "Distance on $w / $w2 is $dist\n"
 		if $self->{'debug'} > 3;
+
+	    # If the words are not a match but start with the same letter,
+	    # check to see what happens if you glom the next word onto the
+	    # shorter of the current words.
+	    if( !($self->_is_match( $w, $dist )) &&
+		substr( $w, 0, 2 ) eq substr( $w2, 0, 2 ) ) {
+		my $distplus;
+		if( length( $w2 ) > length( $w ) ) {
+		    $distplus = &$distance( $wplus, $w2 );
+		    if( $self->_is_match( $wplus, $distplus ) ) {
+			print STDERR "Using glommed match $wplus / $w2\n"
+			    if $self->{'debug'} > 1;
+			$dist = $distplus * ( length($w) / length($wplus) );
+		    }
+		} else {
+		    $distplus = &$distance( $w, $w2plus );
+		    if( $self->_is_match( $w, $distplus ) ) {
+			print STDERR "Using glommed match $w / $w2plus\n"
+			    if $self->{'debug'} > 1;
+			$dist = $distplus;
+		    }
+		}
+	    }
 	    $best_distance = $dist unless defined $best_distance;
 	    $best_idx = $curr_idx2 unless defined $best_idx;
 	    if( $dist < $best_distance ) {
@@ -495,7 +686,7 @@ sub match_and_align_words {
 	# So did we find a match?  Test against our configured fuzziness
 	# value.  Distance should be no more than $fuzziness percent of
 	# length.
-	if( $best_distance < ( length( $w ) * $self->{fuzziness} / 100 ) ) { 
+	if( $self->_is_match( $w, $best_distance ) ) {
 	    # this is enough of a match.
 	    print STDERR "matched $w to " . $words2[$best_idx]->word() . "...\n"
 		if $self->{debug} > 1;
@@ -507,6 +698,7 @@ sub match_and_align_words {
 		    if $self->{debug} > 1;
 	    } else {
 		$index_array2[$best_idx] = $index_array1[$curr_idx];
+		$matched++;
 	    }
 	} else {
 	    print STDERR "Found no match for $w\n"
@@ -515,6 +707,10 @@ sub match_and_align_words {
 	
 	$curr_idx++;
     }
+
+    # Do we want to return the match quality?  If so, it is 
+    # $matched x 100 / scalar @w1.
+    my $quality = $matched * 100 / scalar(@words1);
 
     # Now pass the index arrays to Algorithm::Diff, and use the diff
     # results on the original word arrays.
@@ -552,11 +748,20 @@ sub match_and_align_words {
     }
     
     # Return the padded strings in the order in which we were given them.
+    my @retvals;
     if( $inverted ) {
-	return( \@aligned2, \@aligned1 );
+	@retvals = ( \@aligned2, \@aligned1 );
     } else {
-	return( \@aligned1, \@aligned2 );
+	@retvals = ( \@aligned1, \@aligned2 );
     }
+    push( @retvals, $quality ) if $return_quality;
+    return @retvals;
+}
+
+sub _is_match {
+    my $self = shift;
+    my ( $str, $dist ) = @_;
+    return( $dist < ( length( $str ) * $self->{fuzziness} / 100 ) );
 }
 
 # Helper function.  Returns a string composed of upper-case ASCII
