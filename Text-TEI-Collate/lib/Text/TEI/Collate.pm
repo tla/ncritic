@@ -470,9 +470,9 @@ sub check_gaps {
 	next if $stat eq 'empty';
 	# b is before, a is after
 	my $before = $idx > 0 ? $seq[$idx-1] : '';
-	my( $bstat, $bmag, $b_colidx ) = split( /_/, $before );
+	my( $bstat, $bmag, $b_colidx ) = $before ? split( /_/, $before ) : ( '' ) x 3;
 	my $after = $idx < $#seq ? $seq[$idx+1] : '';
-	my( $astat, $amag, $a_colidx ) = split( /_/, $after );
+	my( $astat, $amag, $a_colidx ) = $after ? split( /_/, $after ) : ( '' ) x 3;
 	if( $mag < 3 && 
 	    ( $bstat eq '' || ( $bstat eq 'empty' && $bmag / $mag >= 4 ) ) &&
 	    ( $astat eq '' || ( $astat eq 'empty' && $amag / $mag >= 4 ) ) ) {
