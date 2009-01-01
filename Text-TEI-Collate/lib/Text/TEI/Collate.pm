@@ -724,11 +724,15 @@ sub match_and_align_words {
 	} elsif( !scalar( $minidiff->Range( 2 ) ) ) {
 	    $self->_handle_diff_interpolation( $minidiff, 1, \@words1, \@aligned1, \@aligned2 );
 	} else {
-	    ## Just pad out the shorter one.
+	    ## Pad out the shorter one, but don't allow a placeholder and a
+	    ## non-placeholder to share a line.
 	    my @r1 = $minidiff->Range( 1 );
 	    my @r2 = $minidiff->Range( 2 );
-	    push( @aligned1, @words1[@r1] );
-	    push( @aligned2, @words2[@r2] );
+	    my( $ph_aligned1, $ph_aligned2 ) = 
+		$self->_align_placeholder( [ @words1[@r1] ], 
+					   [ @words2[@r2] ] );
+	    push( @aligned1, @$ph_aligned1 );
+	    push( @aligned2, @$ph_aligned2 );
 
 	    my $pad_needed = scalar( @r1 ) - scalar( @r2 );
 	    if( $pad_needed > 0 ) {
@@ -762,6 +766,49 @@ sub _is_match {
     my $self = shift;
     my ( $str, $dist ) = @_;
     return( $dist < ( length( $str ) * $self->{fuzziness} / 100 ) );
+}
+
+sub _align_placeholder {
+    my $self = shift;
+    my( $list1, $list2 ) = @_;
+    
+    if( ( grep { $_->placeholder } @$list1 )
+	|| ( grep { $_->placeholder } @$list2 ) ) {
+
+	my $reversed = 0;
+	if( $#{$list1} > $#{$list2} ) {
+	    my $tmp = $list1;
+	    $list1 = $list2;
+	    $list2 = $tmp;
+	    $reversed = 1;
+	}
+	# Now we know that list1 is the shorter.
+
+	foreach my $idx( 0 .. $#{$list1} ) {
+	    my $el1 = $list1->[$idx];
+	    my $el2 = $list2->[$idx];
+	    if( $el1->placeholder && !$el2->placeholder ) {
+		# Push the placeholder down a space...
+		splice( @$list1, $idx, 0, $self->empty_word );
+		# and add an empty space next to it in the other array.
+		splice( @$list2, $idx+1, 0, $self->empty_word );
+	    } elsif( $el2->placeholder && !$el1->placeholder ) {
+		# The same thing in reverse.
+		splice( @$list2, $idx, 0, $self->empty_word );
+		splice( @$list1, $idx+1, 0, $self->empty_word );
+	    } # else both / neither, and they can stay put.
+	}
+	if( $reversed ) {
+	    my $tmp = $list1;
+	    $list1 = $list2;
+	    $list2 = $tmp;
+	}
+	print STDERR 'Spliced for placeholder; new list is ' .
+	    join( '.', map { $_->printable } @$list1 ) . ' / ' .
+	    join( '.', map { $_->printable } @$list2 ) . "\n"
+	    if $self->{'debug'} > 1;
+    }  # else no placeholders so no change.
+    return( $list1, $list2 );
 }
 
 # Helper function.  Returns a string composed of upper-case ASCII
