@@ -1,0 +1,6806 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="tools/tei_ms_crit.rng" type="xml"?>
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>Ժամանակագրութիւն</title>
+        <author>Մատթէոս Ուռհայեցի</author>
+        <respStmt xml:id="tla">
+          <resp>Transcription by</resp>
+          <name> Tara L Andrews</name>
+        </respStmt>
+      </titleStmt>
+      <publicationStmt>
+        <p>Unpublished manuscript</p>
+      </publicationStmt>
+      <sourceDesc>
+        <msDesc>
+          <msIdentifier>
+            <settlement>Venice</settlement>
+            <repository>Mekhitarist Library</repository>
+            <idno>913</idno>
+          </msIdentifier>
+          <p>pp. 136-151</p>
+        </msDesc>
+      </sourceDesc>
+    </fileDesc>
+  </teiHeader>
+  <text>
+    <body>
+      <div n="104">
+<!-- began on p.159 -->
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <w>Արդ</w>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>ցվայրս,</w>
+          <seg type="word"><expan>բազմ</expan>աջան</seg>
+          <w>և</w>
+          <seg type="word">աշ<lb/>խատ<ex>ա</ex>ւ<ex>ո</ex>ր</seg>
+          <seg type="word">քնն<expan>ութեամբ</expan></seg>
+          <seg type="word">գտե<ex>ա</ex>լ</seg>
+          <w>գրեցաք</w>
+          <seg type="word">զշարագր<ex>ա</ex>կ<ex>ա</ex>ն</seg>
+          <seg type="word">գրե<ex>ա</ex>լս,</seg>
+          <w>զհարիւրից</w>
+          <lb/>
+          <w>ամաց,</w>
+          <w>զորս</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժամանակաց</expan>
+          </seg>
+          <seg type="word">հետաքննե<ex>ա</ex>լ</seg>
+          <w>հասու</w>
+          <w>եղաք.</w>
+          <w>ընդ</w>
+          <seg type="word">այն<lb/>քանեաց</seg>
+          <w>տեսողացն</w>
+          <w>և</w>
+          <w>լսողացն,</w>
+          <w>որք</w>
+          <w>էին</w>
+          <w>ի</w>
+          <w>հին</w>
+          <w>ամաց</w>
+          <w>ծնեալք.</w>
+          <lb/>
+          <w>Եւ</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ընթերցողսն</expan>
+          </seg>
+          <seg type="word">
+            <expan>յառաջին</expan>
+          </seg>
+          <seg type="word"><expan>պատմագրացն</expan>,</seg>
+          <w>որք</w>
+          <w>ականատեսք</w>
+          <w>էին</w>
+          <lb/>
+          <w>լեալք</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>եղելոցս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>նեղութեանցս</expan>
+          </seg>
+          <seg type="word">
+            <expan>այսոցիկ</expan>
+          </seg>
+          <w>զոր</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">մեղ<ex>ա</ex>ց</seg>
+          <seg type="word">կրե<ex>ա</ex>ց</seg>
+          <w>տունն</w>
+          <lb/>
+          <w>հայոց,</w>
+          <w>և</w>
+          <seg type="word">ահ<ex>ա</ex>ւ<ex>ո</ex>ր</seg>
+          <w>զայս</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">անգ<ex>ա</ex>մ</seg>
+          <seg type="word">զմտ<ex>ա</ex>ւ</seg>
+          <seg type="word">ածե<ex>ա</ex>լ</seg>
+          <w>եմ,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>այս</w>
+          <w>յետին</w>
+          <lb/>
+          <seg type="word">
+            <expan>ժամանակին</expan>
+          </seg>
+          <w>գրել</w>
+          <seg type="word">զդ<ex>ա</ex>ռն<ex>ա</ex>յ</seg>
+          <w>շունչ</w>
+          <seg type="word"><abbr>կտրծսն</abbr>։</seg>
+          <w>Զայս</w>
+          <seg type="word">սոսկ<ex>ա</ex>լի</seg>
+          <seg type="word">
+            <expan>բարկութիւնս</expan>
+          </seg>
+          <w>զոր</w>
+          <lb/>
+          <seg type="word">կրե<ex>ա</ex>ց</seg>
+          <w>ազգս</w>
+          <w>հայոց,</w>
+          <w>ի</w>
+          <seg type="word">գիս<ex>ա</ex>ւ<ex>ո</ex>ր</seg>
+          <w>և</w>
+          <w>ի</w>
+          <w>պիղծ</w>
+          <w>եղիմնացոց</w>
+          <w>ազգէն</w>
+          <seg type="word">
+            <expan>թուրքաց</expan>
+          </seg>
+          <seg type="word"><add>եղբ</add><lb/><pb n="137"/>եղբարց</seg>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>հոռոմոց.</w>
+          <w>և</w>
+          <expan>
+            <w>վասն</w>
+            <w>այսորիկ</w>
+          </expan>
+          <w>հարկ</w>
+          <w>եղև</w>
+          <w>ի</w>
+          <seg type="word">մտ<ex>ա</ex>ց</seg>
+          <seg type="word">
+            <expan>խորհրդոյս</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>յանդադար</expan>
+          </seg>
+          <w>յուզմամբ</w>
+          <w>իբրև</w>
+          <w>զմեծ</w>
+          <w>իմն,</w>
+          <w>համարելով</w>
+          <w>գտանել</w>
+          <lb/>
+          <w>զայս</w>
+          <seg type="word">
+            <expan>գործս</expan>
+          </seg>
+          <seg type="word"><abbr>կտրածի</abbr>.</seg>
+          <w>և</w>
+          <expan>
+            <w>վասն</w>
+            <w>այսորիկ</w>
+          </expan>
+          <seg type="word">
+            <expan>զօրաժողով</expan>
+          </seg>
+          <seg type="word">ար<ex>ա</ex>րի,</seg>
+          <w>և</w>
+          <w>գրեցի</w>
+          <w>մինչև</w>
+          <w>ցայս</w>
+          <lb/>
+          <w>վայր,</w>
+          <seg type="word">զ<num value="3">Գ</num></seg>
+          <seg type="word">ազգ<ex>ա</ex>ցս,</seg>
+          <w>և</w>
+          <seg type="word"><expan>զհայրապետացս</expan>,</seg>
+          <w>և</w>
+          <w>զայլ</w>
+          <seg type="word">պէսպ<ex>է</ex>ս</seg>
+          <seg type="word">քնն<expan>ութեանց</expan></seg>
+          <seg type="word">զազգ<ex>ա</ex>ց,</seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word"><expan>զթագաւորաց</expan>,</seg>
+          <w>զորս</w>
+          <w>յառաջ</w>
+          <seg type="word"><expan>ասացաք</expan>,</seg>
+          <w>և</w>
+          <w>որ</w>
+          <w>զկնի</w>
+          <w>դեռևս</w>
+          <w>ասասցուք</w>
+          <lb/>
+          <w>սկիզբն</w>
+          <seg type="word"><abbr>կտրծիս</abbr>,</seg>
+          <w>զոր</w>
+          <w>ինչ</w>
+          <w>եղև</w>
+          <w>յաւուրս</w>
+          <w>հարցն</w>
+          <w>մերոց,</w>
+          <w>որք</w>
+          <w>էին</w>
+          <lb/>
+          <w>բազում</w>
+          <w>անգամ</w>
+          <w>տեսեալ</w>
+          <w>աչօք</w>
+          <seg type="word"><expan>իւրոց</expan>.</seg>
+          <w>զոր</w>
+          <w>և</w>
+          <w>իմ։</w>
+          <w>Իսկ</w>
+          <w>խորհեալ</w>
+          <lb/>
+          <seg type="word">
+            <expan>խորհուրդս</expan>
+          </seg>
+          <w>այս,</w>
+          <w>և</w>
+          <w>ըստ</w>
+          <seg type="word">
+            <num value="8">Ը</num>
+          </seg>
+          <w>ամ</w>
+          <w>անհանգիստ</w>
+          <seg type="word">քնն<expan>ութեամբ</expan></seg>
+          <w>կացի,</w>
+          <w>և</w>
+          <w>զայս</w>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>յօժարեցի</w>
+          <w>ի</w>
+          <seg type="word">տեսու<expan>թիւն</expan>,</seg>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">մատենագրու<expan>թիւն</expan></seg>
+          <w>ածել</w>
+          <w>գրով,</w>
+          <lb/>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>մի</w>
+          <w>ի</w>
+          <w>չարաշունչ</w>
+          <seg type="word">
+            <expan>դառնութեան</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժամանակս</expan>
+          </seg>
+          <w>կորիցէ</w>
+          <w>այս</w>
+          <seg type="word"><expan>ամենայն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">մոռա<lb/>սցի.</seg>
+          <w>և</w>
+          <expan>
+            <w>վասն</w>
+            <w>այսորիկ</w>
+          </expan>
+          <w>մատթէոս</w>
+          <w>ուռհայեցի</w>
+          <w>և</w>
+          <w>վանական</w>
+          <seg type="word">
+            <expan>զաշխատութեան</expan>
+          </seg>
+          <lb/>
+          <w>զգործս</w>
+          <w>իմ</w>
+          <w>ոչինչ</w>
+          <w>համարեցայ,</w>
+          <w>այլ</w>
+          <w>թողի</w>
+          <w>սա՛</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>յիշատակ</expan>
+          </seg>
+          <w>սիրողաց,</w>
+          <lb/>
+          <seg type="word"><expan>ժամանակագրութեանց</expan>,</seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>ի</w>
+          <w>հանդէս</w>
+          <seg type="word">քննու<expan>թեան</expan></seg>
+          <w>ելցեն,</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժամանակաց</expan>
+          </seg>
+          <lb/>
+          <w>անցելոցն</w>
+          <w>դիւրւ</w>
+          <seg type="word">
+            <expan>օգտակարեսցեն</expan>
+          </seg>
+          <w>գտանել</w>
+          <w>զժամ,</w>
+          <w>և</w>
+          <w>զժամանակս,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <abbr>զկտրած</abbr>
+          </seg>
+          <seg type="word">
+            <expan>բարկութեանն</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժամանակացն</expan>
+          </seg>
+          <w>գտանիցեն,</w>
+          <w>և</w>
+          <w>այնու</w>
+          <w>զմտաւ</w>
+          <seg type="word">ած<lb/>եալ</seg>
+          <w>յիշեսցեն</w>
+          <seg type="word"><expan>զաստուած</expan>ասաստ</seg>
+          <seg type="word"><expan>բարկութիւնն</expan>,</seg>
+          <w>զոր</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">
+            <expan>մեղացն</expan>
+          </seg>
+          <seg type="word">
+            <expan>ընկալաք</expan>
+          </seg>
+          <seg type="word">զհա<lb/>տուցումն</seg>
+          <seg type="word">արդ<ex>ա</ex>ր</seg>
+          <seg type="word">
+            <expan>դատաւորէն</expan>
+          </seg>
+          <seg type="word"><expan>աստուծոյ</expan>.</seg>
+          <w>և</w>
+          <expan>
+            <w>վասն</w>
+            <w>այսորիկ</w>
+          </expan>
+          <seg type="word">
+            <expan>կողմանց</expan>
+          </seg>
+          <w>զկորուստ</w>
+          <lb/>
+          <seg type="word"><expan>հաւատացելոց</expan>,</seg>
+          <w>և</w>
+          <w>զխրատս</w>
+          <w>զոր</w>
+          <w>անօրէն</w>
+          <w>ազգաւ</w>
+          <seg type="word">խրատե<ex>ա</ex>ց</seg>
+          <w>զմեզ</w>
+          <lb/>
+          <seg type="word">
+            <expan>տէր</expan>
+          </seg>
+          <seg type="word">
+            <expan>աստուած</expan>
+          </seg>
+          <w>մեր.</w>
+          <w>և</w>
+          <w>ահա՛</w>
+          <w>որ</w>
+          <w>ոչ</w>
+          <seg type="word">կամեց<ex>ա</ex>ք</seg>
+          <seg type="word"><expan>զսպառնալիսն</expan>,</seg>
+          <w>և</w>
+          <w>զխրատն</w>
+          <seg type="word">
+            <expan>աստուծոյ</expan>
+          </seg>
+          <lb/>
+          <w>մոռացուցանել</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>մեր։</w>
+          <w>Արդ</w>
+          <w>արժան</w>
+          <w>է</w>
+          <w>մեզ</w>
+          <w>միշտ</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>հանապազ</expan>
+          </seg>
+          <lb/>
+          <w>լսել</w>
+          <w>զխրատն</w>
+          <seg type="word">
+            <expan>աստուծոյ</expan>
+          </seg>
+          <w>մերոյ.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>դարձեալ</expan>
+          </seg>
+          <w>ի</w>
+          <w>նոյն</w>
+          <seg type="word">
+            <expan>պատուհասն</expan>
+          </seg>
+          <seg type="word">մեղ<ex>ա</ex>ց</seg>
+          <seg type="word">դեգերե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>շրջիմք,</w>
+          <w>զորս</w>
+          <w>ընկալաք</w>
+          <seg type="word">
+            <expan>ըստ</expan>
+          </seg>
+          <seg type="word">արժանե<ex>ա</ex>ց</seg>
+          <w>մերոց</w>
+          <seg type="word"><expan>զհատուցումն</expan>,</seg>
+          <w>նայ</w>
+          <lb/>
+          <w>և</w>
+          <w>այլ</w>
+          <w>ևս</w>
+          <w>ունիմք</w>
+          <w>ասել</w>
+          <w>ձեզ</w>
+          <w>ամաց</w>
+          <seg type="word"><num value="80">Ձ</num>ից,</seg>
+          <w>զաշխատութենէ</w>
+          <lb/>
+          <seg type="word">մ<ex>ա</ex>տթէոսի</seg>
+          <w>ուռհայեցոյ</w>
+          <w>և</w>
+          <w>վանաց</w>
+          <w>երիցու։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="105">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <hi>
+            <w>Իսկ</w>
+            <w>ի</w>
+            <w>լինել</w>
+            <seg type="word">
+              <expan>թվականութեանս</expan>
+            </seg>
+            <w>հայոց</w>
+            <seg type="word">
+              <num value="502">ԵՃԲ</num>
+            </seg>
+            <w>եղև</w>
+            <w>ահաւոր</w>
+            <w>նշան,</w>
+          </hi>
+          <lb/>
+          <w>և</w>
+          <w>սոսկալի,</w>
+          <w>և</w>
+          <seg type="word">
+            <abbr>կտրծ</abbr>
+          </seg>
+          <w>մեծ</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բարկութենէ</expan>
+          </seg>
+          <w>երևեալ</w>
+          <w>ի</w>
+          <w>մեծ</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <seg type="word">անտի<lb/>ոք,</seg>
+          <w>զոր</w>
+          <w>ի</w>
+          <w>ներքս</w>
+          <seg type="word">
+            <expan>արեգակնն</expan>
+          </seg>
+          <w>գործեցաւ</w>
+          <w>այս</w>
+          <seg type="word"><expan>սքանչելիս</expan>,</seg>
+          <w>որ</w>
+          <w>է՛ր</w>
+          <w>տեսողացն</w>
+          <lb/>
+          <w>ահաւոր,</w>
+          <w>և</w>
+          <seg type="word"><expan>հրաշալի</expan>.</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>այս</w>
+          <w>նշանս</w>
+          <w>ա՛հ</w>
+          <w>և</w>
+          <seg type="word">դող<ex>ո</ex>ւմն</seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">հ<ex>ա</ex>ւա<lb/><expan>տացելոց</expan></seg>
+          <seg type="word"><expan>քրիստոսի</expan>,</seg>
+          <w>զորս</w>
+          <w>այժմ</w>
+          <w>մեծասաստ</w>
+          <seg type="word">
+            <expan>սպառնալեօք</expan>
+          </seg>
+          <w>յայտնեաց</w>
+          <seg type="word">
+            <expan>աստուած</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>զդատաստան</expan>
+          </seg>
+          <w>իւր</w>
+          <seg type="word">զահ<ex>ա</ex>ւ<ex>ո</ex>ր.</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>պատճառ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բարկութեանն</expan>
+          </seg>
+          <seg type="word"><expan>այսպէս</expan>.</seg>
+          <w>Եւ</w>
+          <w>արդ՝</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <lb/>
+          <w>ազգն</w>
+          <w>ասորոց</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>էին</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոք,</w>
+          <w>ոսկով,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>արծաթով</expan>
+          </seg>
+          <lb/>
+          <seg type="word">լցե<ex>ա</ex>լ</seg>
+          <seg type="word">հարստ<expan>ութեամբ</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>փառաւորութեամբ</expan>,</seg>
+          <w>և</w>
+          <w>մանկունք</w>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>երթային</w>
+          <seg type="word"><add>եկե</add><lb/><pb n="138"/>եկ<ex>ե</ex>ղ<ex>ե</ex>ցին</seg>
+          <seg type="word"><expan>իւրոց</expan>,</seg>
+          <w>տղայք</w>
+          <seg type="word">
+            <num value="500">ԵՃ</num>
+          </seg>
+          <w>ի</w>
+          <w>ջորոց</w>
+          <seg type="word">նստ<ex>եա</ex>լ</seg>
+          <w>գային,</w>
+          <w>և</w>
+          <w>ազգն</w>
+          <w>հոռոմոց</w>
+          <lb/>
+          <seg type="word">
+            <expan>ոխացեալ</expan>
+          </seg>
+          <w>էին</w>
+          <w>յոյժ</w>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">չար<expan>ութեամբ</expan>.</seg>
+          <w>և</w>
+          <w>մի</w>
+          <w>ոմն</w>
+          <w>իշխան</w>
+          <w>ասորոց</w>
+          <w>ազգէն</w>
+          <lb/>
+          <w>ունէր</w>
+          <seg type="word">
+            <expan>կապեալ</expan>
+          </seg>
+          <seg type="word"><expan>բազում</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <w>այսր</w>
+          <seg type="word">
+            <expan>պատճառհանցս</expan>
+          </seg>
+          <w>լինէր</w>
+          <w>մեծ</w>
+          <seg type="word">
+            <expan>դատաստան</expan>
+          </seg>
+          <seg type="word">առ<ex>ա</ex>ջի</seg>
+          <lb/>
+          <seg type="word">պատրի<ex>ա</ex>րգին</seg>
+          <w>հոռոմոց.</w>
+          <w>և</w>
+          <w>սիրաբար</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">
+            <expan>դատաստանին</expan>
+          </seg>
+          <seg type="word">
+            <expan>դարձացուցին</expan>
+          </seg>
+          <w>զնա</w>
+          <w>ի</w>
+          <lb/>
+          <w>հաւատոյ</w>
+          <w>իւրոյ,</w>
+          <w>և</w>
+          <w>կնքեցին</w>
+          <w>զնա</w>
+          <w>հոռոմ</w>
+          <w>իւր</w>
+          <seg type="word"><expan>կամաւորութեամբ</expan>.</seg>
+          <w>և</w>
+          <w>իշխանն</w>
+          <lb/>
+          <seg type="word">
+            <expan>զհաւատսն</expan>
+          </seg>
+          <w>եթող,</w>
+          <w>և</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>հակառակ</expan>
+          </seg>
+          <w>մեծ</w>
+          <w>ազգին</w>
+          <w>ասորոց.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <lb/>
+          <w>մատնեցան</w>
+          <w>ասորիքն</w>
+          <w>ի</w>
+          <w>մեծ</w>
+          <seg type="word">նեղ<expan>ութիւն</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>սկսան</w>
+          <seg type="word">հաւ<ex>ա</ex>տոյ</seg>
+          <seg type="word">քննու<expan>թիւն</expan></seg>
+          <lb/>
+          <w>առնել</w>
+          <seg type="word"><expan>հանապազօր</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>լրբեալ</w>
+          <w>եղեն</w>
+          <w>ազգն</w>
+          <w>հոռոմոց,</w>
+          <w>որ</w>
+          <w>և</w>
+          <seg type="word"><expan>զգործ</expan><lb/>եալն</seg>
+          <w>ոչ</w>
+          <w>գիտել,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word"><expan>զքրիստոս</expan>ական</seg>
+          <seg type="word">
+            <expan>աւետարանն</expan>
+          </seg>
+          <w>հրով</w>
+          <seg type="word">այրե<ex>ա</ex>լ</seg>
+          <w>հրմայեաց</w>
+          <lb/>
+          <seg type="word"><expan>պատրիարգն</expan>.</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>յորժամ</w>
+          <w>ի</w>
+          <w>հուրն</w>
+          <w>դրին</w>
+          <w>զաւետարանն</w>
+          <seg type="word"><expan>աստուծոյ</expan>,</seg>
+          <w>ձայն</w>
+          <lb/>
+          <w>ելանէր</w>
+          <seg type="word">
+            <expan>յաւետարանէն</expan>
+          </seg>
+          <w>անտի,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>կրակէն</w>
+          <w>ի</w>
+          <w>դուրս</w>
+          <w>ելանէր.</w>
+          <w>և</w>
+          <w>նոքա</w>
+          <lb/>
+          <seg type="word">
+            <expan>երկրորդ</expan>
+          </seg>
+          <w>անգամ</w>
+          <w>ի</w>
+          <w>կրակն</w>
+          <w>դնէին</w>
+          <w>զաւետարանն,</w>
+          <w>և</w>
+          <w>նա</w>
+          <seg type="word">
+            <expan>դարձեալ</expan>
+          </seg>
+          <w>ելանէր,</w>
+          <lb/>
+          <w>ի</w>
+          <w>կրակէն.</w>
+          <w>իսկ</w>
+          <w>նոքա</w>
+          <w>կատաղեալ</w>
+          <seg type="word">լրբու<expan>թեամբ</expan></seg>
+          <seg type="word">
+            <expan>երրորդ</expan>
+          </seg>
+          <w>անգամ</w>
+          <w>ի</w>
+          <w>կրակն</w>
+          <lb/>
+          <w>կրկին</w>
+          <seg type="word">
+            <expan>զսուրբ</expan>
+          </seg>
+          <seg type="word"><expan>աւետարանն</expan>,</seg>
+          <w>և</w>
+          <w>նա</w>
+          <w>եղև</w>
+          <w>անվնաս.</w>
+          <w>և</w>
+          <w>իբրև</w>
+          <w>կրակս</w>
+          <w>կրեցին</w>
+          <lb/>
+          <seg type="word">
+            <expan>չորրորդ</expan>
+          </seg>
+          <w>անգամ,</w>
+          <w>յայնժամ</w>
+          <seg type="word">
+            <expan>ընկալաւ</expan>
+          </seg>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <w>աւետարանն</w>
+          <seg type="word">զայրեցողու<expan>թիւն</expan></seg>
+          <lb/>
+          <w>կրակին</w>
+          <w>ի</w>
+          <w>մէջ</w>
+          <w>հրոյն,</w>
+          <w>և</w>
+          <w>այրեցաւ</w>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <w>աւետարանն</w>
+          <seg type="word">
+            <expan>քրիստոսի</expan>
+          </seg>
+          <seg type="word">
+            <expan>աստուծոյ</expan>
+          </seg>
+          <w>մերոյ</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոք,</w>
+          <w>ի</w>
+          <w>յազգէն</w>
+          <w>հոռոմոց։</w>
+          <w>Եւ</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>դարձաւ</w>
+          <lb/>
+          <seg type="word">
+            <expan>պատրիարգն</expan>
+          </seg>
+          <seg type="word"><expan>յեկեղեցին</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժողովուրդն</expan>
+          </seg>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <w>ի</w>
+          <w>յայրմանէ</w>
+          <w>տեղոյն</w>
+          <seg type="word">լցե<ex>ա</ex>լ</seg>
+          <w>էին</w>
+          <lb/>
+          <seg type="word">ուրախ<expan>ութեամբ</expan>,</seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>թէ</w>
+          <w>յաղթեցին</w>
+          <w>չար</w>
+          <seg type="word"><expan>թշնամեաց</expan>.</seg>
+          <w>և</w>
+          <w>իբրև</w>
+          <w>մտան</w>
+          <seg type="word">
+            <expan>յեկեղեցին</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <seg type="word">պետր<ex>ո</ex>ս,</seg>
+          <w>գոչեաց</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">եկ<ex>ե</ex>ղ<ex>ե</ex>ցին</seg>
+          <w>ահաւոր</w>
+          <w>գոչմամբ,</w>
+          <lb/>
+          <w>և</w>
+          <w>եղև</w>
+          <w>շարժ</w>
+          <w>սաստիկ,</w>
+          <w>և</w>
+          <w>դողացոյց</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոքացւոց.</w>
+          <lb/>
+          <w>և</w>
+          <w>եղև</w>
+          <w>ի</w>
+          <w>միւսոյ</w>
+          <w>այլ</w>
+          <w>աւուրն</w>
+          <w>անկաւ</w>
+          <w>հուր</w>
+          <w>երկնից</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>եկեղեցոյն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <w>պետրոսի,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զղամբար</w>
+          <w>ի</w>
+          <w>հիմանցն</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>եկեղեցոյն</expan>
+          </seg>
+          <w>առ</w>
+          <lb/>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>բորբոքեալ</w>
+          <w>լինէր</w>
+          <w>հրով,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զփայտակոյտ</w>
+          <seg type="word">այրեց<ex>ա</ex>ւ</seg>
+          <w>քարն</w>
+          <lb/>
+          <w>և</w>
+          <w>բոցն</w>
+          <seg type="word">
+            <expan>բարձրացեալ</expan>
+          </seg>
+          <w>ելանէր</w>
+          <w>յերկինս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>պատառեցաւ</expan>
+          </seg>
+          <w>խորանն,</w>
+          <w>և</w>
+          <seg type="word">զսե<lb/>ղանն</seg>
+          <w>խորհրդոյն</w>
+          <w>տարաւ</w>
+          <w>անդունդս,</w>
+          <w>և</w>
+          <w>զլուսաւորական</w>
+          <w>զոր</w>
+          <lb/>
+          <w>մեծն</w>
+          <seg type="word">
+            <expan>կոստանդինոս</expan>
+          </seg>
+          <w>եդեալ</w>
+          <w>էր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <w>պետրոս,</w>
+          <w>ընդ</w>
+          <w>քսան</w>
+          <w>բիւր</w>
+          <w>ոսկոյ</w>
+          <lb/>
+          <w>որ</w>
+          <w>կայր</w>
+          <seg type="word">
+            <expan>հանապազ</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>սրբոյ</w>
+          <w>սեղանոյն,</w>
+          <w>ի</w>
+          <seg type="word">լուսաւորու<expan>թիւն</expan></seg>
+          <w>գիշերոյն</w>
+          <lb/>
+          <w>կլաւ</w>
+          <w>երկիր,</w>
+          <w>և</w>
+          <w>այլ</w>
+          <w>ոչ</w>
+          <w>կարացին</w>
+          <w>գտանել,</w>
+          <w>և</w>
+          <w>այլ</w>
+          <seg type="word">
+            <num value="40">Խ</num>
+          </seg>
+          <w>եկեղեցի</w>
+          <lb/>
+          <w>ի</w>
+          <w>հոռոմոցն</w>
+          <w>այրեցան</w>
+          <w>հրով</w>
+          <w>երկնային</w>
+          <w>ընդ</w>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <seg type="word">պետր<ex>ո</ex>սիւ.</seg>
+          <w>Եւ</w>
+          <w>ի</w>
+          <lb/>
+          <w>հայոց</w>
+          <w>կամ</w>
+          <w>ասորոց</w>
+          <w>ոչ</w>
+          <w>ինչ</w>
+          <w>եղև</w>
+          <w>վնաս։</w>
+          <w>Եւ</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>այս</w>
+          <seg type="word">այ<ex>ս</ex>պէս</seg>
+          <lb/>
+          <w>գործեցաւ</w>
+          <w>ահաբեկեալ</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոքացւոց,</w>
+          <w>և</w>
+          <w>կային</w>
+          <seg type="word">
+            <add>ահ</add>
+          </seg>
+          <lb/>
+          <pb n="139"/>
+          <w>ահա՛</w>
+          <w>բեկեալ</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>քաղաքն</w>
+          <w>և</w>
+          <seg type="word">դող<expan>ութեամբ</expan>.</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>սկսան</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>աղօթք</w>
+          <w>առնել</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>աստուած</expan>
+          </seg>
+          <w>լալով</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">
+            <expan>հառաչանօք</expan>
+          </seg>
+          <seg type="word">աղա<lb/>չել</seg>
+          <seg type="word"><expan>զաստուած</expan>.</seg>
+          <w>և</w>
+          <w>ելանէր</w>
+          <seg type="word">
+            <expan>պատրիարգն</expan>
+          </seg>
+          <seg type="word">
+            <expan>հանդերձ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քահանայիւք</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>սարկաւագօք</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>կղերիկոսօք,</w>
+          <w>և</w>
+          <w>այլ</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>ժողովրդօք,</w>
+          <w>արանց</w>
+          <w>և</w>
+          <w>կանանց</w>
+          <w>ծերոց</w>
+          <w>և</w>
+          <lb/>
+          <w>տղայոց,</w>
+          <w>և</w>
+          <w>ժամօք</w>
+          <w>շրջէին</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <seg type="word"><expan>զարդարանօք</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>փառաւոր</expan>
+          </seg>
+          <seg type="word">սպաս<lb/>իւք,</seg>
+          <seg type="word"><expan>եկեղեցականօք</expan>.</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <seg type="word">հ<ex>ա</ex>ս<ex>ա</ex>նէին</seg>
+          <w>ի</w>
+          <w>հոռոմ</w>
+          <w>մեյտանն</w>
+          <w>ի</w>
+          <w>տեղին</w>
+          <lb/>
+          <w>ուր</w>
+          <w>փոքր</w>
+          <w>կարմունջ</w>
+          <w>կա՛,</w>
+          <w>ընդ</w>
+          <w>հեղեղագնացս</w>
+          <w>լերինս,</w>
+          <seg type="word">յանկ<ex>ա</ex>րծակի</seg>
+          <lb/>
+          <w>գոչեաց</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>գետին,</w>
+          <w>և</w>
+          <w>եղև</w>
+          <w>շարժ</w>
+          <w>ի</w>
+          <w>մէջ</w>
+          <w>օրէին</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վեցերորդ</expan>
+          </seg>
+          <w>ժամուն.</w>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <w>նոյն</w>
+          <w>ժամայն</w>
+          <seg type="word">
+            <expan>պատառեցաւ</expan>
+          </seg>
+          <w>երկիրն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>բացեալ</expan>
+          </seg>
+          <w>զբերանն</w>
+          <w>իւր,</w>
+          <w>և</w>
+          <seg type="word">զպա<lb/>տրի<ex>ա</ex>րգն</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քահանայից</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word">ժ<ex>ո</ex>ղովրդոցն</seg>
+          <w>տարաւ</w>
+          <w>յանդունդս</w>
+          <lb/>
+          <w>աւելի</w>
+          <w>քան</w>
+          <w>զբիւր</w>
+          <w>մի.</w>
+          <w>և</w>
+          <w>զաւուրս</w>
+          <seg type="word">
+            <num value="15">ԺԵ</num>
+          </seg>
+          <w>գայր</w>
+          <w>ձայն</w>
+          <w>աղաղակի</w>
+          <w>նոցայ</w>
+          <lb/>
+          <w>ի</w>
+          <w>խորս</w>
+          <w>անդնդոց.</w>
+          <w>և</w>
+          <w>ապա՛</w>
+          <w>անշնչեցան,</w>
+          <w>զի</w>
+          <w>կնքեցաւ</w>
+          <w>երկիրն</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <w>որ</w>
+          <w>կան</w>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>ցայսօր.</w>
+          <w>զորս</w>
+          <w>ի</w>
+          <w>ձեռն</w>
+          <w>բազմադիմի</w>
+          <w>յանցանացն,</w>
+          <lb/>
+          <w>կրեցին</w>
+          <w>բնակիչք</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>անտիոքացւոց,</w>
+          <w>ի</w>
+          <w>արդար</w>
+          <seg type="word">
+            <expan>դատաւորէն</expan>
+          </seg>
+          <seg type="word"><expan>աստուծոյ</expan>.</seg>
+          <lb/>
+          <w>վասն</w>
+          <w>զի</w>
+          <w>չէ</w>
+          <w>իսկ</w>
+          <w>արժանի</w>
+          <w>յիշել</w>
+          <w>զգործս</w>
+          <seg type="word">անօրէնու<expan>թեանն</expan></seg>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <w>զոր</w>
+          <seg type="word"><expan>գործէ</expan><lb/>ին</seg>
+          <seg type="word"><expan>եկեղեցականսն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>դասք</w>
+          <seg type="word">
+            <expan>հաւատացելոցն</expan>
+          </seg>
+          <w>յունաց</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոք.</w>
+          <lb/>
+          <w>զի</w>
+          <w>առաւել</w>
+          <seg type="word">
+            <expan>բարձրացաւ</expan>
+          </seg>
+          <w>ծուխ</w>
+          <w>անօրէն</w>
+          <seg type="word">
+            <expan>գործոցն</expan>
+          </seg>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <w>քան</w>
+          <w>զսոդոմա՛,</w>
+          <w>և</w>
+          <lb/>
+          <w>զգոմորա՛,</w>
+          <expan>
+            <w>վասն</w>
+            <w>որոյ</w>
+          </expan>
+          <w>և</w>
+          <seg type="word">
+            <expan>պատուհասն</expan>
+          </seg>
+          <w>ցուցանէր</w>
+          <w>զփոխարէնն</w>
+          <seg type="word">հատ<ex>ո</ex>ւցումն</seg>
+          <lb/>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <w>ըստ</w>
+          <w>գործոցն.</w>
+          <w>զի</w>
+          <w>ահա՛</w>
+          <w>անդ</w>
+          <w>ջուրն</w>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <w>սատակումն</w>
+          <lb/>
+          <seg type="word"><expan>չարագործողացն</expan>,</seg>
+          <w>և</w>
+          <w>աստ</w>
+          <w>զնոյն</w>
+          <seg type="word">
+            <expan>չարագործն</expan>
+          </seg>
+          <w>հրով</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>պատառմամբ</expan>
+          </seg>
+          <seg type="word">անդն<lb/>տոց</seg>
+          <w>բնաջիջ</w>
+          <w>սատակեաց</w>
+          <w>ի</w>
+          <w>մեղսասէր</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>անտիոք,</w>
+          <w>զոր</w>
+          <w>և</w>
+          <w>դեռ</w>
+          <lb/>
+          <w>իսկ</w>
+          <seg type="word">բորբոքե<ex>ա</ex>լ</seg>
+          <w>կան</w>
+          <seg type="word">
+            <expan>անպատկառելի</expan>
+          </seg>
+          <w>հաւատօք.</w>
+          <w>զի</w>
+          <w>ահա՛</w>
+          <seg type="word">
+            <expan>աստուածապաշտութեամբ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>զանհաւատիցն</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>զանօրինացն</expan>
+          </seg>
+          <seg type="word">
+            <expan>գործէին</expan>
+          </seg>
+          <seg type="word"><expan>զգործսն</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>բորբոքեցան</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>գործս</expan>
+          </seg>
+          <lb/>
+          <w>աղտեղիս,</w>
+          <w>զոր</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>լսողացն</expan>
+          </seg>
+          <w>ծանր</w>
+          <w>է</w>
+          <w>առ</w>
+          <w>ի</w>
+          <w>լսել</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ասողացս</expan>
+          </seg>
+          <w>կարի</w>
+          <seg type="word">զազր<ex>ա</ex>լի</seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>գործողացն</expan>
+          </seg>
+          <w>զի՜նչ</w>
+          <seg type="word">աս<ex>ա</ex>ցից,</seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>մինչ</expan>
+          </seg>
+          <w>զկին</w>
+          <w>հայելն</w>
+          <w>մեզ</w>
+          <w>ծանր</w>
+          <seg type="word">գրե<ex>ա</ex>ց</seg>
+          <w>փրկիչն,</w>
+          <lb/>
+          <seg type="word">
+            <expan>զարուամոլութիւնն</expan>
+          </seg>
+          <w>զի՜նչ</w>
+          <seg type="word">աս<ex>ա</ex>ցից.</seg>
+          <w>զոր</w>
+          <w>և</w>
+          <w>ինքն</w>
+          <seg type="word">
+            <expan>տէր</expan>
+          </seg>
+          <seg type="word">
+            <expan>հատուցանէր</expan>
+          </seg>
+          <seg type="word">զհատու<lb/>ցումն</seg>
+          <w>յանտիոքա՛</w>
+          <w>քաղաքին։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="106">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <hi>
+            <w>Յամի</w>
+            <w>և</w>
+            <w>ի</w>
+            <seg type="word">
+              <expan>թվականութեանն</expan>
+            </seg>
+            <w>հայոց</w>
+            <w>ազգիս</w>
+            <seg type="word">
+              <num value="503">ԵՃԳ</num>
+            </seg>
+            <w>զարթեալ</w>
+            <w>եղև</w>
+            <w>օդ</w>
+          </hi>
+          <lb/>
+          <w>դառնաշունչ</w>
+          <w>և</w>
+          <w>մահաբեր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհին</expan>
+          </seg>
+          <w>հայոց,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>շարժեալ</w>
+          <lb/>
+          <w>եղև</w>
+          <w>յաթոռոյն</w>
+          <w>իւրմէ՛</w>
+          <w>սուլտանն</w>
+          <w>պարսից</w>
+          <w>տուղրիլ,</w>
+          <w>և</w>
+          <w>գայր</w>
+          <lb/>
+          <w>ահագին</w>
+          <seg type="word">
+            <expan>բազմութեամբ</expan>
+          </seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զաւազ</w>
+          <w>ծովու,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>խաղացեալ</expan>
+          </seg>
+          <w>անթիւ</w>
+          <w>զօրօք</w>
+          <lb/>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <w>հայաստան</w>
+          <seg type="word"><expan>աշխարհն</expan>,</seg>
+          <w>իջեալ</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>որ</w>
+          <w>կոչի</w>
+          <seg type="word">
+            <expan>բերկրի</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word">պա<add>տեր</add><lb/><pb n="140"/><expan>տերազմաւ</expan></seg>
+          <seg type="word">առե<ex>ա</ex>լ</seg>
+          <seg type="word"><expan>զքաղաքն</expan>,</seg>
+          <w>և</w>
+          <w>երկաթի</w>
+          <w>կապանօք</w>
+          <seg type="word">զիշխ<ex>ա</ex>նսն</seg>
+          <w>վարէր</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">գերու<expan>թիւն</expan></seg>
+          <w>առաջի</w>
+          <w>իւր,</w>
+          <w>և</w>
+          <w>զայլ</w>
+          <seg type="word">
+            <expan>քաղաքս</expan>
+          </seg>
+          <w>սրով</w>
+          <seg type="word">մաշե<ex>ա</ex>ց</seg>
+          <seg type="word">դ<ex>ա</ex>ռն</seg>
+          <seg type="word">մահ<lb/>ուամբ,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յարուցեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զսեաւ</w>
+          <w>ամպ</w>
+          <w>հրացայթս,</w>
+          <w>և</w>
+          <w>գայր</w>
+          <seg type="word">հ<ex>ա</ex>ս<ex>ա</ex>նէր</seg>
+          <lb/>
+          <seg type="word">
+            <expan>հանդերձ</expan>
+          </seg>
+          <w>մահաբեր</w>
+          <w>կարկտիւն,</w>
+          <w>և</w>
+          <seg type="word">պատե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>զքաղաքն</expan>
+          </seg>
+          <w>որ</w>
+          <w>կոչի</w>
+          <w>արճէշ</w>
+          <lb/>
+          <w>և</w>
+          <w>սաստիկ</w>
+          <seg type="word">
+            <expan>պատերազմն</expan>
+          </seg>
+          <seg type="word">
+            <expan>յարուցանէր</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>զաւուրս</w>
+          <seg type="word">
+            <num value="8">Ը</num>
+          </seg>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <lb/>
+          <w>զօրացն</w>
+          <seg type="word">
+            <expan>ձանձրացեալ</expan>
+          </seg>
+          <w>քաղաքացիքն,</w>
+          <w>ի</w>
+          <w>դառն</w>
+          <seg type="word"><expan>պատերազմէն</expan>,</seg>
+          <w>և</w>
+          <w>այնու</w>
+          <seg type="word">հե<lb/>տև</seg>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <expan>աղաչանօք</expan>
+          </seg>
+          <w>գային</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>հնազանդութիւն</expan>
+          </seg>
+          <w>ի</w>
+          <w>ձեռն</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>ընծայիւք</w>
+          <lb/>
+          <w>ոսկոյ,</w>
+          <w>և</w>
+          <seg type="word">արծ<ex>ա</ex>թոյ,</seg>
+          <w>ձիոց,</w>
+          <w>և</w>
+          <w>ջորոց.</w>
+          <w>և</w>
+          <w>սիրոյ</w>
+          <w>սկիզբն</w>
+          <seg type="word">ար<ex>ա</ex>րին</seg>
+          <w>մեծաւ</w>
+          <lb/>
+          <seg type="word"><expan>պաղատանօք</expan>,</seg>
+          <w>և</w>
+          <seg type="word">աս<ex>ա</ex>ցին</seg>
+          <w>ո՞վ</w>
+          <seg type="word">
+            <expan>աշխարհակալ</expan>
+          </seg>
+          <w>սուլտան,</w>
+          <w>երթ</w>
+          <w>և</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>զքաղաքն</expan>
+          </seg>
+          <lb/>
+          <w>զմանծկերտ,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>մեք,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>հայոց</w>
+          <w>քեզ</w>
+          <w>լիցուք,</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>ծառայութիւն</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>լուեալ</w>
+          <w>զայս</w>
+          <w>տուղրիլ</w>
+          <w>սուլտանա՛,</w>
+          <w>և</w>
+          <w>հաճոյ</w>
+          <w>թուեցաւ</w>
+          <seg type="word">
+            <expan>նմայ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>բանքս</w>
+          <w>այս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յարուցեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բազմութեամբ</expan>
+          </seg>
+          <w>զօրօք</w>
+          <seg type="word">իւր<ex>ո</ex>վք</seg>
+          <seg type="word">
+            <expan>հասանէր</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">մանծ<add>կ</add>երտ,</seg>
+          <w>և</w>
+          <w>էր</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զօ՛ձ</w>
+          <seg type="word">
+            <expan>լուեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">չարու<expan>թեամբ</expan>.</seg>
+          <w>յայնժամ</w>
+          <w>բանակ</w>
+          <seg type="word">
+            <expan>հարկանէր</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>պատէր</w>
+          <w>շուրջ</w>
+          <seg type="word"><expan>զքաղաքաւն</expan>,</seg>
+          <w>և</w>
+          <w>իջանէր</w>
+          <w>ի</w>
+          <w>տեղին</w>
+          <w>որ</w>
+          <w>քարագլուխն</w>
+          <lb/>
+          <w>կոչէին,</w>
+          <w>և</w>
+          <w>անդ</w>
+          <w>օթևանս</w>
+          <seg type="word"><expan>արարեալ</expan>։</seg>
+          <w>Իսկ</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բաժանէր</expan>
+          </seg>
+          <w>առաւօտն</w>
+          <lb/>
+          <w>հրամայէր</w>
+          <seg type="word">
+            <expan>հարկանել</expan>
+          </seg>
+          <seg type="word">
+            <expan>պատերազմողական</expan>
+          </seg>
+          <w>փողն,</w>
+          <w>և</w>
+          <w>ահայ</w>
+          <w>անդ</w>
+          <w>էր</w>
+          <w>տեսանել</w>
+          <seg type="word">զահ<lb/>աւոր</seg>
+          <w>օրն,</w>
+          <w>և</w>
+          <w>զդառն</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>քրիստոնէից,</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <seg type="word">պատե<ex>ա</ex>ց</seg>
+          <w>զքաղաքն</w>
+          <lb/>
+          <w>մանծկերտ.</w>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>ձայնք</w>
+          <w>և</w>
+          <w>հնչիւքն</w>
+          <seg type="word">
+            <expan>պատերազմողականացն</expan>
+          </seg>
+          <w>փողոցն</w>
+          <seg type="word">հար<lb/>կանէր,</seg>
+          <w>և</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>ձայնք</w>
+          <w>գոչմանց</w>
+          <seg type="word">զօրք<ex>ա</ex>ց</seg>
+          <seg type="word">
+            <expan>պատերազմողականացն</expan>
+          </seg>
+          <lb/>
+          <w>զպարիսպն</w>
+          <w>առ</w>
+          <w>հասարակ</w>
+          <seg type="word">դողաց<ex>ո</ex>ւց<ex>ա</ex>նէր։</seg>
+          <w>Իսկ</w>
+          <w>այժմ</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">քրիս<lb/>տոնէից</seg>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>զի՜նչ</w>
+          <seg type="word">աս<ex>ա</ex>ցից,</seg>
+          <w>որք</w>
+          <w>արիաբար</w>
+          <seg type="word">
+            <expan>նահատակեալք</expan>
+          </seg>
+          <w>միաբան</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <w>քաղաքին,</w>
+          <w>որ</w>
+          <w>կային</w>
+          <seg type="word">
+            <expan>ընդդէմ</expan>
+          </seg>
+          <w>անվճարելի</w>
+          <seg type="word"><expan>պատերազմացն</expan>,</seg>
+          <w>և</w>
+          <w>է՛ր</w>
+          <seg type="word">զօրա<lb/>պետ</seg>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>իշխանն</w>
+          <w>հոռոմոց</w>
+          <w>վասիլին</w>
+          <w>որդիք</w>
+          <w>ապուքապա՛,</w>
+          <lb/>
+          <w>այր</w>
+          <w>բարի</w>
+          <w>և</w>
+          <seg type="word"><expan>աստուած</expan>ապ<ex>ա</ex>շտ.</seg>
+          <w>սա՛</w>
+          <seg type="word">
+            <expan>զօրացուցանէր</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">զօր<expan>ութեամբ</expan></seg>
+          <lb/>
+          <w>և</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>ի</w>
+          <w>հռոգս</w>
+          <w>արկանէր,</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքս</expan>,</seg>
+          <w>զայրս,</w>
+          <w>և</w>
+          <w>զկանայս,</w>
+          <seg type="word">զ<lb/>քաջասիրտս,</seg>
+          <w>և</w>
+          <w>խոստանայր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>թագաւորէն</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենեցուն</expan>
+          </seg>
+          <w>փառս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>իշխանութիւնս</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>զտիւ</w>
+          <w>և</w>
+          <w>զգիշեր</w>
+          <w>ո՛չ</w>
+          <seg type="word">
+            <expan>դադարէր</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">քաջալեր<subst><del>էր</del><add place="overwrite">եալ</add></subst>,</seg>
+          <w>և</w>
+          <w>որդորել</w>
+          <w>զամենայն</w>
+          <lb/>
+          <w>քաղաքն։</w>
+          <w>Իսկ</w>
+          <w>զօրք</w>
+          <seg type="word">այլազգ<ex>եա</ex>ցն</seg>
+          <w>ո՛չ</w>
+          <seg type="word">
+            <expan>դադարէին</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>պատերազմելոյ</expan>
+          </seg>
+          <seg type="word">զբազ<ex>ո</ex>ւմ</seg>
+          <lb/>
+          <w>աւուրս,</w>
+          <w>և</w>
+          <seg type="word">ար<ex>ա</ex>րին</seg>
+          <w>գետնափոր</w>
+          <w>ի</w>
+          <w>ներքս</w>
+          <w>գետնոյ,</w>
+          <w>վասն</w>
+          <w>զի</w>
+          <w>այնիւ</w>
+          <lb/>
+          <w>առցեն</w>
+          <seg type="word"><expan>զքաղաքն</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>իմացեալ</expan>
+          </seg>
+          <w>զօրք</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>փորեցին</w>
+          <w>հանդէպ</w>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <w>և</w>
+          <w>կալ</w>
+          <w>ան</w>
+          <lb/>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>փորողքն,</w>
+          <w>կալան</w>
+          <w>և</w>
+          <w>զաներն</w>
+          <w>սուլտանին,</w>
+          <w>որոյ</w>
+          <w>անունն</w>
+          <seg type="word">ոսկո<lb/>ծամ,</seg>
+          <w>ասէին,</w>
+          <w>և</w>
+          <w>հանեալ</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>պարսպին,</w>
+          <w>և</w>
+          <w>սպանին</w>
+          <seg type="word">զն<ex>ո</ex>ս<ex>ա</ex></seg>
+          <w>և</w>
+          <seg type="word">տեսե<ex>ա</ex>լ</seg>
+          <seg type="word"><add>սուլ</add><lb/><pb n="141"/>սուլտան</seg>
+          <w>յոյժ</w>
+          <seg type="word">
+            <expan>վիրաւորեալ</expan>
+          </seg>
+          <w>լինէր,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>առաքեաց</expan>
+          </seg>
+          <w>ի</w>
+          <w>բաղէշ,</w>
+          <w>և</w>
+          <w>ետ</w>
+          <seg type="word">բե<lb/>րել</seg>
+          <w>զբաբանն.</w>
+          <w>զոր</w>
+          <w>վասիլ</w>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <seg type="word">
+            <expan>արարեալ</expan>
+          </seg>
+          <w>էր</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <w>հերայ</w>
+          <seg type="word">
+            <num value="15">ԺԵ</num>
+          </seg>
+          <seg type="word">ա<lb/>տելի,</seg>
+          <w>ահաւոր</w>
+          <w>և</w>
+          <seg type="word"><expan>զարմանալի</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <seg type="word">կանգնեց<ex>ա</ex>ւ</seg>
+          <w>անօրէն</w>
+          <seg type="word">բաբ<lb/>ան,</seg>
+          <w>սոսկաց</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքն</expan>.</seg>
+          <w>և</w>
+          <w>զառաջինն</w>
+          <w>որ</w>
+          <w>եհար</w>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>այր</w>
+          <w>պահ,</w>
+          <w>և</w>
+          <seg type="word">զ<lb/>կրծապահն</seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>քաղաքէն</expan>
+          </seg>
+          <w>ձգեաց.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>էրէց</w>
+          <w>մի՛</w>
+          <w>յայտնեալ</w>
+          <w>ի</w>
+          <w>քաղաքն</w>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <w>շտապոյ</w>
+          <w>դրեալ</w>
+          <w>մեքենա</w>
+          <w>մի</w>
+          <seg type="word">
+            <expan>ընդդէմ</expan>
+          </seg>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յառաջին</expan>
+          </seg>
+          <w>քարէն</w>
+          <seg type="word">հարկա<lb/>նէր</seg>
+          <w>զբաբան,</w>
+          <w>և</w>
+          <w>բեկանէր</w>
+          <w>խոզակն.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զօրացաւ</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքն</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">ահ<lb/>իւ</seg>
+          <w>պաշարեցան.</w>
+          <w>և</w>
+          <w>յետ</w>
+          <w>աւուրց</w>
+          <w>ամրացուցին</w>
+          <w>այլազգիքն</w>
+          <seg type="word">զբա<lb/>բանն,</seg>
+          <w>և</w>
+          <w>կազմեցին</w>
+          <w>անմերձենալի</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>կողմանց,</w>
+          <w>սկսան</w>
+          <seg type="word">հարկա<lb/>նել</seg>
+          <w>զպարիսպ</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>մեծամեծ</w>
+          <w>քարամբք.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">ահաբեկե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>դողայր</w>
+          <w>երերալով</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքն</expan>.</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>վասիլն</w>
+          <w>ձայն</w>
+          <seg type="word">տուե<ex>ա</ex>լ</seg>
+          <w>առ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>քաղաքն</expan>,</seg>
+          <w>և</w>
+          <w>ասէր.</w>
+          <w>ով</w>
+          <w>ոք</w>
+          <seg type="word">կար<ex>ա</ex>սցէ</seg>
+          <w>ելանել,</w>
+          <w>և</w>
+          <w>հրով</w>
+          <w>այրեսցէ</w>
+          <seg type="word">զբաբ<ex>ա</ex>նն,</seg>
+          <lb/>
+          <w>այն</w>
+          <w>առցէ</w>
+          <w>յինէն</w>
+          <w>տուրս</w>
+          <seg type="word"><expan>բազում</expan>,</seg>
+          <w>ոսկո՛</w>
+          <w>և</w>
+          <w>արծաթո՛,</w>
+          <w>ձիս</w>
+          <w>և</w>
+          <w>ջորիս,</w>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>թագաւորէն</expan>
+          </seg>
+          <w>փառս,</w>
+          <w>և</w>
+          <seg type="word"><expan>իշխանութիւնս</expan>.</seg>
+          <w>և</w>
+          <w>եթէ</w>
+          <w>մեռցի</w>
+          <w>անօրինաց,</w>
+          <w>և</w>
+          <w>իցեն</w>
+          <lb/>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <seg type="word"><expan>ազգական</expan>,</seg>
+          <w>կամ</w>
+          <w>որդի,</w>
+          <seg type="word">
+            <expan>նորա</expan>
+          </seg>
+          <w>եղիցի</w>
+          <w>այն</w>
+          <seg type="word"><expan>ամենայն</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յառաջ</expan>
+          </seg>
+          <seg type="word">
+            <expan>եկեալ</expan>
+          </seg>
+          <seg type="word">ֆռ<lb/>անկ</seg>
+          <w>մի՛,</w>
+          <w>և</w>
+          <w>ասէր,</w>
+          <w>ե՛ս</w>
+          <w>ելից</w>
+          <w>և</w>
+          <w>այրեցից</w>
+          <w>զբաբանն</w>
+          <w>զայն,</w>
+          <w>և</w>
+          <w>ահայ</w>
+          <lb/>
+          <w>այսօր</w>
+          <w>հեղից</w>
+          <w>զարիւն</w>
+          <w>իմ</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քրիստոնէից</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>ես</w>
+          <w>միայն</w>
+          <w>եմ</w>
+          <lb/>
+          <w>և</w>
+          <w>ոչ</w>
+          <w>ունիմ</w>
+          <w>կին,</w>
+          <w>կամ</w>
+          <w>որդիք</w>
+          <w>որ</w>
+          <w>լան</w>
+          <w>զիս.</w>
+          <w>և</w>
+          <seg type="word">խնդրե<ex>ա</ex>ց</seg>
+          <w>զօրաւոր</w>
+          <w>և</w>
+          <lb/>
+          <w>քաջ</w>
+          <w>ձի՛,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զգեցեալ</expan>
+          </seg>
+          <w>զրահս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>եդեալ</expan>
+          </seg>
+          <w>սաղաւարտ</w>
+          <w>ի</w>
+          <seg type="word"><expan>գլուխն</expan>,</seg>
+          <w>և</w>
+          <w>առեալ</w>
+          <lb/>
+          <w>թուղթ</w>
+          <seg type="word">
+            <expan>կապեաց</expan>
+          </seg>
+          <w>ի</w>
+          <w>ծայր</w>
+          <w>ռմբին,</w>
+          <w>և</w>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>շիշա՛</w>
+          <w>նաւթ</w>
+          <seg type="word">դրե<ex>ա</ex>լ</seg>
+          <w>ի</w>
+          <w>ծոցս</w>
+          <lb/>
+          <w>իւր,</w>
+          <w>և</w>
+          <w>զթխտաւոր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>պատճառանօք</expan>
+          </seg>
+          <seg type="word">
+            <expan>յառաջ</expan>
+          </seg>
+          <w>ելեալ,</w>
+          <w>և</w>
+          <seg type="word">առե<ex>ա</ex>լ</seg>
+          <w>աղօթս</w>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>հաւատացելոցն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>զաստուած</expan>
+          </seg>
+          <seg type="word">
+            <expan>օգնական</expan>
+          </seg>
+          <seg type="word">
+            <expan>կալեալ</expan>
+          </seg>
+          <w>գնայր</w>
+          <w>դիմօք</w>
+          <w>ի</w>
+          <w>զօրս</w>
+          <seg type="word">այլազգ<lb/>եացն.</seg>
+          <w>և</w>
+          <w>զօրք</w>
+          <w>անիրաւացն</w>
+          <w>տեսանէին</w>
+          <w>զթուխթն</w>
+          <w>և</w>
+          <seg type="word">համարեց<lb/>ան</seg>
+          <w>զնա՛</w>
+          <w>թղթաւոր,</w>
+          <w>և</w>
+          <w>ոչ</w>
+          <w>ինչ</w>
+          <w>խօսեցան.</w>
+          <w>և</w>
+          <w>էր</w>
+          <w>ժամ</w>
+          <w>օր</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>տօթ</w>
+          <w>կարի</w>
+          <w>յոյժ.</w>
+          <w>և</w>
+          <w>այր</w>
+          <seg type="word">
+            <expan>իւրաքանչիւր</expan>
+          </seg>
+          <w>ննջէր</w>
+          <w>ի</w>
+          <w>վրանս</w>
+          <w>իւր.</w>
+          <w>և</w>
+          <seg type="word">եկե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>ֆռանկն</w>
+          <w>առաջի</w>
+          <w>բաբանին,</w>
+          <w>զտեղի</w>
+          <w>առեալ</w>
+          <w>ո՛չ</w>
+          <w>գնայր.</w>
+          <w>և</w>
+          <seg type="word">կ<ex>ա</ex>րծէին</seg>
+          <lb/>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">մեծու<expan>թիւն</expan></seg>
+          <w>բաբանին,</w>
+          <w>կայ</w>
+          <w>և</w>
+          <w>հիանայլին,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>նոյն</w>
+          <w>ժամայն</w>
+          <seg type="word">հանե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>զմէկ</w>
+          <w>շիշն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>հարկանէր</expan>
+          </seg>
+          <w>զբաբանն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զարծիւ</w>
+          <w>շուռ</w>
+          <seg type="word">առե<ex>ա</ex>լ</seg>
+          <seg type="word">զբա<lb/>բան,</seg>
+          <w>և</w>
+          <w>նա՛</w>
+          <seg type="word">
+            <expan>հարկանէր</expan>
+          </seg>
+          <w>զմիւս</w>
+          <w>այլ</w>
+          <w>շիշն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>դարձեալ</expan>
+          </seg>
+          <w>շուրջ</w>
+          <w>եկեալ,</w>
+          <w>և</w>
+          <lb/>
+          <w>նա՛</w>
+          <w>զերեքումն</w>
+          <w>շիշն</w>
+          <w>արկանէր</w>
+          <w>զբաբանն.</w>
+          <w>և</w>
+          <seg type="word">ահաւ<ex>ո</ex>ր</seg>
+          <seg type="word">
+            <expan>բորբոքեցաւ</expan>
+          </seg>
+          <lb/>
+          <w>հրով,</w>
+          <w>և</w>
+          <w>ֆռանկն</w>
+          <seg type="word">
+            <expan>դարձաւ</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word"><expan>փախուստ</expan>.</seg>
+          <w>և</w>
+          <w>զոր</w>
+          <w>ինչ</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <w>տեսին</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <w>բանակին</w>
+          <w>այլազգեացն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>արձակեցան</expan>
+          </seg>
+          <w>զհետ</w>
+          <w>և</w>
+          <w>ֆռանկին</w>
+          <add>
+            <w>և</w>
+            <w>նա</w>
+          </add>
+          <lb/>
+          <pb n="142"/>
+          <w>և</w>
+          <w>նա՛</w>
+          <w>անվնաս</w>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <seg type="word"><expan>քաղաքին</expan>.</seg>
+          <w>և</w>
+          <w>բաբանն</w>
+          <w>սաստկապէս</w>
+          <lb/>
+          <seg type="word">
+            <expan>այրեցեալ</expan>
+          </seg>
+          <w>եղև.</w>
+          <w>և</w>
+          <w>էր</w>
+          <seg type="word">ուրախու<expan>թիւն</expan></seg>
+          <w>մեծ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>հաւատացելոցն</expan>,</seg>
+          <w>և</w>
+          <w>ֆռանկն</w>
+          <lb/>
+          <seg type="word">
+            <expan>փառաւորեցաւ</expan>
+          </seg>
+          <w>տրօք</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքակցեացն</expan>.</seg>
+          <w>և</w>
+          <seg type="word">լուե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <w>մոնոմախ</w>
+          <lb/>
+          <w>տարաւ</w>
+          <w>զնա՛</w>
+          <w>առ</w>
+          <w>իւր,</w>
+          <w>և</w>
+          <w>տայր</w>
+          <seg type="word">
+            <expan>նմայ</expan>
+          </seg>
+          <seg type="word">իշխանու<expan>թիւնս</expan>։</seg>
+          <w>Իսկ</w>
+          <w>սուլտանն</w>
+          <lb/>
+          <w>հիցաւ</w>
+          <w>յոյժ,</w>
+          <w>ընդ</w>
+          <seg type="word">
+            <expan>գործ</expan>
+          </seg>
+          <w>ֆռանկին,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>խնդրեաց</expan>
+          </seg>
+          <w>ի</w>
+          <w>վասիլէն</w>
+          <w>զի</w>
+          <seg type="word">տե<lb/>սանիցէ</seg>
+          <w>զնա՛,</w>
+          <w>որ</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <seg type="word">զայ<ex>ն</ex>պ<ex>ի</ex>սի</seg>
+          <seg type="word"><expan>քաջութիւնն</expan>։</seg>
+          <w>զի</w>
+          <w>տացէ</w>
+          <seg type="word">
+            <expan>նմայ</expan>
+          </seg>
+          <w>պարգևս.</w>
+          <lb/>
+          <w>զորս</w>
+          <w>ոչ</w>
+          <w>է՛առ</w>
+          <w>անձն</w>
+          <w>գնալ</w>
+          <w>ֆռանկն.</w>
+          <w>և</w>
+          <w>սուլտանն</w>
+          <w>զայրացաւ</w>
+          <lb/>
+          <w>յոյժ,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>դարձեալ</expan>
+          </seg>
+          <w>փորելոյ</w>
+          <w>սկիզբն</w>
+          <w>արար,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>վայր</w>
+          <w>կործանեսցէ</w>
+          <lb/>
+          <w>զպարիսպն,</w>
+          <w>և</w>
+          <seg type="word"><expan>քաղաքացիքն</expan>,</seg>
+          <seg type="word">
+            <expan>քաջացան</expan>
+          </seg>
+          <w>ընդդէմ</w>
+          <w>առ</w>
+          <w>ոչինչ</w>
+          <w>համարէին,</w>
+          <lb/>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>մեքենայս</w>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <seg type="word">
+            <expan>արարեալ</expan>
+          </seg>
+          <w>երկաթի</w>
+          <w>ճանկ,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>փորողսն</w>
+          <seg type="word">ար<lb/>տաքս</seg>
+          <w>հանեալ</w>
+          <w>սատակէին.</w>
+          <w>և</w>
+          <seg type="word">տեսե<ex>ա</ex>լ</seg>
+          <w>սուլտանն</w>
+          <w>լռեալ</w>
+          <seg type="word">
+            <expan>դադարեաց</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>կայր</w>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <w>ամօթով։</w>
+          <w>Յայնժամ</w>
+          <seg type="word">առե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>քաղաքացիքն</expan>
+          </seg>
+          <w>խող</w>
+          <w>մի՛,</w>
+          <lb/>
+          <w>և</w>
+          <w>եդին</w>
+          <w>ի</w>
+          <w>բաբան,</w>
+          <w>և</w>
+          <w>ձգեցին</w>
+          <w>զնա</w>
+          <w>ի</w>
+          <w>բանակն</w>
+          <w>սուլտանին,</w>
+          <w>և</w>
+          <seg type="word">ձայ<lb/>նեալ</seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>զհետ</w>
+          <w>և</w>
+          <w>ասէին,</w>
+          <w>թէ</w>
+          <w>առ</w>
+          <w>սուլտան</w>
+          <w>զայտ</w>
+          <w>քեզ</w>
+          <w>կին</w>
+          <lb/>
+          <w>արա՛,</w>
+          <w>և</w>
+          <w>մենք</w>
+          <w>տամք</w>
+          <w>զմանծկերտ</w>
+          <w>քեզ</w>
+          <w>պռոյդ.</w>
+          <w>և</w>
+          <seg type="word">լուե<ex>ա</ex>լ</seg>
+          <seg type="word">սուլ<lb/>տանն</seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բարկութիւն</expan>
+          </seg>
+          <w>շարժեալ,</w>
+          <w>և</w>
+          <seg type="word">զբերող<add>ս</add>ն</seg>
+          <seg type="word"><expan>գլխատեաց</expan>,</seg>
+          <w>որ</w>
+          <w>զինքն</w>
+          <seg type="word">մանծ<lb/>կերտ</seg>
+          <w>բերին,</w>
+          <w>և</w>
+          <w>ինքն</w>
+          <w>մեծաւ</w>
+          <w>ամօթով</w>
+          <seg type="word">
+            <expan>դառնայր</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>պարսից,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">ողորմու<expan>թեամբն</expan></seg>
+          <seg type="word">
+            <expan>աստուծոյ</expan>
+          </seg>
+          <w>փրկեցաւ</w>
+          <w>քաղաքն</w>
+          <w>մանծկերտ</w>
+          <w>յերեսաց</w>
+          <lb/>
+          <w>ազգն</w>
+          <w>թուրքաց։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="107">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <hi>
+            <seg type="word">
+              <expan>Դարձեալ</expan>
+            </seg>
+            <w>ի</w>
+            <seg type="word">
+              <expan>թվականութեանս</expan>
+            </seg>
+            <w>հայոց</w>
+            <w>ամի</w>
+            <seg type="word">
+              <num value="504">ԵՃԴ</num>
+            </seg>
+            <w>մեռանէր</w>
+            <seg type="word">
+              <expan>թագաւորն</expan>
+            </seg>
+          </hi>
+          <lb/>
+          <w>հոռոմոց</w>
+          <w>մոնոմախ.</w>
+          <w>սա՛</w>
+          <seg type="word">
+            <expan>կացեալ</expan>
+          </seg>
+          <w>յաթոռ</w>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <w>հոռոմոց,</w>
+          <lb/>
+          <w>զամս</w>
+          <seg type="word">
+            <num value="14">ԺԴ</num>
+          </seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>թագաւորեաց</expan>
+          </seg>
+          <w>փոխանակ</w>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <w>քենի</w>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <w>կիւռաթօտոռն,</w>
+          <lb/>
+          <w>այն</w>
+          <w>որ</w>
+          <w>անուանեցաւ</w>
+          <w>ելեխտօռ,</w>
+          <w>և</w>
+          <w>էր</w>
+          <w>քոյր</w>
+          <w>կիւռազոյէ,</w>
+          <lb/>
+          <w>սրբասէ՛ր</w>
+          <w>և</w>
+          <w>կոյս,</w>
+          <w>և</w>
+          <w>յո՜յժ</w>
+          <w>առաքինի,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>հրամայեաց</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">արար<ex>ա</ex>ծոց</seg>
+          <lb/>
+          <seg type="word">
+            <expan>խաղաղութիւն</expan>
+          </seg>
+          <w>առնել,</w>
+          <w>և</w>
+          <seg type="word">այրե<ex>ա</ex>ց</seg>
+          <w>և</w>
+          <seg type="word">գերե<ex>ա</ex>ց,</seg>
+          <w>և</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <w>դարձ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>զրկելոց</w>
+          <lb/>
+          <w>և</w>
+          <w>իրաւունս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">բանդարգ<ex>եա</ex>լսն</seg>
+          <seg type="word">
+            <expan>հրամայեաց</expan>
+          </seg>
+          <seg type="word">ազ<ex>ա</ex>տել.</seg>
+          <w>և</w>
+          <w>սա՛</w>
+          <w>եհան</w>
+          <lb/>
+          <w>ի</w>
+          <w>բանդէն</w>
+          <seg type="word">զիշխ<ex>ա</ex>նսն</seg>
+          <w>հայոց՝</w>
+          <w>զորդիսն</w>
+          <w>հաբելի,</w>
+          <w>զհարպկանn</w>
+          <seg type="word">եղբ<ex>ա</ex>րսն</seg>
+          <lb/>
+          <w>եհան</w>
+          <w>ի</w>
+          <w>կղզոյն,</w>
+          <w>և</w>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <expan>փառաւորութեամբ</expan>
+          </seg>
+          <seg type="word">
+            <expan>արձակեաց</expan>
+          </seg>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <w>ի</w>
+          <w>հայրենի,</w>
+          <seg type="word">
+            <expan>յաշխարհն</expan>
+          </seg>
+          <seg type="word"><expan>իւրոց</expan>,</seg>
+          <lb/>
+          <w>ի</w>
+          <w>բերդն</w>
+          <w>յարկնի.</w>
+          <w>և</w>
+          <w>պատուիրեաց</w>
+          <w>այլ</w>
+          <w>մի</w>
+          <w>մեղանչել</w>
+          <w>և</w>
+          <w>յայնմ</w>
+          <seg type="word">ա<lb/>մի</seg>
+          <w>փոխեն</w>
+          <w>զպեռոս</w>
+          <w>կատապանն,</w>
+          <w>և</w>
+          <w>գայր</w>
+          <w>փոխանակ</w>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <seg type="word">մելի<lb/>սանոսն,</seg>
+          <w>այր</w>
+          <w>բարի</w>
+          <w>և</w>
+          <w>անուանի,</w>
+          <w>և</w>
+          <w>էր</w>
+          <seg type="word">
+            <expan>ողորմած</expan>
+          </seg>
+          <w>այրեաց,</w>
+          <w>և</w>
+          <seg type="word">գերե<ex>ա</ex>ց,</seg>
+          <lb/>
+          <w>շինօղ</w>
+          <seg type="word"><expan>աշխարհի</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>փառաւորութեամբ</expan>
+          </seg>
+          <seg type="word">
+            <expan>զարդարեալ</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word"><expan>կացեալ</expan>,</seg>
+          <seg type="word">
+            <expan>յաթոռ</expan>
+          </seg>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <seg type="word">կիւրօ<add>թօ</add><lb/><pb n="143"/>թօտօռն</seg>
+          <w>զամս</w>
+          <seg type="word">
+            <num value="2">Բ</num>
+          </seg>
+          <w>և</w>
+          <w>ամիսս</w>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>և</w>
+          <w>փոխեցաւ</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>քրիստոս</expan>
+          </seg>
+          <w>բարի</w>
+          <lb/>
+          <seg type="word">խոստովանու<expan>թեամբ</expan>,</seg>
+          <w>և</w>
+          <w>նստաւ,</w>
+          <w>յաթոռ</w>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <w>միխայլ</w>
+          <w>ալևորն,</w>
+          <lb/>
+          <w>զամիսն</w>
+          <seg type="word">
+            <num value="7">Է</num>
+          </seg>
+          <w>և</w>
+          <w>յաւուրս</w>
+          <w>յայսոսիկ</w>
+          <w>ելանէր</w>
+          <w>իշխան</w>
+          <w>ոմն</w>
+          <w>ի</w>
+          <w>տանէն</w>
+          <lb/>
+          <w>հոռոմոց,</w>
+          <w>և</w>
+          <w>անուն</w>
+          <seg type="word">
+            <expan>նորա</expan>
+          </seg>
+          <w>կոմանոս.</w>
+          <w>սայ</w>
+          <seg type="word">
+            <expan>յարուցեալ</expan>
+          </seg>
+          <seg type="word">ահ<ex>ա</ex>գին</seg>
+          <seg type="word">
+            <expan>բազմութեամբ</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>գայր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>կոստանդնուպօլսի</expan>,</seg>
+          <w>և</w>
+          <w>բանակ</w>
+          <w>հարկանէր</w>
+          <w>յեզր</w>
+          <w>ծովուն,</w>
+          <lb/>
+          <w>ովկիանոսի,</w>
+          <w>ի</w>
+          <w>յսյսկոյս,</w>
+          <w>և</w>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">բռն<expan>ութեամբ</expan></seg>
+          <w>խնդրէր</w>
+          <seg type="word">զաթ<ex>ո</ex>ռ</seg>
+          <seg type="word"><expan>թագ</expan><lb/>աւորու<expan>թեանն</expan></seg>
+          <w>հոռոմոց։</w>
+          <w>Այս</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>թվականութեանս</expan>
+          </seg>
+          <w>հայոց՝</w>
+          <seg type="word">
+            <num value="505">ԵՃԵ</num>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>ամին</expan>։</seg>
+          <w>Յայնժամ</w>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <w>միխայլ</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <seg type="word">
+            <expan>ժողով</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <seg type="word">
+            <expan>յարևմտից</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">բազմու<expan>թիւն</expan></seg>
+          <seg type="word">զօր<ex>ա</ex>ց</seg>
+          <seg type="word">իւր<ex>ո</ex>ց</seg>
+          <w>անցուցանէր</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>ովկիանոս</w>
+          <w>ի</w>
+          <seg type="word">խռօ<lb/>պօլիս,</seg>
+          <w>և</w>
+          <w>գնային</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>կոմանոսին,</w>
+          <w>և</w>
+          <w>յայնմ</w>
+          <w>աւուր</w>
+          <w>խմբեցաւ</w>
+          <lb/>
+          <seg type="word"><expan>պատերազմ</expan>,</seg>
+          <w>մեծ</w>
+          <w>և</w>
+          <w>ահաւոր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>քրիստոնէիցն</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>բախէին</w>
+          <seg type="word">զմիմ<ex>եա</ex>նս</seg>
+          <lb/>
+          <w>ուժգին</w>
+          <w>կոտորածով,</w>
+          <w>և</w>
+          <w>հեղոյր</w>
+          <w>արիւն</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացելոց</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>երկրի.</w>
+          <lb/>
+          <w>և</w>
+          <w>յայնժամ</w>
+          <w>կոմանոս</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զառիւծ</w>
+          <seg type="word">գոչե<ex>ա</ex>ց</seg>
+          <w>մեծաւ</w>
+          <w>զայրացմամբ,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>հասեալ</expan>
+          </seg>
+          <w>բեկանէր</w>
+          <w>զօրս</w>
+          <seg type="word">
+            <expan>թագաւորին</expan>
+          </seg>
+          <w>հոռոմոց,</w>
+          <w>և</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>սրով</w>
+          <seg type="word">փախ<lb/>ուստ</seg>
+          <seg type="word">
+            <expan>դարձուցանէր</expan>
+          </seg>
+          <seg type="word"><expan>զնոսա</expan>,</seg>
+          <w>և</w>
+          <w>անողորմ</w>
+          <w>ի</w>
+          <w>սուր</w>
+          <w>սուսերի</w>
+          <w>կոտորեաց</w>
+          <lb/>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>զօրս</w>
+          <w>հոռոմոց,</w>
+          <w>և</w>
+          <w>փակեցին</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>յեզր</w>
+          <seg type="word">ովկիան<ex>ո</ex>սի</seg>
+          <lb/>
+          <w>մեծի</w>
+          <w>ծովուն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զմառախ</w>
+          <w>ի</w>
+          <w>հողմոյ</w>
+          <w>թմրեալ,</w>
+          <seg type="word">այնպ<ex>է</ex>ս</seg>
+          <seg type="word">թմրե<ex>ա</ex>լ</seg>
+          <seg type="word">լինէ<lb/>ին</seg>
+          <w>զօրքն</w>
+          <w>հոռոմոց,</w>
+          <w>ի</w>
+          <w>սաստիկ</w>
+          <seg type="word"><expan>պատերազմէն</expan>,</seg>
+          <w>և</w>
+          <w>ովկիանոս</w>
+          <seg type="word">
+            <expan>լցեալ</expan>
+          </seg>
+          <seg type="word">մեռա<lb/>նէին,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>բազումք</expan>
+          </seg>
+          <w>այն</w>
+          <w>էին</w>
+          <w>որ</w>
+          <w>դառն</w>
+          <w>սրով</w>
+          <seg type="word">
+            <expan>ընկեալ</expan>
+          </seg>
+          <w>զմահ.</w>
+          <w>և</w>
+          <w>յաւուր</w>
+          <seg type="word">յայն<lb/>միկ</seg>
+          <w>մեռան</w>
+          <w>ի</w>
+          <w>զօրացն</w>
+          <w>հոռոմոց</w>
+          <w>արք</w>
+          <seg type="word">
+            <expan>պատերազմողք</expan>
+          </seg>
+          <w>հարիւր</w>
+          <w>և</w>
+          <seg type="word">
+            <num value="15">ԺԵ</num>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <num value="1000">Ռ</num>
+          </seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>իշխանսն</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>կալաւ</expan>
+          </seg>
+          <seg type="word"><expan>զթագաւորութիւնն</expan>։</seg>
+          <w>Յայնժամ</w>
+          <lb/>
+          <w>իշխանքն</w>
+          <w>որ</w>
+          <w>ի</w>
+          <w>պաղատն</w>
+          <w>էին</w>
+          <w>իբրև</w>
+          <w>տեսին</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <abbr>կտրծն</abbr>
+          </seg>
+          <seg type="word">
+            <expan>բարկութեանս</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>այնչափ</expan>
+          </seg>
+          <w>արեան</w>
+          <w>հեղմունս,</w>
+          <w>խորհեցան</w>
+          <w>տալ</w>
+          <w>զաթոռ</w>
+          <seg type="word"><expan>թագաւորութեանն</expan>,</seg>
+          <lb/>
+          <w>կոմանոսի,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>մեծ</w>
+          <w>սուգ</w>
+          <w>էած</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>ազգին,</w>
+          <seg type="word">յու<lb/>նայ,</seg>
+          <w>և</w>
+          <w>յայնժամ</w>
+          <w>ելեալ</w>
+          <w>պատրիարգն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>իշխանքն</w>
+          <seg type="word">կոստան<lb/>դինու<expan>պօլսի</expan></seg>
+          <w>առ</w>
+          <w>կոմանոսն,</w>
+          <w>և</w>
+          <seg type="word">ար<ex>ա</ex>րին</seg>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>նմայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>երդումն.</w>
+          <w>և</w>
+          <lb/>
+          <w>տարան</w>
+          <w>նստուցին</w>
+          <w>զնա՛</w>
+          <w>յաթոռ</w>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <w>հոռոմոց,</w>
+          <w>և</w>
+          <w>ապա</w>
+          <lb/>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>խաղաղութիւն</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհին</expan>
+          </seg>
+          <w>յունաց,</w>
+          <w>աւերումն</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յափշտակութիւն</expan>
+          </seg>
+          <lb/>
+          <w>բազում</w>
+          <w>եղև</w>
+          <w>յերկիր։</w>
+          <w>Յայնմ</w>
+          <w>ամի</w>
+          <w>զի</w>
+          <w>կոմանոսին</w>
+          <w>դեհն,</w>
+          <w>և</w>
+          <seg type="word">մի<lb/>խայլին</seg>
+          <w>զմիմեանս</w>
+          <w>աւերէին,</w>
+          <w>և</w>
+          <seg type="word"><expan>այսպէս</expan>,</seg>
+          <w>բազմացաւ,</w>
+          <w>ներ</w>
+          <seg type="word">գործեց<ex>ա</ex>ւ</seg>
+          <lb/>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաստատեցաւ</expan>
+          </seg>
+          <w>յաթոռ</w>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <w>կոմանոսն.</w>
+          <w>և</w>
+          <w>յայնժամ</w>
+          <seg type="word">հա<lb/>նեալ</seg>
+          <w>հրովարտակ</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>երկիր,</w>
+          <w>և</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <seg type="word">
+            <expan>խաղաղութիւն</expan>
+          </seg>
+          <seg type="word"><expan>աշխարհի</expan>։</seg>
+          <w>Իսկ</w>
+          <seg type="word">կոման<add>ոսն</add><lb/><pb n="144"/>նոսն</seg>
+          <seg type="word">
+            <expan>առաւել</expan>
+          </seg>
+          <seg type="word">մեծարե<ex>ա</ex>ց</seg>
+          <seg type="word">զայն<ex>ո</ex>ս<ex>ի</ex>կ</seg>
+          <w>որք</w>
+          <w>միամիտ</w>
+          <w>կացին</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>միխայլին,</w>
+          <lb/>
+          <seg type="word">
+            <expan>քան</expan>
+          </seg>
+          <w>զայն</w>
+          <w>որ</w>
+          <w>իւր</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>նահատակեցան</expan>.</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>յառաջ</expan>
+          </seg>
+          <seg type="word">
+            <expan>քան</expan>
+          </seg>
+          <w>զայս</w>
+          <w>գային</w>
+          <w>իշխանքն</w>
+          <lb/>
+          <w>հոռոմոց,</w>
+          <seg type="word">յօգն<expan>ութիւն</expan></seg>
+          <w>միխայլին,</w>
+          <w>պիղշօնիտն,</w>
+          <w>և</w>
+          <w>լիպարիտն.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <lb/>
+          <w>հասան</w>
+          <w>ի</w>
+          <w>ճերիտն,</w>
+          <w>լուան</w>
+          <w>եթէ</w>
+          <w>կոմանոսն</w>
+          <seg type="word"><expan>թագաւորեաց</expan>,</seg>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>գիշերին</expan>
+          </seg>
+          <seg type="word">փա<lb/>խան</seg>
+          <w>առ</w>
+          <seg type="word"><expan>հասարակ</expan>,</seg>
+          <w>և</w>
+          <w>ասէին</w>
+          <w>ցմիմեանս</w>
+          <w>եթէ</w>
+          <w>խալատ</w>
+          <w>ի</w>
+          <w>ճերճերոյ</w>
+          <seg type="word">դա<lb/>ռնայ,</seg>
+          <w>և</w>
+          <w>յետ</w>
+          <w>յաւուրց</w>
+          <w>ինչ</w>
+          <seg type="word">գն<ex>ա</ex>ցին</seg>
+          <w>առ</w>
+          <seg type="word"><expan>թագաւորն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>առաւել</expan>
+          </seg>
+          <seg type="word">
+            <expan>մեծարեաց</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>զնոսայ</expan>։</seg>
+          <w>Եւ</w>
+          <seg type="word">
+            <expan>հրամայեաց</expan>
+          </seg>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <w>կոմանոս,</w>
+          <w>դեկան</w>
+          <w>զարկանել</w>
+          <w>իւր</w>
+          <seg type="word">ան<lb/>ուն,</seg>
+          <w>և</w>
+          <w>զթուրն</w>
+          <w>հանել</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>ուսոց</w>
+          <w>իւրոց,</w>
+          <w>եթէ</w>
+          <w>թրով</w>
+          <w>առի</w>
+          <lb/>
+          <w>զաթոռ</w>
+          <seg type="word"><expan>թագաւորութեանս</expan>,</seg>
+          <w>ըստ</w>
+          <w>որում</w>
+          <w>ոչ</w>
+          <w>հաճեցաւ</w>
+          <seg type="word">
+            <expan>աստուած</expan>
+          </seg>
+          <seg type="word">
+            <expan>ըստ</expan>
+          </seg>
+          <w>բանս</w>
+          <w>այս</w>
+          <lb/>
+          <w>նա՛</w>
+          <w>և</w>
+          <w>այլ</w>
+          <w>ևս</w>
+          <w>պէսպէս</w>
+          <seg type="word">
+            <expan>գործ</expan>
+          </seg>
+          <w>ներ</w>
+          <seg type="word">
+            <expan>գործութեան</expan>
+          </seg>
+          <seg type="word">
+            <expan>գործեաց</expan>
+          </seg>
+          <w>կոմանոսն,</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <lb/>
+          <w>քրիստոնեայքն.</w>
+          <w>և</w>
+          <w>յետ</w>
+          <w>աւուրց</w>
+          <seg type="word">զօրաժ<ex>ո</ex>ղ<ex>ո</ex>վ</seg>
+          <seg type="word">
+            <expan>արարեալ</expan>
+          </seg>
+          <seg type="word">ահ<ex>ա</ex>գին</seg>
+          <seg type="word">
+            <expan>բազմութեամբ</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word">կ<ex>ա</ex>մեցաւ</seg>
+          <seg type="word">
+            <expan>յարուցանել</expan>
+          </seg>
+          <seg type="word">
+            <expan>պատերազմ</expan>
+          </seg>
+          <w>ընդ</w>
+          <w>ազգն</w>
+          <w>պանծինկացն.</w>
+          <w>և</w>
+          <w>երթեալ</w>
+          <lb/>
+          <w>անցանէր</w>
+          <w>ընդ</w>
+          <w>մեծ</w>
+          <w>գետն</w>
+          <w>տօնաւիս,</w>
+          <w>և</w>
+          <w>գնայր</w>
+          <w>խաղայր</w>
+          <w>առ</w>
+          <lb/>
+          <seg type="word">
+            <expan>ապականել</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>արևմուտքն,</w>
+          <w>և</w>
+          <w>ու՞ր</w>
+          <seg type="word">հ<ex>ա</ex>ս<ex>ա</ex>նէր</seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զչար</w>
+          <seg type="word">
+            <expan>գազան</expan>
+          </seg>
+          <seg type="word">
+            <expan>մռմռայր</expan>
+          </seg>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">չար<expan>ութենէ</expan></seg>
+          <w>իւրոյ,</w>
+          <w>և</w>
+          <w>ընդ</w>
+          <w>որ</w>
+          <w>անցանէր</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>արիւն</w>
+          <w>տայր</w>
+          <seg type="word">հեղ<lb/>ուլ,</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>կոծ</w>
+          <w>մեծ</w>
+          <seg type="word">
+            <expan>յամենայն</expan>
+          </seg>
+          <seg type="word"><expan>յարևմուտք</expan>,</seg>
+          <w>ևս</w>
+          <seg type="word">
+            <expan>առաւել</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <seg type="word">բուլ<lb/>ղարաց.</seg>
+          <w>և</w>
+          <w>էր</w>
+          <w>յաւուրսն</w>
+          <w>ամառնային,</w>
+          <w>և</w>
+          <w>հասանէր</w>
+          <seg type="word"><expan>աստուած</expan>ասա<lb/>ստ</seg>
+          <seg type="word">
+            <expan>բարկութիւնն</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>զօրացն</w>
+          <w>կոմանոսին,</w>
+          <w>զոր</w>
+          <w>ոչ</w>
+          <w>բաւէ</w>
+          <w>բերան</w>
+          <lb/>
+          <w>զմեծ</w>
+          <w>կատարածն</w>
+          <w>արկանել,</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>գրով,</w>
+          <w>զոր</w>
+          <w>ըստ</w>
+          <w>արժանեացն</w>
+          <lb/>
+          <seg type="word">ընկ<ex>ա</ex>լ<ex>ա</ex>ւ.</seg>
+          <w>և</w>
+          <w>զի</w>
+          <w>ահա՛</w>
+          <w>ելանէր</w>
+          <w>ամպ</w>
+          <seg type="word"><expan>յարևմտից</expan>,</seg>
+          <w>և</w>
+          <w>գայր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">բանա<lb/>կին,</seg>
+          <w>կոմանոսին,</w>
+          <w>և</w>
+          <w>էր</w>
+          <w>ամպն</w>
+          <w>սեաւ,</w>
+          <w>և</w>
+          <w>ահաւոր</w>
+          <w>տեսլեամբ,</w>
+          <lb/>
+          <w>որ</w>
+          <w>ոչ</w>
+          <w>ոք</w>
+          <seg type="word">
+            <expan>համարձակէր</expan>
+          </seg>
+          <w>հայել</w>
+          <w>ի</w>
+          <w>նա՛.</w>
+          <w>և</w>
+          <w>եղև</w>
+          <w>ճայթմունս,</w>
+          <w>և</w>
+          <w>որոտմունս</w>
+          <lb/>
+          <w>և</w>
+          <w>հրացայտ</w>
+          <seg type="word">
+            <expan>փայլատակմունս</expan>
+          </seg>
+          <seg type="word"><expan>յարուցանէր</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>սկսաւ</w>
+          <w>ի</w>
+          <w>կար</w>
+          <w>կուտ</w>
+          <seg type="word">մեծ<lb/>ամեծս,</seg>
+          <w>և</w>
+          <w>բախեալ</w>
+          <w>բանակէր</w>
+          <w>զբանակն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>սաստկապէս</expan>
+          </seg>
+          <w>դիպէր</w>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>զօրացն,</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>նոքա</expan>
+          </seg>
+          <w>մի՛</w>
+          <w>առ</w>
+          <w>մի</w>
+          <w>փախեան,</w>
+          <w>և</w>
+          <w>ելս</w>
+          <w>իրացն</w>
+          <w>ոչ</w>
+          <lb/>
+          <w>գտանէին,</w>
+          <w>և</w>
+          <seg type="word">տես<ex>եա</ex>լ</seg>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <seg type="word">լց<ex>ա</ex>ւ</seg>
+          <seg type="word"><expan>բարկութեամբ</expan>,</seg>
+          <w>և</w>
+          <w>ոչ</w>
+          <w>կամաց</w>
+          <w>դարձաւ</w>
+          <lb/>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <seg type="word"><expan>փախստական</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>զօրքն</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ցրուեալք</expan>
+          </seg>
+          <w>լինէին,</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>լերինս,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>դաշտս,</w>
+          <w>և</w>
+          <w>անդ</w>
+          <w>է՛ր</w>
+          <seg type="word">
+            <expan>տեսանել</expan>
+          </seg>
+          <w>զմեծ</w>
+          <w>կոտորածն</w>
+          <w>զոր</w>
+          <w>կրեցին</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>հարուածոցն,</w>
+          <w>և</w>
+          <w>անթիւք</w>
+          <w>կորեան,</w>
+          <w>հայր</w>
+          <w>որդոյ,</w>
+          <w>և</w>
+          <seg type="word">որ<lb/>դի</seg>
+          <w>ի</w>
+          <w>հօրէ,</w>
+          <w>եղբայր</w>
+          <w>եղբօրէ։</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>արամբք</w>
+          <seg type="word">կորուսե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>եղև.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>ի</w>
+          <w>տօնաւիս</w>
+          <w>գետն,</w>
+          <w>ապա՛</w>
+          <w>եղև</w>
+          <seg type="word">գտե<ex>ա</ex>լ,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <lb/>
+          <w>հանդէս</w>
+          <seg type="word">ար<ex>ա</ex>ր,</seg>
+          <seg type="word">զօր<ex>ա</ex>ց</seg>
+          <seg type="word">իւր<ex>ո</ex>ց,</seg>
+          <w>մեծ</w>
+          <w>մասն</w>
+          <seg type="word">զօր<ex>ա</ex>ց</seg>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>կորուսեալ</w>
+          <w>էին,</w>
+          <seg type="word">
+            <expan>յերկնից</expan>
+          </seg>
+          <seg type="word"><add>բա</add><lb/><pb n="145"/>բարկութենէն։</seg>
+          <w>Իսկ</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <w>ձիոց,</w>
+          <w>և</w>
+          <w>ջորոց,</w>
+          <w>ոսկո՛</w>
+          <w>և</w>
+          <w>արծաթոյ</w>
+          <lb/>
+          <w>և</w>
+          <w>այլ</w>
+          <seg type="word">կարասե<ex>ա</ex>ց</seg>
+          <w>աւելորդ</w>
+          <w>է</w>
+          <w>ասել,</w>
+          <w>և</w>
+          <w>կամ</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>արք</w>
+          <seg type="word"><expan>պատերազմի</expan>.</seg>
+          <lb/>
+          <w>և</w>
+          <w>այնուհետև</w>
+          <seg type="word">
+            <expan>գիտացեալ</expan>
+          </seg>
+          <w>կոմանոսն,</w>
+          <w>եթէ</w>
+          <w>այս</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>աստուած</expan>ասաստ</seg>
+          <lb/>
+          <seg type="word">
+            <expan>բարկութիւնն</expan>
+          </seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>իմոյ</w>
+          <w>յանցանացն</w>
+          <w>եհաս</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>քրիստոնէից</expan>
+          </seg>
+          <w>զի</w>
+          <w>մեղօք</w>
+          <w>իմովք</w>
+          <lb/>
+          <seg type="word">
+            <expan>բարկացուցի</expan>
+          </seg>
+          <seg type="word"><expan>զաստուած</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>եկեալ</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word"><expan>կոստանդնուպօլիս</expan>,</seg>
+          <w>և</w>
+          <seg type="word">անկե<ex>ա</ex>լ</seg>
+          <w>առաջի</w>
+          <seg type="word"><expan>աստուծոյ</expan>,</seg>
+          <seg type="word">խնդ<add>ր</add>էր</seg>
+          <lb/>
+          <w>ելանել</w>
+          <w>յաթոռոյն</w>
+          <seg type="word">թագաւորու<expan>թեանն</expan>,</seg>
+          <w>և</w>
+          <w>մտանել</w>
+          <w>ի</w>
+          <w>կարգ</w>
+          <seg type="word">ապա<lb/>շխարու<expan>թեան</expan></seg>
+          <w>պահօք</w>
+          <w>և</w>
+          <w>արտասուօք։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="108">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <seg type="word"><hi>Ե</hi>ւ</seg>
+          <w>եղև</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>թվականութեանս</expan>
+          </seg>
+          <w>հայոց</w>
+          <seg type="word">
+            <num value="505">ՇԵ</num>
+          </seg>
+          <w>ամին,</w>
+          <seg type="word">
+            <expan>թագաւորեցոյց</expan>
+          </seg>
+          <w>կոմանոսն</w>
+          <lb/>
+          <w>զտուկիծն,</w>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <w>այնր</w>
+          <seg type="word">
+            <expan>գործոյն</expan>
+          </seg>
+          <w>զոր</w>
+          <seg type="word">
+            <expan>յառաջն</expan>
+          </seg>
+          <w>ծանուցաք,</w>
+          <seg type="word">
+            <expan>գիտացեալ</expan>
+          </seg>
+          <lb/>
+          <w>թէ</w>
+          <w>ոչ</w>
+          <seg type="word">հաճեց<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <expan>աստուած</expan>
+          </seg>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>թագաւորութիւնն</expan>
+          </seg>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>անմեղ</w>
+          <w>արանցն</w>
+          <w>զորս</w>
+          <lb/>
+          <w>եհեղ</w>
+          <w>ազգէ</w>
+          <seg type="word"><expan>հաւատացելոցն</expan>,</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>զի</w>
+          <w>մէկ</w>
+          <w>կողմն</w>
+          <seg type="word"><add>ա</add>ձինն</seg>
+          <w>թուլացաւ.</w>
+          <lb/>
+          <w>և</w>
+          <w>յորժամ</w>
+          <w>ետես</w>
+          <seg type="word"><expan>զաստուած</expan>ասաստ</seg>
+          <seg type="word">
+            <expan>բարկութիւնն</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>անձինն</w>
+          <w>իւրոյ,</w>
+          <seg type="word">կամե<lb/>ցաւ</seg>
+          <w>զգենուլ</w>
+          <w>զգեստ</w>
+          <seg type="word">կրօնաւորու<expan>թեան</expan>,</seg>
+          <w>և</w>
+          <seg type="word">մի<ex>ա</ex>ւ<ex>ո</ex>րել</seg>
+          <w>ի</w>
+          <w>վանք</w>
+          <seg type="word">կրօ<lb/>նաւոր<ex>ա</ex>ց.</seg>
+          <w>և</w>
+          <w>յայնժամ</w>
+          <seg type="word">
+            <expan>առաքեաց</expan>
+          </seg>
+          <w>ի</w>
+          <w>կողմն</w>
+          <w>տաճկաց</w>
+          <w>իր</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <seg type="word">ուռհա<lb/>յոյ,</seg>
+          <w>և</w>
+          <seg type="word">բերե<ex>ա</ex>լ</seg>
+          <w>զտուկ</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>ուռհայոյ,</w>
+          <w>որում</w>
+          <w>անունն</w>
+          <w>է՛ր</w>
+          <lb/>
+          <w>տուկիծ,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>ի</w>
+          <seg type="word">մեծամեծ<ex>ա</ex>ց</seg>
+          <w>ազգէ</w>
+          <w>է՛,</w>
+          <w>և</w>
+          <seg type="word">առե<ex>ա</ex>լ</seg>
+          <w>զթագն</w>
+          <w>դնէր</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>գլուխն</expan>
+          </seg>
+          <w>տուկծին,</w>
+          <w>և</w>
+          <w>երկիրպագանէր</w>
+          <w>նմայ,</w>
+          <w>և</w>
+          <w>նստոյց</w>
+          <w>զնայ</w>
+          <seg type="word">յաթ<lb/>ոռ</seg>
+          <seg type="word"><expan>թագաւորութեանն</expan>,</seg>
+          <w>և</w>
+          <w>ինքն</w>
+          <seg type="word">
+            <expan>գնացեալ</expan>
+          </seg>
+          <seg type="word"><expan>յանապատ</expan>,</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>վանական.</w>
+          <w>և</w>
+          <seg type="word">տու<lb/>կիծն</seg>
+          <seg type="word">
+            <expan>բնակեալ</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>թագաւորութեանն</expan>,</seg>
+          <w>յունաց,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>անհաւատսն</expan>
+          </seg>
+          <w>ածէր</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word"><expan>հաւանութիւնս</expan>,</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <seg type="word">
+            <expan>ուրախութիւն</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>տանն</w>
+          <seg type="word">
+            <expan>յունաց</expan>
+          </seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>տուկծին։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="109">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <hi>
+            <w>Յայսմ</w>
+            <w>ամի</w>
+            <w>մեռաւ</w>
+            <w>ամենագովելին</w>
+            <seg type="word">
+              <expan>տէր</expan>
+            </seg>
+            <seg type="word">պետր<ex>ո</ex>ս</seg>
+            <seg type="word">
+              <expan>կաթուղիկոսն</expan>
+            </seg>
+          </hi>
+          <lb/>
+          <w>հայոց,</w>
+          <w>որ</w>
+          <seg type="word">
+            <expan>գլուխ</expan>
+          </seg>
+          <w>էր</w>
+          <w>մարմնոյ</w>
+          <seg type="word"><expan>հայաստանեայց</expan>,</seg>
+          <w>և</w>
+          <w>պարիսպ</w>
+          <w>սրբոյ</w>
+          <seg type="word">եկե<lb/>ղեցոյ,</seg>
+          <w>սա՛</w>
+          <seg type="word">
+            <expan>կացեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յաթոռ</expan>
+          </seg>
+          <seg type="word"><expan>հայրապետութեանն</expan>,</seg>
+          <w>զամս</w>
+          <seg type="word">
+            <num value="42">ԽԲ</num>
+          </seg>
+          <w>և</w>
+          <w>յաւելաւ</w>
+          <w>առ</w>
+          <lb/>
+          <w>հարս</w>
+          <w>իւր.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ձեռնադրեաց</expan>
+          </seg>
+          <w>յաթոռ</w>
+          <seg type="word">
+            <expan>հայրապետութեանն</expan>
+          </seg>
+          <seg type="word">
+            <expan>զերանելին</expan>
+          </seg>
+          <seg type="word">
+            <expan>զտէր</expan>
+          </seg>
+          <w>խաչիկ,</w>
+          <w>որ</w>
+          <lb/>
+          <w>է՜ր</w>
+          <w>քուրորդի</w>
+          <w>իւր,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>լցեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>սրբասնունդ</expan>
+          </seg>
+          <seg type="word"><expan>առաքինութեամբ</expan>,</seg>
+          <w>և</w>
+          <w>բարի</w>
+          <lb/>
+          <w>համբաւ</w>
+          <seg type="word">
+            <expan>անուամբ</expan>
+          </seg>
+          <seg type="word"><expan>զարդարեալ</expan>,</seg>
+          <seg type="word">
+            <expan>շնորհօք</expan>
+          </seg>
+          <seg type="word"><expan>առաքելական</expan>,</seg>
+          <w>և</w>
+          <seg type="word"><expan>մարգարէական</expan>.</seg>
+          <w>և</w>
+          <seg type="word">թաղ<ex>ե</ex>ցին</seg>
+          <lb/>
+          <seg type="word">
+            <expan>զտէր</expan>
+          </seg>
+          <w>պետրոսն,</w>
+          <w>ի</w>
+          <w>քաղաքն</w>
+          <w>որ</w>
+          <w>կոչի</w>
+          <seg type="word">սեբ<ex>ա</ex>ստիա</seg>
+          <w>ի</w>
+          <w>վանքն</w>
+          <seg type="word">
+            <expan>սրբոյ</expan>
+          </seg>
+          <seg type="word">նշա<lb/>նին</seg>
+          <seg type="word">
+            <expan>հանդերձ</expan>
+          </seg>
+          <seg type="word"><expan>բազմութեամբ</expan>։</seg>
+          <w>և</w>
+          <w>ի</w>
+          <w>նոյն</w>
+          <seg type="word">թվականու<expan>թեանս</expan></seg>
+          <w>հայոց</w>
+          <seg type="word">
+            <expan>երկրորդեալ</expan>
+          </seg>
+          <seg type="word">արձա<lb/>կեցան</seg>
+          <w>ազգ</w>
+          <seg type="word">
+            <expan>անօրինաց</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացելոց</expan>
+          </seg>
+          <seg type="word"><expan>քրիստոսի</expan>.</seg>
+          <w>Եւ</w>
+          <w>ահա՛</w>
+          <w>ելեալ</w>
+          <w>գայր</w>
+          <lb/>
+          <w>ի</w>
+          <w>պարսից՝</w>
+          <w>նահանգէն,</w>
+          <w>ամիրա՛</w>
+          <w>ոմն</w>
+          <w>մեծ</w>
+          <w>և</w>
+          <w>հզօր՝</w>
+          <w>դինար</w>
+          <w>անուն,</w>
+          <lb/>
+          <w>և</w>
+          <w>զօրօք</w>
+          <seg type="word">բ<ex>ա</ex>զմօք</seg>
+          <w>գայր</w>
+          <w>անկասկած</w>
+          <seg type="word">դ<ex>ա</ex>ռնաշունչ</seg>
+          <seg type="word">բռն<expan>ութեամբ</expan>,</seg>
+          <w>և</w>
+          <seg type="word">նե<lb/>նգաւոր</seg>
+          <w>սրտիւ</w>
+          <w>ծածկեալ</w>
+          <seg type="word">զչար<expan>ութիւն</expan></seg>
+          <w>իւր.</w>
+          <w>և</w>
+          <w>անցանէր</w>
+          <w>անվնաս</w>
+          <w>ի</w>
+          <seg type="word"><add>բազ</add><lb/><pb n="146"/>բազում</seg>
+          <w>տեղաց,</w>
+          <w>և</w>
+          <w>խաղայր</w>
+          <w>գնայր</w>
+          <w>և</w>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>հռչակաւոր</expan>
+          </seg>
+          <lb/>
+          <w>քաղաքն,</w>
+          <w>որ</w>
+          <w>անուանովն</w>
+          <w>կոչի</w>
+          <w>մելտենի,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">
+            <expan>ժամանակաց</expan>
+          </seg>
+          <lb/>
+          <w>մատնած</w>
+          <w>էր</w>
+          <w>քաղաքն</w>
+          <w>պարսից,</w>
+          <w>թէ</w>
+          <w>անչափ</w>
+          <w>է</w>
+          <seg type="word">հարստու<expan>թիւն</expan>,</seg>
+          <w>ոսկո՛</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">արծ<ex>ա</ex>թո՛,</seg>
+          <w>ականց</w>
+          <w>և</w>
+          <seg type="word"><expan>մարգարտաց</expan>,</seg>
+          <w>և</w>
+          <w>դիպակաց.</w>
+          <w>և</w>
+          <w>էր</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <seg type="word">անպա<lb/>րիսպ,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>գայր</w>
+          <seg type="word"><expan>յառաջ</expan>,</seg>
+          <w>զհատաւ</w>
+          <w>էառ,</w>
+          <w>և</w>
+          <w>կոտորեաց</w>
+          <w>և</w>
+          <lb/>
+          <w>հասարակ,</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <w>սրով.</w>
+          <w>և</w>
+          <w>գայր</w>
+          <w>անցանէր</w>
+          <w>ի</w>
+          <w>մելտենի,</w>
+          <w>և</w>
+          <w>եղև</w>
+          <lb/>
+          <seg type="word">
+            <expan>առաջնորդ</expan>
+          </seg>
+          <seg type="word">զօր<ex>ա</ex>ցն</seg>
+          <w>օնօրինացն</w>
+          <w>որդին</w>
+          <w>լիպարտին</w>
+          <seg type="word">միաբանե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>նոսա</expan>,</seg>
+          <w>և</w>
+          <w>է՛ր</w>
+          <w>յաւուրս</w>
+          <w>ձմերայնոյ,</w>
+          <w>ի</w>
+          <w>մուտսն</w>
+          <w>յիսնակաց,</w>
+          <seg type="word">յորժ<ex>ա</ex>մ</seg>
+          <lb/>
+          <w>պատեաց</w>
+          <seg type="word">
+            <expan>զքաղաքն</expan>
+          </seg>
+          <w>մելտենի.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">
+            <expan>հռչակաւոր</expan>
+          </seg>
+          <w>անուանն</w>
+          <w>որ</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>պարսից,</w>
+          <w>տարածեցաւ</w>
+          <w>անուն</w>
+          <seg type="word">գեղեցկու<expan>թեան</expan></seg>
+          <seg type="word"><expan>նորա</expan>,</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>սեաւ</w>
+          <w>ամպ</w>
+          <w>շրջականաւ</w>
+          <seg type="word">
+            <expan>պատեաց</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>առ</w>
+          <seg type="word"><expan>հասարակ</expan>,</seg>
+          <lb/>
+          <w>և</w>
+          <w>տեսեալ</w>
+          <w>քաղաքացեացն</w>
+          <w>զահաւոր</w>
+          <seg type="word">բարկու<expan>թիւն</expan>,</seg>
+          <w>և</w>
+          <w>միաբան</w>
+          <lb/>
+          <w>ի</w>
+          <w>փախուստ</w>
+          <seg type="word"><expan>դարձան</expan>,</seg>
+          <w>արք</w>
+          <w>և</w>
+          <w>կանայք,</w>
+          <w>և</w>
+          <w>ոչ</w>
+          <w>գոյր</w>
+          <w>տեղի</w>
+          <seg type="word">փախս<lb/>տեան։</seg>
+          <w>Յայնժամ</w>
+          <w>հատաւ</w>
+          <w>սէր</w>
+          <seg type="word">բ<ex>ա</ex>րեկամաց,</seg>
+          <w>և</w>
+          <w>յոյս</w>
+          <seg type="word">կեն<ex>ա</ex>ց</seg>
+          <lb/>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>մտաց,</w>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">դ<ex>ա</ex>ռն<ex>ա</ex>շունչ</seg>
+          <seg type="word"><expan>բարկութեանցն</expan>,</seg>
+          <w>մոռանայր</w>
+          <w>հայր</w>
+          <w>զորդի</w>
+          <lb/>
+          <w>և</w>
+          <w>զորդին</w>
+          <w>զհայր,</w>
+          <w>մայր</w>
+          <w>զդուստր,</w>
+          <w>և</w>
+          <w>դուստր</w>
+          <w>զմայր</w>
+          <w>իւր</w>
+          <w>լայր</w>
+          <lb/>
+          <w>եղբայր</w>
+          <w>առ</w>
+          <w>եղբայր,</w>
+          <w>և</w>
+          <w>սիրելիք</w>
+          <w>առ</w>
+          <w>սիրելիքս.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">լայնա<lb/>տարած</seg>
+          <w>դաշտք</w>
+          <w>քաղաքին,</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>ի</w>
+          <w>փախուստ</w>
+          <w>ելեալ,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">բազմու<expan>թիւնքն</expan></seg>
+          <w>գնային</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>մէջ</w>
+          <seg type="word"><expan>թշնամեացն</expan>,</seg>
+          <w>և</w>
+          <w>տեսեալ</w>
+          <w>զթշնամին,</w>
+          <lb/>
+          <seg type="word">
+            <expan>սակաւ</expan>
+          </seg>
+          <w>մի</w>
+          <w>զտեղի</w>
+          <w>առին</w>
+          <w>և</w>
+          <w>հիանային</w>
+          <seg type="word">զբազմամբոխու<expan>թիւն</expan></seg>
+          <seg type="word">քաղ<ex>ա</ex>քին</seg>
+          <lb/>
+          <w>զի</w>
+          <w>էին</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զաւազ</w>
+          <w>ծովու,</w>
+          <w>անթիւ</w>
+          <seg type="word">բազմու<expan>թեամբ</expan>,</seg>
+          <w>և</w>
+          <w>ոչ</w>
+          <seg type="word">
+            <expan>համարձակէին</expan>
+          </seg>
+          <lb/>
+          <w>այլազգիքն</w>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>փախեան</w>
+          <seg type="word"><expan>քաղաքացիքն</expan>.</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>արձակեցան</w>
+          <w>սրով</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքին</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>սուրք</w>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>գործ</expan>
+          </seg>
+          <w>արեան</w>
+          <seg type="word">
+            <expan>սկսեալ</expan>
+          </seg>
+          <lb/>
+          <w>մխեցան.</w>
+          <w>և</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>սակաւ</expan>
+          </seg>
+          <w>ժամ</w>
+          <w>մի</w>
+          <w>լցեալ</w>
+          <w>արեամբ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">ծփ<lb/>այր</seg>
+          <w>ի</w>
+          <w>ծայրէ</w>
+          <w>ի</w>
+          <w>ծայր</w>
+          <w>արեամբ</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>մելտենի,</w>
+          <w>և</w>
+          <w>ոչ</w>
+          <w>ոք</w>
+          <w>էր</w>
+          <w>որ</w>
+          <seg type="word">ող<lb/>որմէր</seg>
+          <w>ծերոց,</w>
+          <w>կամ</w>
+          <w>տղայոց.</w>
+          <w>և</w>
+          <w>անդ</w>
+          <w>էր</w>
+          <w>տեսանել</w>
+          <w>մարմինք</w>
+          <lb/>
+          <seg type="word"><expan>փառաւոր</expan>,</seg>
+          <w>և</w>
+          <seg type="word"><expan>պատուականք</expan>,</seg>
+          <w>որք</w>
+          <w>անկեալք</w>
+          <w>և</w>
+          <w>թաւալեալք</w>
+          <w>կային</w>
+          <w>ի</w>
+          <w>մէջ</w>
+          <lb/>
+          <w>արեանցն,</w>
+          <w>և</w>
+          <w>տղայքն</w>
+          <w>ի</w>
+          <w>գիրկս</w>
+          <w>մարցն,</w>
+          <w>մասն,</w>
+          <w>մասն</w>
+          <w>հարեալ</w>
+          <lb/>
+          <w>լինէին,</w>
+          <w>և</w>
+          <w>արիւն</w>
+          <w>և</w>
+          <w>կաթն</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>միմեանս</w>
+          <seg type="word">
+            <expan>միաւորեալ</expan>
+          </seg>
+          <w>խառնեցան.</w>
+          <lb/>
+          <w>և</w>
+          <w>ո՞վ</w>
+          <w>կարէ</w>
+          <w>ի</w>
+          <w>գիր</w>
+          <w>արկանել</w>
+          <seg type="word"><expan>զաստուած</expan>ասաստ</seg>
+          <seg type="word"><expan>բարկութիւնն</expan>,</seg>
+          <w>զոր</w>
+          <w>յաւուր</w>
+          <lb/>
+          <seg type="word">յայնմ<ex>ի</ex>կ</seg>
+          <seg type="word">կրե<ex>ա</ex>ց</seg>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>մելտենի,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">փոխ<ex>ա</ex>ն<ex>ա</ex>կ</seg>
+          <w>քաղցր</w>
+          <w>ցօղոյն</w>
+          <lb/>
+          <w>արիւն</w>
+          <w>ծածկեալ</w>
+          <w>ունէր</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>բոյսք</w>
+          <w>դալարոյ,</w>
+          <w>անդաստանաց.</w>
+          <seg type="word">
+            <add>և</add>
+          </seg>
+          <lb/>
+          <pb n="147"/>
+          <w>և</w>
+          <w>յետ</w>
+          <w>այսչափ</w>
+          <seg type="word">
+            <abbr>կտրծի</abbr>
+          </seg>
+          <w>արեանցն</w>
+          <w>և</w>
+          <seg type="word">գերու<expan>թեանցն</expan></seg>
+          <w>զոր</w>
+          <w>վարէր</w>
+          <seg type="word">առ<lb/>աջի</seg>
+          <w>իւր</w>
+          <w>ի</w>
+          <seg type="word">գերու<expan>թիւն</expan>,</seg>
+          <w>կանայս,</w>
+          <seg type="word"><expan>պատուականս</expan>,</seg>
+          <w>և</w>
+          <w>գեղեցիկս,</w>
+          <w>և</w>
+          <seg type="word">ման<lb/>կունս,</seg>
+          <w>և</w>
+          <w>աղջկունս</w>
+          <w>վայելուչս,</w>
+          <w>և</w>
+          <w>անհամար</w>
+          <w>գանս</w>
+          <w>ոսկոյ</w>
+          <lb/>
+          <w>և</w>
+          <w>արծաթոյ</w>
+          <w>անթիւս,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յարուցեալ</expan>
+          </seg>
+          <w>խաղայր</w>
+          <seg type="word">ուրախու<expan>թեամբ</expan>,</seg>
+          <w>և</w>
+          <seg type="word">գայ<lb/>րն</seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>պարսից,</w>
+          <w>և</w>
+          <w>անցեալ</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>եփրատ</w>
+          <w>գետն,</w>
+          <w>արար</w>
+          <w>ձմերոց</w>
+          <w>ի</w>
+          <lb/>
+          <w>հանձիթ.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>զօրքն</w>
+          <w>հոռոմոց,</w>
+          <w>յարձակեցան</w>
+          <w>զհետ</w>
+          <w>թուրքից</w>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <w>հասանել</w>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <w>ոչ</w>
+          <w>համարձակեցան</w>
+          <seg type="word">
+            <expan>պատերազմել</expan>
+          </seg>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word"><expan>նոսա</expan>,</seg>
+          <w>այլ</w>
+          <seg type="word">
+            <expan>դարձան</expan>
+          </seg>
+          <lb/>
+          <seg type="word">խաղաղու<expan>թեամբ</expan></seg>
+          <w>ի</w>
+          <seg type="word">հ<ex>ո</ex>ռոմս։</seg>
+          <w>Իսկ</w>
+          <w>ի</w>
+          <w>ժամանակս</w>
+          <w>գարնանային</w>
+          <seg type="word">
+            <expan>հասեալ</expan>
+          </seg>
+          <lb/>
+          <w>գնաց</w>
+          <w>զօրքն</w>
+          <w>այլազգեաց</w>
+          <w>ի</w>
+          <w>գաւառն</w>
+          <w>տարօն,</w>
+          <w>որ</w>
+          <w>և</w>
+          <seg type="word">բնակալե<ex>ա</ex>լ</seg>
+          <lb/>
+          <w>առ</w>
+          <w>ստորոտ</w>
+          <w>լերինն</w>
+          <w>տօրոսի,</w>
+          <w>մերձ</w>
+          <w>ի</w>
+          <w>սասուն.</w>
+          <w>և</w>
+          <seg type="word">լուե<ex>ա</ex>լ</seg>
+          <w>զայս</w>
+          <lb/>
+          <w>իշխանն</w>
+          <w>հայոց,</w>
+          <w>զօրաւոր</w>
+          <w>և</w>
+          <w>քաջ</w>
+          <w>որդին</w>
+          <w>մուշեղա՛</w>
+          <w>թոռնիկն,</w>
+          <lb/>
+          <w>և</w>
+          <w>ժողով</w>
+          <seg type="word">
+            <expan>արարեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>սասուն,</w>
+          <w>և</w>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">զօր<ex>ա</ex>ցն</seg>
+          <seg type="word">այլազ<lb/>գեացն.</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>զօրք</w>
+          <w>այլազգեացն</w>
+          <seg type="word">
+            <expan>հնչեցուցին</expan>
+          </seg>
+          <w>զփողս</w>
+          <seg type="word">
+            <expan>պատերազմին</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>միաբան</w>
+          <w>ելին</w>
+          <w>ի</w>
+          <seg type="word"><expan>պատերազմ</expan>,</seg>
+          <w>և</w>
+          <w>եղև</w>
+          <w>օրն</w>
+          <w>այն</w>
+          <w>մեծ</w>
+          <w>և</w>
+          <w>ահաւոր,</w>
+          <lb/>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զջոկս</w>
+          <w>առիւծոց</w>
+          <w>զմիմեանս</w>
+          <w>բախէին,</w>
+          <w>յերկոցունց</w>
+          <seg type="word">կո<lb/>ղմանցն,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>գոջեաց</w>
+          <w>քաջն</w>
+          <w>թոռնիկ,</w>
+          <w>և</w>
+          <w>ձայն</w>
+          <w>տուեալ</w>
+          <lb/>
+          <w>աջոյ</w>
+          <w>թևին</w>
+          <w>իւրոյ,</w>
+          <w>և</w>
+          <w>հասանէր</w>
+          <w>ի</w>
+          <w>վերայ</w>
+          <w>ձախոյ</w>
+          <w>թևին</w>
+          <seg type="word">այլազ<lb/>գեացն,</seg>
+          <w>և</w>
+          <w>պատառէր</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <w>մեծաւ</w>
+          <seg type="word">յաղթու<expan>թեամբ</expan>,</seg>
+          <w>և</w>
+          <w>դարձաւ</w>
+          <lb/>
+          <w>հայեցաւ</w>
+          <w>ի</w>
+          <w>վանքն</w>
+          <seg type="word">
+            <expan>սրբոյ</expan>
+          </seg>
+          <w>կարապետին,</w>
+          <w>և</w>
+          <w>ոյժգին</w>
+          <w>զձայն</w>
+          <seg type="word">ար<lb/>կեալ,</seg>
+          <w>և</w>
+          <w>ասէր,</w>
+          <w>գլակա՛</w>
+          <w>վանք</w>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <w>կարապետ,</w>
+          <w>հասիր</w>
+          <w>մեզ</w>
+          <lb/>
+          <seg type="word">յօգնու<expan>թիւն</expan>,</seg>
+          <w>և</w>
+          <w>արա՛</w>
+          <w>զօրս</w>
+          <w>զայս</w>
+          <w>երևելի,</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>հաւատացելոցս</w>
+          <lb/>
+          <w>և</w>
+          <w>միաբան</w>
+          <w>ձայն</w>
+          <w>տուեալ</w>
+          <w>միմեանց,</w>
+          <w>և</w>
+          <w>արձակեցան</w>
+          <w>ի</w>
+          <seg type="word">վեր<ex>ա</ex>յ</seg>
+          <lb/>
+          <w>այլազգեացն,</w>
+          <w>և</w>
+          <w>առին</w>
+          <w>զառն</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>աւարն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>դարձացուցին</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">գերու<expan>թիւն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>մնացեալքն</expan>
+          </seg>
+          <w>այլազգեաց</w>
+          <w>մազապուրծ</w>
+          <w>արարին,</w>
+          <lb/>
+          <w>զերծեալք</w>
+          <w>ամօթով</w>
+          <w>գնացին</w>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>պարսից.</w>
+          <w>և</w>
+          <w>քաջն</w>
+          <w>թոռնիկ</w>
+          <lb/>
+          <w>մեծաւ</w>
+          <seg type="word">ուրախու<expan>թեամբ</expan></seg>
+          <w>դարձաւ</w>
+          <w>ի</w>
+          <w>սասունք</w>
+          <w>գոհանալով</w>
+          <lb/>
+          <seg type="word"><expan>զաստուծոյ</expan>,</seg>
+          <w>որ</w>
+          <w>ազատեաց</w>
+          <w>զանթիւ</w>
+          <seg type="word">բազմու<expan>թիւնն</expan></seg>
+          <w>զմելտենոյ</w>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>ծառայութենէն</expan>
+          </seg>
+          <w>անօրէն</w>
+          <w>ազգին</w>
+          <seg type="word"><expan>պարսից</expan>։</seg>
+          <w>այս</w>
+          <w>նշանակս</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <lb/>
+          <w>հայոց</w>
+          <w>յաշխարհաց</w>
+          <w>էր։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="110">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <seg type="word">
+            <hi>Դ</hi>
+            <expan>արձեալ</expan>
+          </seg>
+          <w>ի</w>
+          <w>յայսմ</w>
+          <w>ամի,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>նոյն</w>
+          <w>ձմերային</w>
+          <w>եղև</w>
+          <w>նշան</w>
+          <w>ահաւոր</w>
+          <lb/>
+          <w>և</w>
+          <w>հրաշալի</w>
+          <w>սոսկալի,</w>
+          <w>և</w>
+          <w>մեծ</w>
+          <seg type="word">բարկ<expan>ութիւն</expan></seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>քրիստոնէից,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <lb/>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յառաջագոյն</expan>
+          </seg>
+          <w>երևեալ</w>
+          <w>գուշակ</w>
+          <w>անցման</w>
+          <seg type="word">հաւատ<ex>ա</ex>ցելոց</seg>
+          <seg type="word">
+            <expan>քրիստոսի</expan>
+          </seg>
+          <seg type="word"><add>զի</add><lb/><pb n="148"/>զի</seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>պիղծ</w>
+          <w>գիշէն</w>
+          <seg type="word">
+            <expan>յառաջագոյն</expan>
+          </seg>
+          <w>հոտ</w>
+          <seg type="word">զազրու<expan>թեան</expan></seg>
+          <w>գա՛,</w>
+          <seg type="word">
+            <expan>այսպիսի</expan>
+          </seg>
+          <lb/>
+          <w>օրինակաւս,</w>
+          <seg type="word">
+            <expan>յառաջ</expan>
+          </seg>
+          <w>քան</w>
+          <seg type="word">
+            <abbr>զկտրծն</abbr>
+          </seg>
+          <w>նշանք</w>
+          <w>չարաչար</w>
+          <w>երևէին</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>աշխարհին</expan>,</seg>
+          <w>դառնաշունչ</w>
+          <w>հողմն</w>
+          <w>հարաւոյ։</w>
+          <w>Եւ</w>
+          <w>արդ</w>
+          <w>ահա՛</w>
+          <seg type="word">յաւ<lb/>ուր</seg>
+          <w>միում</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>լուսանայր</w>
+          <w>առաւօտուն,</w>
+          <w>և</w>
+          <w>ելանէր</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>մարդ</expan>,</seg>
+          <w>ի</w>
+          <w>տանէ</w>
+          <w>իւրմէ,</w>
+          <w>տեսանէին</w>
+          <w>ի</w>
+          <w>պարզոյ</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>ցամաք</w>
+          <seg type="word">գե<lb/>տոյն</seg>
+          <w>կարմիր</w>
+          <w>ձիւն</w>
+          <seg type="word"><expan>եկեալ</expan>,</seg>
+          <w>և</w>
+          <w>էր</w>
+          <w>լցեալ</w>
+          <seg type="word">զ<num value="4">Դ</num></seg>
+          <w>կողմն</w>
+          <seg type="word"><expan>աշխարհիս</expan>,</seg>
+          <w>ի</w>
+          <seg type="word">յարև<lb/>ելս,</seg>
+          <w>և</w>
+          <w>յարևելս</w>
+          <w>մուտս</w>
+          <w>ի</w>
+          <w>հիւիս,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>հարաւ,</w>
+          <w>և</w>
+          <w>սկիզբն</w>
+          <seg type="word">ար<ex>ա</ex>ր</seg>
+          <lb/>
+          <w>գալոյ</w>
+          <w>ի</w>
+          <w>յաւուր</w>
+          <w>երկուշաբթին,</w>
+          <w>և</w>
+          <w>զաւուրս</w>
+          <w>կամ</w>
+          <w>անդադար</w>
+          <lb/>
+          <w>եկեալ,</w>
+          <w>ի</w>
+          <w>գիշերին</w>
+          <w>գայր,</w>
+          <w>և</w>
+          <w>ցերեկն</w>
+          <w>հոսէր,</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>երեսս</w>
+          <seg type="word"><expan>երկրի</expan>,</seg>
+          <w>բայց</w>
+          <lb/>
+          <w>կարմի</w>
+          <w>ձիւ</w>
+          <w>մէկ</w>
+          <w>օր</w>
+          <seg type="word">
+            <expan>եկեալ</expan>
+          </seg>
+          <w>և</w>
+          <w>այն</w>
+          <w>ամին</w>
+          <w>եղև</w>
+          <w>անցումն</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">չորեքոտան<lb/>եաց,</seg>
+          <w>անասնոց</w>
+          <w>և</w>
+          <w>գազանաց,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>սաստիկ</w>
+          <w>բարկութենէն</w>
+          <w>ոչ</w>
+          <seg type="word">գտ<lb/>անէին</seg>
+          <w>կերակուր</w>
+          <seg type="word"><expan>իւրոց</expan>,</seg>
+          <w>ի</w>
+          <w>շէն</w>
+          <w>առ</w>
+          <w>հասարակ</w>
+          <w>դէմ</w>
+          <seg type="word">
+            <expan>արարեալ</expan>
+          </seg>
+          <w>նոցայ,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>թշնամիսն</w>
+          <w>ապաւինէին.</w>
+          <w>և</w>
+          <w>յայնժամ</w>
+          <w>անխնայ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>ոք</w>
+          <lb/>
+          <w>կոտորէր</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <w>անխնա՛</w>
+          <w>և</w>
+          <w>անողորմաբար,</w>
+          <w>զի</w>
+          <w>անասունքն</w>
+          <w>ջոլիր</w>
+          <lb/>
+          <w>ջոլիր</w>
+          <w>լինէին,</w>
+          <w>և</w>
+          <w>թռչունք</w>
+          <w>երամ</w>
+          <w>երամ</w>
+          <w>ի</w>
+          <w>փողոցս</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>տունս</w>
+          <lb/>
+          <w>մտանէին,</w>
+          <w>և</w>
+          <w>անդ</w>
+          <w>էր</w>
+          <w>տեսանել</w>
+          <w>զահաւոր</w>
+          <w>կատարածն</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <lb/>
+          <w>անասնոցն,</w>
+          <w>թռչնոցն,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <seg type="word">
+            <expan>մեղաց</expan>
+          </seg>
+          <w>որդոց</w>
+          <seg type="word"><expan>մարդկան</expan>։</seg>
+          <w>Իսկ</w>
+          <seg type="word">ողոր<lb/>մածք</seg>
+          <w>էին</w>
+          <w>ի</w>
+          <w>տունս</w>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>կերակրէին</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <w>աւուրս</w>
+          <w>նոցայ</w>
+          <lb/>
+          <w>ձմերայնն,</w>
+          <w>և</w>
+          <w>արձակէին</w>
+          <seg type="word">
+            <expan>զնոսա</expan>
+          </seg>
+          <seg type="word">խաղաղու<expan>թեամբ</expan>,</seg>
+          <w>և</w>
+          <w>առ</w>
+          <w>հասարակ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>ոք</w>
+          <lb/>
+          <w>ի</w>
+          <w>գութ</w>
+          <seg type="word">ողորմու<expan>թեան</expan></seg>
+          <w>դառնային,</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>անասնոցն</w>
+          <w>և</w>
+          <w>մերծ</w>
+          <seg type="word">ամիր<ex>ա</ex>յն</seg>
+          <lb/>
+          <w>նորտօլ</w>
+          <w>որ</w>
+          <w>նստէր</w>
+          <w>ի</w>
+          <w>քաղաքն,</w>
+          <w>մուֆարկին,</w>
+          <seg type="word">
+            <num value="40">Խ</num>
+          </seg>
+          <w>քուռ</w>
+          <seg type="word">ցորե<lb/>նոյ</seg>
+          <w>և</w>
+          <w>գարոյ,</w>
+          <w>կորեկոյ,</w>
+          <w>և</w>
+          <w>զայլ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>հնտաց</w>
+          <w>ցանեալ,</w>
+          <seg type="word">
+            <expan>հրամայեաց</expan>
+          </seg>
+          <lb/>
+          <w>ցանել</w>
+          <w>ընդ</w>
+          <w>դաշտս,</w>
+          <w>և</w>
+          <w>ընդ</w>
+          <w>լերինս</w>
+          <w>վասն</w>
+          <w>թռչնոցն,</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>խոտ,</w>
+          <lb/>
+          <w>և</w>
+          <w>յարդ</w>
+          <w>այնչափ</w>
+          <w>յաղագս</w>
+          <w>անասնոցն,</w>
+          <w>և</w>
+          <w>այսպիսի</w>
+          <seg type="word">օրինակ<ex>ա</ex>ւս</seg>
+          <lb/>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>անասունք</w>
+          <w>և</w>
+          <seg type="word">թռչ<ex>ո</ex>ւնք</seg>
+          <seg type="word">
+            <expan>ապրեցան</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բարկութենէ</expan>
+          </seg>
+          <w>անտի։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="111">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <w>Յաղագս</w>
+          <w>ամի</w>
+          <w>եղև</w>
+          <w>սով</w>
+          <w>սաստիկ</w>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>երկիր,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>բազումք</expan>
+          </seg>
+          <lb/>
+          <w>մեռան</w>
+          <w>չարաչար,</w>
+          <w>և</w>
+          <w>դառն</w>
+          <w>մահուամբ,</w>
+          <seg type="word">յերես<ex>ա</ex>ց</seg>
+          <w>սովոյն</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <lb/>
+          <w>ի</w>
+          <w>սաստկութենէ</w>
+          <w>ձեանն,</w>
+          <w>անձրև</w>
+          <w>ոչ</w>
+          <w>եկն</w>
+          <w>երկիր,</w>
+          <w>և</w>
+          <w>վաստակ</w>
+          <lb/>
+          <w>ոչ</w>
+          <w>եղև,</w>
+          <w>և</w>
+          <w>բազում</w>
+          <w>պտղաբերք</w>
+          <w>չորացան,</w>
+          <w>և</w>
+          <w>եղև</w>
+          <w>ի</w>
+          <w>փոխել</w>
+          <lb/>
+          <w>միւս</w>
+          <w>այլ</w>
+          <w>տարոյն</w>
+          <w>եղև</w>
+          <w>լիութիւն,</w>
+          <w>և</w>
+          <seg type="word">առա<lb/>տու<expan>թիւն</expan></seg>
+          <w>ամենայն</w>
+          <w>կերակրոց,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <lb/>
+          <w>զի</w>
+          <w>մէկ</w>
+          <w>մոթն</w>
+          <w>հարիւր</w>
+          <seg type="word">վաստակե<ex>ա</ex>ց։</seg>
+        </p>
+        <lb/>
+      </div>
+      <pb n="149"/>
+      <div n="112">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <hi>
+            <w>Իսկ</w>
+            <w>ի</w>
+            <w>վերանալ</w>
+            <seg type="word">
+              <expan>թվականութեանս</expan>
+            </seg>
+            <w>հայոց</w>
+            <w>ի</w>
+            <w>յամի</w>
+            <seg type="word">
+              <num value="508">ԵՃԸ</num>
+            </seg>
+            <seg type="word">ժամ<ex>ա</ex>նեալ</seg>
+          </hi>
+          <lb/>
+          <w>հասանէր</w>
+          <w>արհաւիրք,</w>
+          <w>և</w>
+          <seg type="word">
+            <abbr>կտրծք</abbr>
+          </seg>
+          <w>մահաբերք</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացելոց</expan>
+          </seg>
+          <seg type="word">
+            <expan>քրիստոսի</expan>
+          </seg>
+          <lb/>
+          <w>զոր</w>
+          <w>ոչ</w>
+          <w>կարեմք</w>
+          <w>պատմել,</w>
+          <w>զոր</w>
+          <w>ինչ</w>
+          <seg type="word">
+            <del>գրեց<ex>ա</ex>ւ</del>
+          </seg>
+          <w>գործ</w>
+          <seg type="word">
+            <expan>գործեցաւ</expan>
+          </seg>
+          <w>ամիսս</w>
+          <seg type="word">այս<lb/>միկ,</seg>
+          <w>աղէտ</w>
+          <seg type="word">ահ<ex>ա</ex>ւ<ex>ո</ex>ր</seg>
+          <seg type="word"><expan>դառնութեան</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>շարժեցաւ</expan>
+          </seg>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>տունն</w>
+          <seg type="word">պ<ex>ա</ex>ր<lb/>սից,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յարուցեալ</expan>
+          </seg>
+          <w>գային</w>
+          <w>ահագին</w>
+          <seg type="word">
+            <expan>բազմութեամբ</expan>
+          </seg>
+          <w>առանց</w>
+          <w>համարոց</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <seg type="word">
+            <expan>զաւազ</expan>
+          </seg>
+          <lb/>
+          <w>ծովու,</w>
+          <w>և</w>
+          <w>խաղայր</w>
+          <w>գայր</w>
+          <seg type="word">
+            <expan>հասանէր</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացելոց</expan>
+          </seg>
+          <w>տանն</w>
+          <w>հայոց,</w>
+          <w>և</w>
+          <lb/>
+          <seg type="word">
+            <expan>բազումք</expan>
+          </seg>
+          <seg type="word">
+            <expan>գաւառք</expan>
+          </seg>
+          <seg type="word">
+            <expan>մաշեալք</expan>
+          </seg>
+          <w>լինէին,</w>
+          <w>սրով</w>
+          <w>և</w>
+          <seg type="word">գեր<expan>ութեամբ</expan>,</seg>
+          <w>յերից</w>
+          <seg type="word">
+            <expan>ամբարիշտ</expan>
+          </seg>
+          <seg type="word">
+            <expan>գազանացս</expan>
+          </seg>
+          <lb/>
+          <seg type="word"><expan>այսոսիկ</expan>,</seg>
+          <w>որք</w>
+          <w>ելանեն</w>
+          <w>ի</w>
+          <w>տիւանէն</w>
+          <w>տուխլիր</w>
+          <w>սուլտանէն,</w>
+          <w>ամիրայք</w>
+          <lb/>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>սամուխն,</w>
+          <w>և</w>
+          <w>ամուրքաֆրն,</w>
+          <w>և</w>
+          <w>գիճաճիճի,</w>
+          <w>արք</w>
+          <w>չարք</w>
+          <w>և</w>
+          <seg type="word">ար<lb/>իւնարբուք,</seg>
+          <seg type="word">
+            <expan>առաւել</expan>
+          </seg>
+          <seg type="word">
+            <expan>քան</expan>
+          </seg>
+          <seg type="word"><expan>զգազանս</expan>,</seg>
+          <w>և</w>
+          <w>սեաւագունդ</w>
+          <w>զօրօք,</w>
+          <w>և</w>
+          <w>մահաբեր</w>
+          <lb/>
+          <w>նշանօք,</w>
+          <seg type="word">հ<ex>ա</ex>ս<ex>ա</ex>նէին</seg>
+          <w>ի</w>
+          <seg type="word">բ<ex>ա</ex>զմամբոխ,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>նշանաւոր</expan>
+          </seg>
+          <seg type="word">
+            <expan>քաղաքին</expan>
+          </seg>
+          <w>սեբաստիոյ,</w>
+          <w>և</w>
+          <seg type="word">մռն<lb/>չալով</seg>
+          <w>որոտային,</w>
+          <w>կամեցան</w>
+          <w>զմեծասաստ</w>
+          <seg type="word">
+            <expan>բարկութիւնն</expan>
+          </seg>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>ածել</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>հաւատացելոց</expan>
+          </seg>
+          <seg type="word"><expan>քրիստոսի</expan>,</seg>
+          <w>և</w>
+          <seg type="word">մանաւ<ex>ա</ex>նդ</seg>
+          <seg type="word">
+            <expan>խորհեցան</expan>
+          </seg>
+          <w>ի</w>
+          <w>միտս</w>
+          <seg type="word"><expan>իւրոց</expan>,</seg>
+          <seg type="word">
+            <expan>ձերբակալ</expan>
+          </seg>
+          <w>առնել</w>
+          <lb/>
+          <w>զորդիսն</w>
+          <w>սենեքէրիմա՛,</w>
+          <w>զորդիք</w>
+          <seg type="word">
+            <expan>թագաւորին</expan>
+          </seg>
+          <w>հայոց,</w>
+          <w>զատոմ,</w>
+          <w>և</w>
+          <seg type="word">զա<lb/>պուսայլ,</seg>
+          <w>զորս</w>
+          <seg type="word">
+            <expan>յառաջագոյն</expan>
+          </seg>
+          <seg type="word">
+            <expan>նոցա</expan>
+          </seg>
+          <seg type="word">լուե<ex>ա</ex>լ</seg>
+          <w>զգոլն</w>
+          <w>զօրացն</w>
+          <seg type="word">այլազգե<ex>ա</ex>ցն</seg>
+          <lb/>
+          <w>և</w>
+          <w>փախեան</w>
+          <w>ի</w>
+          <w>խաւատանեքն,</w>
+          <w>և</w>
+          <w>այլ</w>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <seg type="word">իշխ<ex>ա</ex>նքն</seg>
+          <seg type="word">գն<ex>ա</ex>ցին</seg>
+          <w>զհետ</w>
+          <seg type="word"><expan>նորա</expan>.</seg>
+          <lb/>
+          <w>և</w>
+          <w>օր</w>
+          <seg type="word">բ<ex>ա</ex>րէկենդանին</seg>
+          <seg type="word"><expan>վարդավառին</expan>,</seg>
+          <seg type="word">պատե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>զքաղաքն</expan>
+          </seg>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <seg type="word">զօր<ex>ա</ex>ցն</seg>
+          <seg type="word">անօ<lb/>րինացն,</seg>
+          <w>և</w>
+          <w>պաշարեաց</w>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <w>շուրջանակի</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքն</expan>,</seg>
+          <w>և</w>
+          <w>սուր</w>
+          <lb/>
+          <w>ի</w>
+          <w>գործ</w>
+          <w>մտեալ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>զօրցն,</w>
+          <w>և</w>
+          <w>անհամար</w>
+          <w>մարմինք</w>
+          <seg type="word">
+            <expan>չարաչար</expan>
+          </seg>
+          <seg type="word">
+            <expan>խոցմամբ</expan>
+          </seg>
+          <lb/>
+          <w>ի</w>
+          <w>յերկիր</w>
+          <seg type="word">թաւ<ex>ա</ex>լէին,</seg>
+          <w>և</w>
+          <seg type="word">հոսե<ex>ա</ex>լ</seg>
+          <w>արեանցն</w>
+          <w>լնոյր</w>
+          <w>զերկիր,</w>
+          <w>որ</w>
+          <w>և</w>
+          <seg type="word">տեսող<lb/>ացն</seg>
+          <seg type="word">սոսկ<ex>ա</ex>լի</seg>
+          <w>երևէին,</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>փայտ</w>
+          <w>անտառի,</w>
+          <seg type="word">
+            <expan>կուտեալ</expan>
+          </seg>
+          <w>լինէին,</w>
+          <lb/>
+          <w>մարմինք</w>
+          <seg type="word">
+            <expan>պատուականք</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>երկրի,</w>
+          <w>և</w>
+          <w>արեամբ</w>
+          <seg type="word">
+            <expan>ծածկեալ</expan>
+          </seg>
+          <w>եղև</w>
+          <w>հող</w>
+          <w>երկրին,</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>բազմութենէ</expan>
+          </seg>
+          <seg type="word"><expan>դիականցն</expan>.</seg>
+          <w>և</w>
+          <w>զի</w>
+          <w>անպարիսպ</w>
+          <w>էր</w>
+          <seg type="word">
+            <expan>քաղաքն</expan>
+          </seg>
+          <w>սեբաստիայ։</w>
+          <w>Իսկ</w>
+          <lb/>
+          <w>այլազգիքն</w>
+          <w>զառաջինն</w>
+          <w>ոչ</w>
+          <seg type="word">
+            <expan>համարձակեցան</expan>
+          </seg>
+          <w>մտանել</w>
+          <w>ի</w>
+          <seg type="word"><expan>քաղաքն</expan>,</seg>
+          <w>զի</w>
+          <w>տեսանէին</w>
+          <lb/>
+          <seg type="word">
+            <expan>զբազմութիւն</expan>
+          </seg>
+          <seg type="word">
+            <expan>եկեղեցւոյցն</expan>
+          </seg>
+          <w>սպիտակս,</w>
+          <w>և</w>
+          <w>գումպէթաձևս</w>
+          <seg type="word">գիտ<ex>ա</ex>ցին</seg>
+          <w>թէ</w>
+          <seg type="word">վր<lb/>անք</seg>
+          <w>զօրացն</w>
+          <w>իցեն,</w>
+          <w>և</w>
+          <w>իբրև</w>
+          <seg type="word">գիտ<ex>ա</ex>ցին,</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word"><expan>զաստուած</expan>ասաստ</seg>
+          <seg type="word">
+            <expan>բարկութիւնն</expan>
+          </seg>
+          <lb/>
+          <w>ածին</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word"><expan>քրիստոնէիցն</expan>,</seg>
+          <seg type="word">անող<ex>ո</ex>րմ,</seg>
+          <w>և</w>
+          <w>անխնայ</w>
+          <w>կոտորեցին</w>
+          <w>զայնքան</w>
+          <lb/>
+          <seg type="word">
+            <expan>բազմութիւն</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքին</expan>,</seg>
+          <w>անթիւ</w>
+          <w>և</w>
+          <w>անհամար</w>
+          <w>աւարաւ,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>գերութեամբ</expan>
+          </seg>
+          <w>արանց</w>
+          <lb/>
+          <w>և</w>
+          <w>կանանց,</w>
+          <w>մանկունս,</w>
+          <w>և</w>
+          <seg type="word">աղջկ<ex>ո</ex>ւնս</seg>
+          <w>վարէին</w>
+          <w>ի</w>
+          <seg type="word">գերու<expan>թիւն</expan>,</seg>
+          <w>և</w>
+          <seg type="word">այնչ<ex>ա</ex>փ</seg>
+          <lb/>
+          <w>գանձս,</w>
+          <w>ոսկո՛յ</w>
+          <w>և</w>
+          <seg type="word">արծ<ex>ա</ex>թոյ,</seg>
+          <w>ականց</w>
+          <w>և</w>
+          <seg type="word"><expan>մարգարտաց</expan>,</seg>
+          <w>և</w>
+          <w>դիպակաց</w>
+          <seg type="word"><expan>յափշտա</expan><lb/>կեալ</seg>
+          <w>հանին</w>
+          <w>ի</w>
+          <w>սեբաստիոյ,</w>
+          <w>և</w>
+          <w>զի</w>
+          <w>տուն</w>
+          <w>եղև</w>
+          <w>հայոց</w>
+          <seg type="word"><expan>թագաւորացն</expan>.</seg>
+          <w>և</w>
+          <w>էր</w>
+          <lb/>
+          <w>օրն</w>
+          <w>այն,</w>
+          <w>դառնաշունչ</w>
+          <w>և</w>
+          <w>չար</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բնակչաց</expan>
+          </seg>
+          <seg type="word"><expan>քաղաքին</expan>,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>առ</w>
+          <seg type="word">սակ<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <add>մի՛</add>
+          </seg>
+          <lb/>
+          <pb n="150"/>
+          <w>մի՛</w>
+          <w>ժամ</w>
+          <w>աւեր</w>
+          <w>եղև</w>
+          <w>քաղաքն,</w>
+          <w>և</w>
+          <w>դաշտն</w>
+          <w>արեամբ</w>
+          <seg type="word">լցե<ex>ա</ex>լ,</seg>
+          <w>և</w>
+          <w>գետն</w>
+          <lb/>
+          <w>որ</w>
+          <w>անցանէր</w>
+          <w>ընդ</w>
+          <w>մէջ</w>
+          <w>քաղաքին,</w>
+          <w>փոխանակ</w>
+          <w>յստակ</w>
+          <w>ջրոյն</w>
+          <w>ի</w>
+          <seg type="word">յար<lb/>իւն</seg>
+          <seg type="word">
+            <expan>դարձացուցանէր</expan>
+          </seg>
+          <w>զգոյնն,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>բազումք</expan>
+          </seg>
+          <w>այն</w>
+          <w>էին,</w>
+          <w>որ</w>
+          <w>հրով</w>
+          <w>այրեցան,</w>
+          <lb/>
+          <w>և</w>
+          <w>ահայ</w>
+          <w>անկեալ</w>
+          <w>կային</w>
+          <seg type="word">
+            <expan>բազումք</expan>
+          </seg>
+          <seg type="word">իշխ<ex>ա</ex>նք,</seg>
+          <w>և</w>
+          <w>մեծ,</w>
+          <w>և</w>
+          <seg type="word"><expan>փառաւորք</expan>,</seg>
+          <w>մահաբեր</w>
+          <lb/>
+          <w>բոցմամբ,</w>
+          <w>ի</w>
+          <w>մէջ</w>
+          <w>մաքուր</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>պատուական</expan>
+          </seg>
+          <w>դիականացն</w>
+          <w>արեամբ</w>
+          <seg type="word">
+            <expan>ծածկեալք</expan>
+          </seg>
+          <lb/>
+          <w>լինէին,</w>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>սպիտակութիենէ</expan>
+          </seg>
+          <seg type="word"><expan>մարմնոցն</expan>,</seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զաստեղս</w>
+          <w>փայլէին.</w>
+          <w>զինչ</w>
+          <w>և</w>
+          <lb/>
+          <w>վասն</w>
+          <seg type="word">
+            <expan>քահանայիցն</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word"><expan>սարկաւագացն</expan>,</seg>
+          <w>ասացից,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <w>զհարիւր</w>
+          <seg type="word">
+            <expan>եկեղեցեայցն</expan>
+          </seg>
+          <lb/>
+          <w>որ</w>
+          <w>ի</w>
+          <w>նմայ</w>
+          <w>կային,</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>սրով</w>
+          <seg type="word"><expan>վճարեցան</expan>.</seg>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>կոյսք,</w>
+          <w>և</w>
+          <w>հարսունք</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">փառաւ<ex>ո</ex>ր</seg>
+          <w>տիկնայք</w>
+          <w>վարեցան</w>
+          <w>ի</w>
+          <seg type="word">գերու<expan>թիւն</expan></seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <w>պարսից,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>սակաւ</expan>
+          </seg>
+          <lb/>
+          <w>ժամ</w>
+          <w>մի</w>
+          <w>եղև</w>
+          <w>սեբաստիայ</w>
+          <w>իբրև</w>
+          <w>զխուղ</w>
+          <w>մի՛</w>
+          <seg type="word">
+            <expan>այրեցեալ</expan>
+          </seg>
+          <w>հրով.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>կացեալ</expan>
+          </seg>
+          <lb/>
+          <w>զօրք</w>
+          <w>այլազգեացն,</w>
+          <w>ի</w>
+          <w>սեբաստիայ,</w>
+          <w>յաւուրս</w>
+          <seg type="word">
+            <num value="8">Ը</num>
+          </seg>
+          <w>և</w>
+          <w>խաղաց</w>
+          <lb/>
+          <w>գնաց</w>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <seg type="word"><expan>պարսից</expan>,</seg>
+          <w>և</w>
+          <w>անթիւ</w>
+          <w>և</w>
+          <w>անհամար</w>
+          <w>գերութեամբ։</w>
+          <lb/>
+          <seg type="word">
+            <hi>Ո՞վ</hi>
+          </seg>
+          <w>կարասցէ</w>
+          <w>մի</w>
+          <seg type="word">
+            <expan>ըստ</expan>
+          </seg>
+          <w>միոջէ</w>
+          <seg type="word">պ<ex>ա</ex>տմել</seg>
+          <w>զկորուստ</w>
+          <seg type="word">բարկ<expan>ութեանն</expan>,</seg>
+          <w>և</w>
+          <w>զլաց</w>
+          <lb/>
+          <w>ապաշաւանաց,</w>
+          <w>տանս</w>
+          <w>հայոց՝</w>
+          <w>զոր</w>
+          <w>անօրէն</w>
+          <w>և</w>
+          <w>արեանարբու</w>
+          <seg type="word">
+            <expan>գազանացն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">զօր<ex>ա</ex>ցն</seg>
+          <seg type="word">թուրք<ex>ա</ex>ց,</seg>
+          <w>կրեաց</w>
+          <seg type="word">անտիրու<expan>թենէ</expan></seg>
+          <w>ի</w>
+          <w>սու՛տ</w>
+          <seg type="word"><expan>պահապանացն</expan>,</seg>
+          <w>ի</w>
+          <w>տկար</w>
+          <lb/>
+          <w>և</w>
+          <w>ի</w>
+          <w>թուլամորթ</w>
+          <w>վատ</w>
+          <w>ազգին</w>
+          <seg type="word">յուն<ex>ա</ex>ց,</seg>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <w>մի՛</w>
+          <w>առ</w>
+          <w>մի,</w>
+          <seg type="word">քակե<ex>ա</ex>լ</seg>
+          <seg type="word">հա<lb/>նին</seg>
+          <seg type="word">
+            <expan>զօրականսն</expan>
+          </seg>
+          <w>ի</w>
+          <w>տանէն</w>
+          <w>հայոց,</w>
+          <w>զորս</w>
+          <w>հանին</w>
+          <w>յարկաց,</w>
+          <w>և</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>գաւառաց</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>բարձեալ</expan>
+          </seg>
+          <w>խափանեցին</w>
+          <seg type="word">զաթ<ex>ո</ex>ռ</seg>
+          <seg type="word">
+            <expan>թագաւորութեանն</expan>
+          </seg>
+          <w>հայոց։</w>
+          <w>Քակեցին</w>
+          <seg type="word">զց<ex>ա</ex>նկ</seg>
+          <lb/>
+          <seg type="word">
+            <expan>պահպանութեան</expan>
+          </seg>
+          <w>զօրացն,</w>
+          <w>և</w>
+          <seg type="word"><expan>զօրաւորացն</expan>,</seg>
+          <w>և</w>
+          <w>ազգն</w>
+          <w>հոռոմոց</w>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>անուն</w>
+          <lb/>
+          <seg type="word">քաջու<expan>թեան</expan>,</seg>
+          <seg type="word">
+            <expan>զանդարձ</expan>
+          </seg>
+          <seg type="word">
+            <expan>փախչելն</expan>
+          </seg>
+          <seg type="word">ար<ex>ա</ex>րին</seg>
+          <w>պարծանք,</w>
+          <w>նմանեցան</w>
+          <w>վատ</w>
+          <lb/>
+          <w>հովացն,</w>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>գայլն</w>
+          <seg type="word">տես<ex>ա</ex>նէ</seg>
+          <w>փախչի.</w>
+          <w>Սակայն</w>
+          <w>հոռոմք</w>
+          <w>այն</w>
+          <lb/>
+          <w>ջանս</w>
+          <w>ջանացան,</w>
+          <w>որ</w>
+          <w>լուր</w>
+          <w>զպարիսպ</w>
+          <seg type="word">ամրու<expan>թեան</expan></seg>
+          <w>տանս</w>
+          <w>հայոց՝</w>
+          <seg type="word">
+            <expan>քակեալ</expan>
+          </seg>
+          <lb/>
+          <w>կործանեցին,</w>
+          <w>և</w>
+          <w>զպարսիկք</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>դարձեալ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յարձակեցին</expan>
+          </seg>
+          <w>սրով,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>յաղթութիւն</expan>
+          </seg>
+          <seg type="word">
+            <expan>իւրոց</expan>
+          </seg>
+          <w>համարեցին,</w>
+          <w>և</w>
+          <w>ինքեանք</w>
+          <w>անպատկառելի</w>
+          <w>երեսօք,</w>
+          <seg type="word">կո<lb/>ւրտ</seg>
+          <w>զօրավարօք</w>
+          <w>և</w>
+          <w>ներքինի</w>
+          <w>զօրօք</w>
+          <w>զհայք</w>
+          <w>պահել</w>
+          <w>ջանային</w>
+          <lb/>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>պարսիկք</w>
+          <w>անտէ՛ր</w>
+          <w>տեսին,</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word"><expan>արևելք</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>մեծաւ</w>
+          <lb/>
+          <seg type="word">զօր<expan>ութեամբ</expan></seg>
+          <seg type="word">
+            <expan>զօրացան</expan>
+          </seg>
+          <w>այլազգիքն,</w>
+          <w>որ</w>
+          <w>ի</w>
+          <w>մէկ</w>
+          <w>տարոյ</w>
+          <w>հասան</w>
+          <seg type="word">
+            <expan>մինչև</expan>
+          </seg>
+          <w>ի</w>
+          <w>դուռն</w>
+          <lb/>
+          <seg type="word"><expan>կոստանդնուպօլիս</expan>,</seg>
+          <w>և</w>
+          <w>առին</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>աշխարհն</expan>
+          </seg>
+          <seg type="word">
+            <expan>հոռոմոց</expan>
+          </seg>
+          <seg type="word">
+            <expan>զքաղաքս</expan>
+          </seg>
+          <w>ծովեզերաց</w>
+          <w>և</w>
+          <lb/>
+          <w>զկղզիս</w>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <w>և</w>
+          <seg type="word">ար<ex>ա</ex>րին</seg>
+          <w>զազգն</w>
+          <w>յունաց</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <seg type="word">
+            <expan>զբանդարգեալք</expan>
+          </seg>
+          <w>ի</w>
+          <w>ներս</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word"><expan>կոստանդնուպօլիս</expan>.</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>առաւ</w>
+          <w>հայք</w>
+          <w>ի</w>
+          <seg type="word">յուն<ex>ա</ex>ց,</seg>
+          <seg type="word">
+            <expan>արգելաւ</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">չա<lb/>րու<expan>թիւնն</expan></seg>
+          <w>հոռոմոց՝</w>
+          <w>ազգէն</w>
+          <w>հայոց,</w>
+          <w>և</w>
+          <w>զկնի</w>
+          <seg type="word">
+            <expan>այսորիկ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հնարեցան</expan>
+          </seg>
+          <w>այլ</w>
+          <seg type="word">
+            <expan>կերպիւ</expan>
+          </seg>
+          <lb/>
+          <seg type="word">
+            <expan>պատերազմ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յարուցանել</expan>
+          </seg>
+          <seg type="word">
+            <expan>ընդ</expan>
+          </seg>
+          <w>ազգն</w>
+          <w>հայոց։</w>
+          <w>Եւ</w>
+          <w>նստան</w>
+          <w>ի</w>
+          <seg type="word">քնն<expan>ութիւն</expan></seg>
+          <w>հայոց՝,</w>
+          <seg type="word">
+            <add>և</add>
+          </seg>
+          <lb/>
+          <pb n="151"/>
+          <w>և</w>
+          <w>այսու</w>
+          <seg type="word">ատե<ex>ա</ex>լ</seg>
+          <seg type="word">
+            <expan>անարգեցին</expan>
+          </seg>
+          <w>զհանդէս</w>
+          <seg type="word"><expan>պատերազմ</expan>,</seg>
+          <w>և</w>
+          <w>զօրամարտի</w>
+          <w>և</w>
+          <seg type="word">զ<lb/>կռիւս,</seg>
+          <w>և</w>
+          <w>զաղմուկս</w>
+          <seg type="word">
+            <expan>յեկեղեցի</expan>
+          </seg>
+          <seg type="word"><expan>աստուծոյ</expan>,</seg>
+          <w>կարգեալ</w>
+          <w>հաստատեցին,</w>
+          <w>ի</w>
+          <seg type="word">պա<lb/>րսից</seg>
+          <seg type="word"><expan>պատերազմէն</expan>,</seg>
+          <seg type="word">յօժարու<expan>թեամբ</expan></seg>
+          <w>փաղչին,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>ճշմարիտ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացեալքս</expan>
+          </seg>
+          <seg type="word">
+            <expan>քրիստոսի</expan>
+          </seg>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">
+            <expan>հաւատոյն</expan>
+          </seg>
+          <w>ջանան</w>
+          <w>խափել,</w>
+          <w>և</w>
+          <w>խախտել։</w>
+          <seg type="word">
+            <expan>վասն</expan>
+          </seg>
+          <w>զի</w>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>այր</w>
+          <w>քաջ</w>
+          <w>և</w>
+          <seg type="word">զօր<lb/>աւոր</seg>
+          <w>գտանէին</w>
+          <w>զաչսն</w>
+          <seg type="word"><expan>խաւարեցուցանէին</expan>,</seg>
+          <w>և</w>
+          <w>կամ</w>
+          <w>ի</w>
+          <w>ծով</w>
+          <seg type="word">ձգ<lb/>եալ</seg>
+          <w>խեղդամահ</w>
+          <w>սատակէին.</w>
+          <w>և</w>
+          <w>այն</w>
+          <w>էր</w>
+          <w>փոյթ</w>
+          <seg type="word">
+            <expan>յօժարութեանց</expan>
+          </seg>
+          <seg type="word"><expan>նոցա</expan>,</seg>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <seg type="word">
+            <expan>զամենայն</expan>
+          </seg>
+          <lb/>
+          <w>իշխանսն</w>
+          <w>հայոց,</w>
+          <w>և</w>
+          <w>զքաջ</w>
+          <seg type="word">
+            <expan>զօրականսն</expan>
+          </seg>
+          <w>հանին</w>
+          <seg type="word"><expan>յարևելից</expan>,</seg>
+          <w>և</w>
+          <w>բերին</w>
+          <seg type="word">բնակե<lb/>ցուցին</seg>
+          <w>ի</w>
+          <w>յոյնք.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <w>ինքեանքն</w>
+          <seg type="word">զմանկու<expan>թիւնս</expan></seg>
+          <seg type="word">արիու<expan>թեանն</expan></seg>
+          <w>ի</w>
+          <seg type="word">կուր<lb/>տս</seg>
+          <w>փոխարկեցին,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>փոխանակ</expan>
+          </seg>
+          <w>լեկուռ</w>
+          <seg type="word">
+            <del>զօրացն</del>
+          </seg>
+          <w>զրեհացն</w>
+          <w>զոր</w>
+          <lb/>
+          <w>քաջք</w>
+          <w>զգենուին,</w>
+          <seg type="word">
+            <expan>նոքա</expan>
+          </seg>
+          <w>զծոցն</w>
+          <seg type="word">
+            <expan>հանդերձիցն</expan>
+          </seg>
+          <w>լայն</w>
+          <w>և</w>
+          <w>երկայն</w>
+          <seg type="word">ար<ex>ա</ex>րին,</seg>
+          <w>և</w>
+          <lb/>
+          <w>փոխանակ,</w>
+          <w>պողովատ</w>
+          <w>սաղաւարտին</w>
+          <w>պէլևտառ</w>
+          <w>եդին,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>փոխանակ</expan>
+          </seg>
+          <lb/>
+          <w>երկաթապատ</w>
+          <w>թիկանցն</w>
+          <w>զփողպատն</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <w>յուսոցն</w>
+          <w>յայն</w>
+          <w>արարին,</w>
+          <lb/>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <w>զկանայք</w>
+          <w>հեզ</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>ծածուկ</expan>
+          </seg>
+          <w>խօսին,</w>
+          <w>քաջ</w>
+          <w>և</w>
+          <w>մանուկ</w>
+          <w>հանապազ</w>
+          <lb/>
+          <w>կորուստ</w>
+          <w>խորհին,</w>
+          <w>որ</w>
+          <w>և</w>
+          <w>ի</w>
+          <w>ձեռաց</w>
+          <seg type="word">
+            <expan>սոցա</expan>
+          </seg>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատացեալք</expan>
+          </seg>
+          <w>մատնեցան</w>
+          <lb/>
+          <w>ի</w>
+          <seg type="word">գերու<expan>թիւն</expan></seg>
+          <seg type="word">
+            <expan>յաշխարհն</expan>
+          </seg>
+          <w>պարսից։</w>
+        </p>
+        <lb/>
+      </div>
+      <div n="113">
+        <p xmlns="http://www.tei-c.org/ns/1.0">
+          <seg type="word"><hi>Յ</hi>այսմ</seg>
+          <seg type="word">
+            <expan>ժամանակինս</expan>
+          </seg>
+          <seg type="word">
+            <expan>թագաւորն</expan>
+          </seg>
+          <w>տուկիծ,</w>
+          <seg type="word">խորհ<ex>ե</ex>ց<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <expan>խորհուրդ</expan>
+          </seg>
+          <lb/>
+          <w>չար,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>կամեցաւ</expan>
+          </seg>
+          <seg type="word">
+            <expan>բառնալ</expan>
+          </seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>խափանել</expan>
+          </seg>
+          <seg type="word">զաթ<ex>ո</ex>ռ</seg>
+          <seg type="word">
+            <expan>հայրապետութեան</expan>
+          </seg>
+          <seg type="word">
+            <expan>սրբոյն</expan>
+          </seg>
+          <w>գրիգորի</w>
+          <lb/>
+          <w>ի</w>
+          <w>տանէն</w>
+          <w>հայոց,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>որպէս</expan>
+          </seg>
+          <seg type="word"><expan>ասացաքս</expan>,</seg>
+          <seg type="word">
+            <expan>յարուցանէր</expan>
+          </seg>
+          <seg type="word"><expan>հալածանս</expan>,</seg>
+          <w>և</w>
+          <w>առնէր</w>
+          <seg type="word">քնն<expan>ութիւնս</expan></seg>
+          <lb/>
+          <seg type="word">պ<ex>է</ex>սպէս,</seg>
+          <seg type="word">
+            <expan>յաղագս</expan>
+          </seg>
+          <seg type="word">
+            <expan>հաւատոյ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հայաստանեաց</expan>
+          </seg>
+          <w>ազգիս,</w>
+          <seg type="word">
+            <expan>մանաւանդ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յորժամ</expan>
+          </seg>
+          <w>մեռաւ</w>
+          <seg type="word">
+            <expan>տէր</expan>
+          </seg>
+          <lb/>
+          <seg type="word">պետր<ex>ո</ex>ս,</seg>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>յարեան</expan>
+          </seg>
+          <w>հոռոմք</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>վերայ</expan>
+          </seg>
+          <seg type="word">
+            <expan>սուրբ</expan>
+          </seg>
+          <seg type="word"><expan>յաթոռոյն</expan>,</seg>
+          <w>և</w>
+          <w>կամեցան</w>
+          <seg type="word">
+            <expan>եղծանել</expan>
+          </seg>
+          <lb/>
+          <w>զնայ,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>կամեցան</expan>
+          </seg>
+          <w>առ</w>
+          <seg type="word">
+            <expan>հասարակ</expan>
+          </seg>
+          <seg type="word">
+            <expan>դարձուցանել</expan>
+          </seg>
+          <w>զհայք</w>
+          <w>ի</w>
+          <seg type="word">
+            <expan>հաւատսն</expan>
+          </seg>
+          <w>անօրէն</w>
+          <seg type="word">քաղկե<lb/>դոնի.</seg>
+          <w>և</w>
+          <w>յայսմ</w>
+          <seg type="word">
+            <expan>ժամու</expan>
+          </seg>
+          <seg type="word">
+            <expan>արարին</expan>
+          </seg>
+          <w>հոռոմք</w>
+          <w>խնդիր</w>
+          <seg type="word">
+            <expan>բազմութեան</expan>
+          </seg>
+          <w>գանձուցն</w>
+          <lb/>
+          <w>ոսկոյ,</w>
+          <w>և</w>
+          <seg type="word"><expan>արծաթոյ</expan>,</seg>
+          <seg type="word">
+            <expan>տէրն</expan>
+          </seg>
+          <seg type="word">պետր<ex>ո</ex>սի</seg>
+          <w>հայոց</w>
+          <seg type="word"><expan>կաթուղիկոսի</expan>,</seg>
+          <w>և</w>
+          <seg type="word">
+            <expan>զբազումս</expan>
+          </seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>խոշտանգս</expan>
+          </seg>
+          <lb/>
+          <w>մատնեցին</w>
+          <w>ի</w>
+          <seg type="word">սեբ<ex>ա</ex>ստիա՛,</seg>
+          <w>և</w>
+          <seg type="word">զօծե<ex>ա</ex>լն</seg>
+          <w>ի</w>
+          <seg type="word">
+            <expan>յաթոռ</expan>
+          </seg>
+          <seg type="word">
+            <expan>հայրապետութեանն</expan>
+          </seg>
+          <seg type="word">
+            <expan>զտէր</expan>
+          </seg>
+          <w>Խաչիկ</w>
+          <lb/>
+          <seg type="word">
+            <expan>հանդերձ</expan>
+          </seg>
+          <seg type="word"><expan>եպիսկոպոսօք</expan>,</seg>
+          <w>տարան</w>
+          <w>ի</w>
+          <seg type="word"><expan>կոստանդնուպօլիս</expan>,</seg>
+          <w>և</w>
+          <w>զամենագովելին</w>
+          <seg type="word">
+            <expan>զտէր</expan>
+          </seg>
+          <lb/>
+          <w>եղիսէ՛,</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>պահեցին</expan>
+          </seg>
+          <w>զնա՛</w>
+          <w>յաքսորանս</w>
+          <w>զամս</w>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <w>և</w>
+          <w>զաւուրսն</w>
+          <seg type="word">յայն<lb/>ոսիկ</seg>
+          <seg type="word">
+            <expan>բազում</expan>
+          </seg>
+          <w>վտանգսն</w>
+          <seg type="word">
+            <expan>գործեցաւ</expan>
+          </seg>
+          <w>ի</w>
+          <w>հաւատս</w>
+          <w>հայոց.</w>
+          <w>և</w>
+          <seg type="word">
+            <expan>յայնժամ</expan>
+          </seg>
+          <seg type="word">
+            <expan>թագաւորք</expan>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>իշխանք</w>
+          <w>հայոց՝</w>
+          <w>գագիկ</w>
+          <w>անեցի,</w>
+          <w>և</w>
+          <w>ատոմ,</w>
+          <w>և</w>
+          <w>ապուսահլ,</w>
+          <seg type="word">որդ<lb/>իք</seg>
+          <w>սենեքարիմա՛յ</w>
+          <seg type="word">մեծ<ex>ա</ex>ւ</seg>
+          <seg type="word">
+            <expan>աշխատութեամբ</expan>
+          </seg>
+          <w>ջանս</w>
+          <w>անձինս</w>
+          <w>կրել,</w>
+          <w>և</w>
+          <w>հազիւ</w>
+          <lb/>
+          <seg type="word">
+            <expan>կարացին</expan>
+          </seg>
+          <w>հանել</w>
+          <seg type="word"><expan>զնոսա</expan>,</seg>
+          <w>և</w>
+          <w>զկնի</w>
+          <w>յայսմ</w>
+          <seg type="word">
+            <expan>ամենայն</expan>
+          </seg>
+          <w>եղելոցն,</w>
+          <w>նստուցանեն</w>
+          <lb/>
+          <w>զաթոռ</w>
+          <seg type="word">
+            <expan>հայրապետութեան</expan>
+          </seg>
+          <w>ի</w>
+          <w>թաւբլուր,</w>
+          <w>և</w>
+          <w>կացեալ</w>
+          <w>անդ</w>
+          <w>զամս</w>
+          <seg type="word">
+            <num value="3">Գ</num>
+          </seg>
+          <lb/>
+          <w>և</w>
+          <w>ընդ</w>
+          <w>ամենայն</w>
+          <w>վեց</w>
+          <w>ամ</w>
+          <w>կալեալ</w>
+          <w>զաթոռ</w>
+          <seg type="word">
+            <expan>հայրապետութեանն</expan>
+          </seg>
+          <seg type="word">
+            <expan>տէր</expan>
+          </seg>
+          <w>Խաչիկ։</w>
+        </p>
+        <lb/>
+      </div>
+    </body>
+  </text>
+</TEI>
