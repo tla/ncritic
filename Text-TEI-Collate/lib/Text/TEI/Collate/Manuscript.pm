@@ -26,7 +26,6 @@ sub new {
     my $class = ref( $proto ) || $proto;
     my $self = { 'sigil' => undef,
 		 'identifier' => 'Unidentified ms',
-		 'auto_sigla' => 1,
 		 'canonizer' => undef,
 		 'type' => 'plaintext',
 		 %opts,
@@ -43,17 +42,16 @@ sub new {
     if( $type eq 'xmldesc' ) {
         $self->_init_from_xml( $source );
 	unless( exists $self->{'sigil'} ) {
-	    # TODO: how to specify sigla?
-	    # warn "No sigil assigned!  Assigning automatic sigil.";
-	    $self->{'auto_sigla'} = 1;
+	    # Should not actually get here
+	    warn( 'No sigil definition occurred!  Danger Will Robinson!' );
 	}
     } else {
-	    $self->_init_from_string( $source );
+	$self->auto_assign_sigil();
+	$self->_init_from_string( $source );
     }
-
-    $self->auto_assign_sigil() if $self->{'auto_sigla'};
+    
     $assigned_sigla{$self->{'sigil'}} = 1;
-
+    
     return $self;
 }
 
@@ -75,12 +73,16 @@ sub _init_from_xml {
 	$self->{'settlement'} = $setNode ? $setNode->textContent : '';
 	$self->{'repository'} = $reposNode ? $reposNode->textContent : '';
 	$self->{'idno'} = $idNode ? $idNode->textContent : '';
+	if( $descnode->hasAttribute('xml:id') ) {
+	    $self->{'sigil'} = $descnode->getAttribute('xml:id');
+	} else {
+	    $self->auto_assign_sigil();
+	}
     } else {
 	warn "Could not find manuscript description in doc; creating generic manuscript";
 	$self->{'identifier'} = '==Unknown manuscript==';
     }
     $self->{'identifier'} = join( ' ', $self->{'settlement'}, $self->{'idno'} );
-    # TODO: find a way to encode sigla in TEI files
 
     # Now get the words out.
     # Assume for now one body text, since "more than one text per
@@ -102,7 +104,7 @@ sub _init_from_xml {
 		$place_str = '__DIV__';
 	    }
 	    push( @words, Text::TEI::Collate::Word->new( placeholder => $place_str,
-							 canonizer => $self->{'canonizer'} ) );
+							 ms_sigil => $self->{'sigil'} ) );
 	    push( @words, $self->_read_paragraphs( $_ ) );
 	}  # foreach <div/>
 	
@@ -125,7 +127,7 @@ sub _read_paragraphs {
     return () unless @pgraphs;
     foreach my $pg( @pgraphs ) {
 	push( @words, Text::TEI::Collate::Word->new( placeholder => '__PG__', 
-						     canonizer => $self->{'canonizer'} ) );
+						     ms_sigil => $self->{'sigil'} ) );
 	# If there are any #text nodes that are direct children of
 	# this paragraph, the whole thing needs to be processed.
 	my $xpc = XML::LibXML::XPathContext->new( $pg );
@@ -153,6 +155,7 @@ sub _read_paragraphs {
 		foreach( @textwords ) {
 		    push( @words, 
 			  Text::TEI::Collate::Word->new( 'string' => $_,
+				 'ms_sigil' => $self->{'sigil'},
 				 'canonizer' => $self->{'canonizer'} ) );
 		}
 	    }
@@ -220,6 +223,7 @@ sub _split_words {
     my @words;
     foreach my $w ( @raw_words ) {
 	my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
+						   'ms_sigil' => $self->{'sigil'},
 						   'canonizer' => $self->{'canonizer'} );
 	# Skip any words that have been canonized out of existence.
 	next if( length( $w_obj->word ) == 0 );
