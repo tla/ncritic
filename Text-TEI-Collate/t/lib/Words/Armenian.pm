@@ -34,6 +34,8 @@ sub canonize_word {
     $word =~ s/՛//g;
     # Get rid of hyphen.
     $word =~ s/֊//g;
+    # Get rid of any backtick that falls mid-word.
+    $word =~ s/՝(.)/$1/g;
 
     # Expand ligatures.
     $word =~ s/օ/աւ/g;
