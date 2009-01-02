@@ -5,9 +5,10 @@ Settlement:Bzommar
 Repository:Bibliothek des Klosters
 Idno:449
 Pages:pp. 163r-174r
-Transcriber: Tara L Andrews
+Transcriber:Tara L Andrews
 TranscriberID:tla
 PublicationStmt:Unpublished manuscript
+Sigil:A
 =BODY
 ¶ ## began on page 162r ##
 [163ա]

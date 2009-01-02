@@ -5,9 +5,10 @@ Settlement:Venice
 Repository:Mekhitarist Library
 Idno:887
 Pages:pp. 160-177
-Transcriber: Tara L Andrews
+Transcriber:Tara L Andrews
 TranscriberID:tla
 PublicationStmt:Unpublished manuscript
+Sigil:D
 =BODY
 ¶ ## began on p.159 ##
 [160]

@@ -8,14 +8,14 @@
         <author>Մատթէոս Ուռհայեցի</author>
         <respStmt xml:id="tla">
           <resp>Transcription by</resp>
-          <name> Tara L Andrews</name>
+          <name>Tara L Andrews</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
         <p>Unpublished manuscript</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="A">
           <msIdentifier>
             <settlement>Bzommar</settlement>
             <repository>Bibliothek des Klosters</repository>
@@ -84,7 +84,9 @@
         <seg type="word">նեղութե<ex resp="#tla">ան</ex>ս</seg>
         <w>այսոցիկ՝</w>
         <w>զոր</w>
-        <seg type="word"><expan>վասն</expan></seg>
+        <seg type="word">
+          <expan>վասն</expan>
+        </seg>
         <w>մեղաց</w>
         <seg type="word">կր<lb/>եաց</seg>
         <w>տունն</w>

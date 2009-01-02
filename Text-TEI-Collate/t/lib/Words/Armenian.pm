@@ -32,6 +32,8 @@ sub canonize_word {
 
     # Get rid of accent marks.
     $word =~ s/՛//g;
+    # Get rid of hyphen.
+    $word =~ s/֊//g;
 
     # Expand ligatures.
     $word =~ s/օ/աւ/g;
@@ -39,11 +41,6 @@ sub canonize_word {
 
     # Downcase the word.
     $word = am_downcase( $word );
-
-    # Check our spelling hash.
-    if( exists $SPELLINGS{$word} ) {
-        $word = $SPELLINGS{$word};
-    }
 
     return $word;
 }

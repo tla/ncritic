@@ -8,14 +8,14 @@
         <author>Մատթէոս Ուռհայեցի</author>
         <respStmt xml:id="tla">
           <resp>Transcription by</resp>
-          <name> Tara L Andrews</name>
+          <name>Tara L Andrews</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
         <p>Unpublished manuscript</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="D">
           <msIdentifier>
             <settlement>Venice</settlement>
             <repository>Mekhitarist Library</repository>
@@ -138,8 +138,10 @@
             <num value="502">ԵՃԲ</num>
           </seg>
           <w>եղև</w>
+          <w>ահ</w>
         </hi>
-          <w><hi>ահ</hi><lb/>աւոր</w>
+        <lb/>
+        <w>աւոր</w>
         <w>նշան</w>
         <w>և</w>
         <seg type="word">սոսկ<ex resp="#tla">ա</ex>լի,</seg>

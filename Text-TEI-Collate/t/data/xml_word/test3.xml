@@ -15,7 +15,7 @@
         <p>Unpublished manuscript</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="C">
           <msIdentifier>
             <settlement>London</settlement>
             <repository>British Library</repository>
@@ -192,68 +192,6 @@
           <w>մեծ</w>
           <w>ազգին</w>
           <w>ասորոց.</w>
-          <w>և</w>
-          <w>յայնժամ</w>
-          <lb/>
-          <w>մատնեցան</w>
-          <w>ասորիք</w>
-          <w>մեծ</w>
-          <seg type="word">նեղութի<ex resp="#tla">ւն</ex>,</seg>
-          <seg type="word">
-            <expan>վասն</expan>
-          </seg>
-          <w>սկսաւ</w>
-          <seg type="word">հաւա<lb/>տոյ</seg>
-          <seg type="word">քննութի<ex resp="#tla">ւն</ex></seg>
-          <w>առնե՛լ</w>
-          <w>հանապազօ՛ր.</w>
-          <w>և</w>
-          <w>այնչափ</w>
-          <w>լրբեալ</w>
-          <lb/>
-          <w>եղեն</w>
-          <w>ազգն</w>
-          <w>հոռոմոց,</w>
-          <w>որ</w>
-          <w>և</w>
-          <w>զգործսն</w>
-          <w>ո՛չ</w>
-          <w>կարացին</w>
-          <w>գիտել</w>
-          <lb/>
-          <seg type="word">
-            <expan>վասն</expan>
-          </seg>
-          <w>զի</w>
-          <seg type="word">
-            <expan>քրիստոսի</expan>
-          </seg>
-          <w>աւետարանն</w>
-          <w>հրայմայեաց</w>
-          <w>հրով</w>
-          <w>այրե՛լ</w>
-          <seg type="word">պա<lb/>տրիարգն.</seg>
-          <w>և</w>
-          <w>եղև</w>
-          <w>յորժամ</w>
-          <w>ի</w>
-          <seg type="word">հ<gap extent="2" unit="chars" rend="erase"/>ուրն</seg>
-          <w>եդին</w>
-          <seg type="word">
-            <expan>զաւետարանն</expan>
-          </seg>
-          <lb/>
-          <seg type="word"><expan>աստուծոյ</expan>,</seg>
-          <w>ձայն</w>
-          <w>ելանէ՛ր</w>
-          <w>յաւետարանէ</w>
-          <w>անտի՛</w>
-          <w>և</w>
-          <w>ի</w>
-          <w>հրոյն</w>
-          <w>ի</w>
-          <seg type="word">դու<lb/>րս</seg>
-          <w>ելանէ՞ր.</w>
           <lb/>
         </p>
       </div>

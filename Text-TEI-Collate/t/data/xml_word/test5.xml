@@ -6,18 +6,18 @@
       <titleStmt>
         <title>Ժամանակագրութիւն</title>
         <author>Մատթէոս Ուռհայեցի</author>
-        <respStmt xml:id="__TRANSCRIBERID__">
+        <respStmt xml:id="tla">
           <resp>Transcription by</resp>
-          <name>__TRANSCRIBER__</name>
+          <name>Tara L Andrews</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
         <p>__PUBLICATIONSTMT__</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="E">
           <msIdentifier>
-            <settlement>Wien</settlement>
+            <settlement>Vienna</settlement>
             <repository>Mekhitarist Library</repository>
             <idno>574</idno>
           </msIdentifier>
@@ -30,94 +30,6 @@
     <body>
       <div>
 <!-- began on p. 250բ -->
-        <p xmlns="http://www.tei-c.org/ns/1.0">
-          <w>Արդ</w>
-          <w>ահա՛</w>
-          <w>մինչև</w>
-          <w>ցայս</w>
-          <w>վարս</w>
-          <w>բազմա՛ջան</w>
-          <w>և</w>
-          <seg type="word">աշխատաւ<lb/>որ</seg>
-          <seg type="word">քննութ<ex resp="#tla">եամ</ex>բ</seg>
-          <w>գտեալ</w>
-          <w>գրեցաք</w>
-          <w>զշարագրական</w>
-          <w>գրեալս,</w>
-          <seg type="word">զ<lb/><num value="100">Ճ</num>ից</seg>
-          <w>ամաց,</w>
-          <w>զոր</w>
-          <w>ի</w>
-          <seg type="word">
-            <expan>բազում</expan>
-          </seg>
-          <seg type="word">
-            <expan>ժամանակաց</expan>
-          </seg>
-          <w>հետա՛</w>
-          <w>հասու</w>
-          <w>եղաք</w>
-          <seg type="word">
-            <expan>ըստ</expan>
-          </seg>
-          <seg type="word">այնքա<lb/>նեացս</seg>
-          <w>տեսողացն</w>
-          <w>և</w>
-          <w>լսողացն,</w>
-          <w>որք</w>
-          <w>էին</w>
-          <w>ի</w>
-          <w>հին</w>
-          <w>ամաց</w>
-          <seg type="word"><expan>ծնեալք</expan>,</seg>
-          <lb/>
-          <w>և</w>
-          <w>ընթերցողսն</w>
-          <w>առաջին</w>
-          <w>պատգամագրացն</w>
-          <w>որք</w>
-          <seg type="word">ականա՛տ<lb/><pb n="265ա"/>եսք</seg>
-          <w>էին</w>
-          <w>լեալք</w>
-          <seg type="word">
-            <expan>ամենայն</expan>
-          </seg>
-          <w>եղելոցս,</w>
-          <w>և</w>
-          <seg type="word">նեղութե<ex resp="#tla">ան</ex>ցս,</seg>
-          <w>յայսոցիկ</w>
-          <w>զոր</w>
-          <lb/>
-          <seg type="word">
-            <expan>վասն</expan>
-          </seg>
-          <w>մեղաց</w>
-          <w>տուն</w>
-          <w>հա՛ոց,</w>
-          <w>և</w>
-          <w>ահա՛</w>
-          <w>որ</w>
-          <w>զայս</w>
-          <seg type="word">
-            <expan>բազում</expan>
-          </seg>
-          <w>անգամ</w>
-          <w>զմտաւ</w>
-          <lb/>
-          <w>ածեալ</w>
-          <w>իմ,</w>
-          <seg type="word">
-            <expan>վասն</expan>
-          </seg>
-          <w>այս</w>
-          <w>յետին</w>
-          <seg type="word">
-            <expan>ժամանակիս</expan>
-          </seg>
-          <w>գրել</w>
-          <w>զդառնա՛շունչ</w>
-          <seg type="word"><abbr>կտծս</abbr><lb/>ն։</seg>
-        </p>
         <p xmlns="http://www.tei-c.org/ns/1.0">
           <seg type="word"><hi>Ի</hi>սկ</seg>
           <w>ի</w>
