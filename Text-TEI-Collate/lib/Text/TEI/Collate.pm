@@ -154,8 +154,7 @@ sub align {
 
     for ( 0 .. $#ms_texts ) {
 	my $text = $ms_texts[$_];
-	print STDERR "Beginning run of build_array for text " . ($_+2) . "\n"
-	    if $self->{debug};
+	$self->debug( "Beginning run of build_array for text " . ($_+2) );
 	my( $result1, $result2 ) = $self->build_array( $base_text, $text );
  
 	# Are the resulting arrays the same length?
@@ -179,8 +178,8 @@ sub align {
 		} 
 	    }
 
-	    print STDERR "All arrays now " . scalar @{$result_array[0]} . " items long\n"
-		if $self->{debug};    
+	    $self->debug( 'All arrays now ' . scalar @{$result_array[0]} 
+			  . ' items long' );
 
 	    # Add result2 to the output.
 	    push( @result_array, $result2 );
@@ -207,7 +206,7 @@ sub align {
 # Small utility to get a string out of an array of word objects.
 sub _stripped_words {
     my $text = shift;
-    my @words = map { defined $_->placeholder ? $_->placeholder : $_->word } @$text;
+    my @words = map { $_->word } @$text;
     return @words;
 }
 
@@ -243,8 +242,9 @@ sub build_array {
 	    $self->_handle_diff_interpolation( $diff, 1, $base_text, \@base_result, \@new_result );
 	} else {  # Change
 	    # A true change.  Time to pull out some fuzzy matching then.
-	    print STDERR "Diff: collating words " . join( '.', $diff->Items( 1 ) ) . " / " .
-		join( '.', $diff->Items( 2 ) ) . "\n" if $self->{debug} > 1;
+	    $self->debug( "Diff: collating words " 
+			  . join( '.', $diff->Items( 1 ) ) . " / " 
+			  . join( '.', $diff->Items( 2 ) ), 1 );
 	    
 	    # Grab the word sets from each text.
 	    my @base_wlist = @{$base_text}[$diff->Range( 1 )];
@@ -278,8 +278,8 @@ sub _handle_diff_same {
     my @rnew = $diff->Range( 2 );
     my @base_wlist = @{$base_text}[@rbase];
     my @new_wlist = @{$new_text}[@rnew];
-    print STDERR "Diff: pushing same words " . join( ' ', _stripped_words( \@base_wlist ) ) . "\n" 
-	if $self->{debug} > 2;
+    $self->debug( "Diff: pushing same words " 
+		  . join( ' ', _stripped_words( \@base_wlist ) ), 2 );
     push( @$base_result, @base_wlist );
     push( @$new_result, @new_wlist );
 }
@@ -294,8 +294,8 @@ sub _handle_diff_interpolation {
     my @range = $diff->Range( $which );
     my @wlist = @{$from_text}[@range];
     
-    print STDERR "DBrecord: pushing $op " . join( ' ',  _stripped_words( \@wlist ) ) . "\n"
-	if $self->{debug} > 2;
+    $self->debug( "DBrecord: pushing $op " 
+		  . join( ' ',  _stripped_words( \@wlist ) ), 2 );
     push( @$to_result, ( $self->empty_word ) x scalar( @wlist ) );
     push( @$from_result, @wlist );
 }
@@ -419,8 +419,8 @@ sub link_words {
 	next if $word_obj eq $self->empty_word;
 	next if $new_word_obj eq $self->empty_word;
 
-	print STDERR "Trying to set link for " . $word_obj->word . " / "
-	    . $new_word_obj->word . "..." if $self->{'debug'} > 1;
+	$self->debug( "Trying to set link for " . $word_obj->word . " / "
+		      . $new_word_obj->word . "...", 1, 1 );
 
 	# Now we have to repeat the distance checking that we did in
 	# &match_and_align_words.  This cries out for refactoring, but
@@ -430,7 +430,7 @@ sub link_words {
 	my $match_answer = $self->_index_word_match( $base, $new, $i );
 	if( $match_answer ne 'no' ) {
 	    $word_obj->add_link( $new_word_obj );
-	    print STDERR "word match: $match_answer\n" if $self->{'debug'} > 1;
+	    $self->debug( "word match: $match_answer", 1 );
 	} else {
 	    # Trot out the list of variants.
 	    my $found_variant_match = 0;
@@ -439,14 +439,14 @@ sub link_words {
 		if( $match_answer ne 'no' ) {
 		    $var_obj->add_link( $new_word_obj );
 		    $found_variant_match = 1;
-		    print STDERR "variant match: $match_answer to " .
-			$var_obj->word . "\n" if $self->{'debug'} > 1;
+		    $self->debug( "variant match: $match_answer to " 
+				  . $var_obj->word, 1 );
 		    last;
 		}
 	    }
 	    unless( $found_variant_match ) {
 		$word_obj->add_variant( $new_word_obj );
-		print STDERR "new variant\n";
+		$self->debug( "new variant" );
 	    }
 	}
     }
@@ -487,7 +487,7 @@ sub _is_near_word_match {
     }
     my $distance = $self->{'distance_sub'};
     my $dist = &$distance( $word1, $word2 );
-    return ( $dist < ( length( $word1 ) * $self->{fuzziness} / 100 ) );
+    return( $self->_is_match( $word1, $dist ) );
 }
 
 
@@ -495,9 +495,10 @@ sub _is_near_word_match {
 # for orphan words in a sea of undefs.  Try to find a contiguous home
 # for them.
 
+# TODO: check & fix gaps in the base (i.e. previous arrays.)
 sub check_gaps {
     my $self = shift;
-    my( $base, $new ) = @_;
+    my( $base, $new, @results ) = @_;
     
     # Will need some state vars.
     my @seq;
@@ -523,7 +524,7 @@ sub check_gaps {
 	}
     }
 	
-    print STDERR "Check_array gave seq @seq\n" if $self->{'debug'};
+    $self->debug( "Check_array gave seq @seq" );
     # Looking for empty_big, word_small, empty_big sequence.
     my @orphans;
     my $last_orphan_idx;
@@ -543,9 +544,8 @@ sub check_gaps {
 		[ $self->_wordlist_slice( $new, $seq[$idx] ) ] );
 	    next if grep( /^__.*__$/, @words ) == scalar @words;
 	    # Talk about it.
-	    print STDERR "Found orphan at index $colidx: entries are " .
-		join( ' ', $seq[$idx-1], $seq[$idx], $seq[$idx+1] ) . "\n"
-		if $self->{'debug'} > 1;
+	    $self->debug( "Found orphan at index $colidx: entries are " .
+		  join( ' ', $seq[$idx-1], $seq[$idx], $seq[$idx+1] ), 1 );
 	    if( $last_orphan_idx && $last_orphan_idx == $idx - 2 ) {
 		# It's probably the same orphan.  Add it to the last
 		# datastructure.
@@ -564,8 +564,7 @@ sub check_gaps {
 
     if( $self->{'debug'} ) {
 	foreach( @orphans ) {
-	    print STDERR "Orphan group is " . join(' ', @{$_->{'words'}} ) 
-		. "\n";
+	    $self->debug( "Orphan group is " . join(' ', @{$_->{'words'}} ) );
 	}
     }
 
@@ -590,14 +589,14 @@ sub check_gaps {
 	    my @base_words = 
 		@{$base}[ ($idx - 4 - scalar @orphaned_words) .. ($idx) ];
 	    $base_entry = 'base_' . scalar( @base_words ) . "_$idx";
-	    print STDERR "Will try new alignment on words " 
-		. join( ' ', _stripped_words( \@orphaned_words ) ) . ' and ' 
-		. join( ' ', _stripped_words( \@base_words ) ) . "\n"
-		if $self->{'debug'};
+	    $self->debug( "Will try new alignment on words " 
+			  . join( ' ', _stripped_words( \@orphaned_words ) ) 
+			  . ' and ' 
+			  . join( ' ', _stripped_words( \@base_words ) ) );
 
 	    my( $rematch_base, $rematch_new, $quality ) = $self->match_and_align_words( \@base_words, \@orphaned_words, 1 );
 	    if( $quality > 49 ) {
-		print STDERR "...match has quality $quality; will fix the array with this\n" if $self->{'debug'};
+		$self->debug( "...match has quality $quality; will fix the array with this" );
 		$better_match = [ $rematch_base, $rematch_new ];
 	    }
 	}
@@ -610,13 +609,13 @@ sub check_gaps {
 				       ($idx+scalar(@orphaned_words)+4) ];
 	    $base_entry = 'base_' . scalar( @base_words ) . '_'
 		. ( $idx+scalar(@orphaned_words)+4 );
-	    print STDERR "Will try next new alignment on words " 
-		. join( ' ', _stripped_words( \@orphaned_words ) ) . ' and ' 
-		. join( ' ', _stripped_words( \@base_words ) ) . "\n"
-		if $self->{'debug'};
+	    $self->debug( "Will try next new alignment on words " 
+			  . join( ' ', _stripped_words( \@orphaned_words ) ) 
+			  . ' and ' 
+			  . join( ' ', _stripped_words( \@base_words ) ) );
 	    my( $rematch_base, $rematch_new, $quality ) = $self->match_and_align_words( \@base_words, \@orphaned_words, 1 );
 	    if( $quality > 49 ) {
-		print STDERR "...match has quality $quality; will fix the array with this\n" if $self->{'debug'};
+		$self->debug( "...match has quality $quality; will fix the array with this" );
 		$better_match = [ $rematch_base, $rematch_new ];
 	    }
 	}
@@ -630,8 +629,7 @@ sub check_gaps {
 	    $self->_wordlist_slice( $base, $base_entry, $better_match->[0] );
 	    $self->_wordlist_slice( $new, $base_entry, $better_match->[1] );
 	} else {
-	    print STDERR "...No better match found; leaving as is\n"
-		if $self->{'debug'};
+	    $self->debug( "...No better match found; leaving as is\n" );
 	}
     }
 	    
@@ -654,10 +652,9 @@ sub _wordlist_slice {
     }
 }
 
-# begin_end_mark: Compress any placeholder sectioning to just before
-# the first real word, and put an "END" placeholder after the last 
-# real word, for each array.
-
+# begin_end_mark: Note, with special words spliced in, where each
+# text actually begins and ends.
+my $GAP_MIN_SIZE = 18;
 sub begin_end_mark {
     my $self = shift;
     my @manuscripts = @_;
@@ -666,47 +663,59 @@ sub begin_end_mark {
 	my $sigil = $text->sigil;
 	my $first_word_idx = -1;
 	my $last_word_idx = -1;
-	my %placeholders = ();
+	my $gap_start = -1;
+	my $gap_end = -1;
 	foreach my $idx( 0 .. $#{$wordlist} ) {
 	    my $word_obj = $wordlist->[$idx];
 	    if( $first_word_idx > -1 ) {
-		# We have found and coped with the first word; just
-		# look for the last word now.
-		$last_word_idx = $idx if $word_obj->word;
-	    } elsif( $word_obj->word && !$word_obj->placeholder ) {
-		$first_word_idx = $idx;
-		# We have found the first real word.  Splice in all the
-		# placeholders before this.
-		my @ph_set = Text::TEI::Collate::Word->new( 
-		    placeholder => '__BEGIN__',
-		    ms_sigil => $sigil,
-		    invisible => 1 );
-		foreach my $ph_idx ( sort keys %placeholders ) {
-		    # Clear out the old
-		    push( @ph_set, $placeholders{$ph_idx} );
-		    $wordlist->[$ph_idx] = $self->empty_word;
+		# We have found and coped with the first word; 
+		# now we are looking for substantive gaps.
+		if ( $word_obj->word ) {
+		    $last_word_idx = $idx;
+		    if( $gap_start > 0 &&
+			( $gap_end - $gap_start ) > $GAP_MIN_SIZE ) {
+			# Put in the gap start & end markers.  Here we are
+			# replacing a blank, rather than adding to the array.
+ 			foreach( $gap_start, $gap_end ) {
+ 			    my $tag =  $_ < $gap_end ? 'BEGINGAP' : 'ENDGAP';
+ 			    my $gapdesc = $tag . "_1_$_";
+  			    $self->_wordlist_slice( $wordlist, $gapdesc,
+ 					    [ _special( $tag, $sigil ) ] );
+ 			}
+		    }
+		    # Either way we are not now in a gap.  Reset the counters.
+		    $gap_end = $gap_start = -1;
+		# else empty space; are we in a gap?
+		} elsif( $gap_start < 0 ) { 
+		    $gap_start = $idx;
+		} else {
+		    $gap_end = $idx;
 		}
-		# Put in the new - we are actually splicing in an
-		# extra BEGIN element for all arrays.
-		my $slicedesc = join( '_', 'begin', 
-				      scalar( @ph_set) - 1, 
-				      $idx-1 );
-		$self->_wordlist_slice( $wordlist, $slicedesc, \@ph_set );
-	    } else {
-		$placeholders{$idx} = $word_obj if $word_obj->placeholder;
-	    }
+	    # else we are still looking for the first non-blank word.
+	    } elsif( $word_obj->word ) {
+		$first_word_idx = $idx;
+		# We have found the first real word.  Splice in a begin marker.
+		my $slicedesc = join( '_', 'begin', 0, $idx-1 );
+		$self->_wordlist_slice( $wordlist, $slicedesc, 
+					[ _special( 'BEGIN', $sigil ) ] );
+	    } # else it's a blank before the first word.
 	} ## end foreach
-
+	
 	# Now put in the END element after the last word found.
 	# First account for the fact that we shifted the end of the array.
 	my $end_idx = $last_word_idx == $#{$wordlist} - 1 ? 
 	    $last_word_idx+1 : $last_word_idx;
 	my $slicedesc = join( '_', 'end', 0, $end_idx );
 	$self->_wordlist_slice( $wordlist, $slicedesc, 
-			       [ Text::TEI::Collate::Word->new( placeholder => '__END__', ms_sigil => $sigil, invisible => 1 ) ] );
+				[ _special( 'END', $sigil ) ] );
     }
 }
 		
+sub _special {
+    my( $mark, $sigil ) = @_;
+    return Text::TEI::Collate::Word->new( special => $mark, 
+					  ms_sigil => $sigil );
+}
 
 # match_and_align_words: Do the fuzzy matching necessary to roughly
 # align two columns (i.e. arrays) of words.  Takes two word arrays;
@@ -765,8 +774,7 @@ sub match_and_align_words {
 	    # corresponding indices, if they aren't the same.
 	    
 	    my $dist = &$distance( $w, $w2 );
-	    print STDERR "Distance on $w / $w2 is $dist\n"
-		if $self->{'debug'} > 3;
+	    $self->debug( "Distance on $w / $w2 is $dist", 3 );
 
 	    # If the words are not a match but start with the same letter,
 	    # check to see what happens if you glom the next word onto the
@@ -777,15 +785,13 @@ sub match_and_align_words {
 		if( length( $w2 ) > length( $w ) ) {
 		    $distplus = &$distance( $wplus, $w2 );
 		    if( $self->_is_match( $wplus, $distplus ) ) {
-			print STDERR "Using glommed match $wplus / $w2\n"
-			    if $self->{'debug'} > 1;
+			$self->debug( "Using glommed match $wplus / $w2", 1 );
 			$dist = $distplus * ( length($w) / length($wplus) );
 		    }
 		} else {
 		    $distplus = &$distance( $w, $w2plus );
 		    if( $self->_is_match( $w, $distplus ) ) {
-			print STDERR "Using glommed match $w / $w2plus\n"
-			    if $self->{'debug'} > 1;
+			$self->debug( "Using glommed match $w / $w2plus", 1 );
 			$dist = $distplus;
 		    }
 		}
@@ -804,21 +810,19 @@ sub match_and_align_words {
 	# length.
 	if( $self->_is_match( $w, $best_distance ) ) {
 	    # this is enough of a match.
-	    print STDERR "matched $w to " . $words2[$best_idx]->word() . "...\n"
-		if $self->{debug} > 1;
+	    $self->debug( "matched $w to " . $words2[$best_idx]->word() 
+			  . "...", 1 );
 	    # Make index_array2 match index_array1 for this word.
 	    if( $index_array2[$best_idx] =~ /^[A-Z]+$/ ) {
 		# Skip it.  This word has had an earlier match.
-		print STDERR "...but " . $words2[$best_idx]->word() . 
-		    " already has a match.  Skipping.\n"
-		    if $self->{debug} > 1;
+		$self->debug( "...but " . $words2[$best_idx]->word() . 
+			      " already has a match.  Skipping.", 1 );
 	    } else {
 		$index_array2[$best_idx] = $index_array1[$curr_idx];
 		$matched++;
 	    }
 	} else {
-	    print STDERR "Found no match for $w\n"
-		if $self->{debug} > 1;
+	    $self->debug( "Found no match for $w", 1 );
 	}
 	
 	$curr_idx++;
@@ -840,15 +844,11 @@ sub match_and_align_words {
 	} elsif( !scalar( $minidiff->Range( 2 ) ) ) {
 	    $self->_handle_diff_interpolation( $minidiff, 1, \@words1, \@aligned1, \@aligned2 );
 	} else {
-	    ## Pad out the shorter one, but don't allow a placeholder and a
-	    ## non-placeholder to share a line.
+	    ## Pad out the shorter one
 	    my @r1 = $minidiff->Range( 1 );
 	    my @r2 = $minidiff->Range( 2 );
-	    my( $ph_aligned1, $ph_aligned2 ) = 
-		$self->_align_placeholder( [ @words1[@r1] ], 
-					   [ @words2[@r2] ] );
-	    push( @aligned1, @$ph_aligned1 );
-	    push( @aligned2, @$ph_aligned2 );
+	    push( @aligned1, @words1[@r1] );
+	    push( @aligned2, @words2[@r2] );
 
 	    my $pad_needed = scalar( @r1 ) - scalar( @r2 );
 	    if( $pad_needed > 0 ) {
@@ -882,49 +882,6 @@ sub _is_match {
     return( $dist < ( length( $str ) * $self->{fuzziness} / 100 ) );
 }
 
-sub _align_placeholder {
-    my $self = shift;
-    my( $list1, $list2 ) = @_;
-    
-    if( ( grep { $_->placeholder } @$list1 )
-	|| ( grep { $_->placeholder } @$list2 ) ) {
-
-	my $reversed = 0;
-	if( $#{$list1} > $#{$list2} ) {
-	    my $tmp = $list1;
-	    $list1 = $list2;
-	    $list2 = $tmp;
-	    $reversed = 1;
-	}
-	# Now we know that list1 is the shorter.
-
-	foreach my $idx( 0 .. $#{$list1} ) {
-	    my $el1 = $list1->[$idx];
-	    my $el2 = $list2->[$idx];
-	    if( $el1->placeholder && !$el2->placeholder ) {
-		# Push the placeholder down a space...
-		splice( @$list1, $idx, 0, $self->empty_word );
-		# and add an empty space next to it in the other array.
-		splice( @$list2, $idx+1, 0, $self->empty_word );
-	    } elsif( $el2->placeholder && !$el1->placeholder ) {
-		# The same thing in reverse.
-		splice( @$list2, $idx, 0, $self->empty_word );
-		splice( @$list1, $idx+1, 0, $self->empty_word );
-	    } # else both / neither, and they can stay put.
-	}
-	if( $reversed ) {
-	    my $tmp = $list1;
-	    $list1 = $list2;
-	    $list2 = $tmp;
-	}
-	print STDERR 'Spliced for placeholder; new list is ' .
-	    join( '.', map { $_->printable } @$list1 ) . ' / ' .
-	    join( '.', map { $_->printable } @$list2 ) . "\n"
-	    if $self->{'debug'} > 1;
-    }  # else no placeholders so no change.
-    return( $list1, $list2 );
-}
-
 # Helper function.  Returns a string composed of upper-case ASCII
 # characters based on an index number.  Handles overflow past 26.
 sub _return_alpha_string {
@@ -937,6 +894,16 @@ sub _return_alpha_string {
 	$idx = int( $idx / 26 );
     }
     return scalar( reverse @chars );
+}
+
+## Print a debugging message.
+sub debug {
+    my $self = shift;
+    my( $msg, $lvl, $no_newline ) = @_;
+    $lvl = 0 unless $lvl;
+    print STDERR 'DEBUG ' . ($lvl+1) . ": $msg"
+	. ( $no_newline ? '' : "\n" )
+	if $self->{'debug'} > $lvl;
 }
 
 1;

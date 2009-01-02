@@ -34,6 +34,9 @@ sub new {
     };
     
     bless $self, $class;
+    if( $self->{'special'} ) {
+	$self->{'invisible'} = 1;
+    }
     $self->evaluate_word( $init_string );
     return $self;
 }
@@ -42,7 +45,10 @@ sub evaluate_word {
     my $self = shift;
     my $word = shift;
 
-    $word = '' unless defined $word;
+    unless( defined $word ) {
+	$word = '';
+	return;
+    }
 
     # Preserve the original word, weird orthography and all.
     if( $self->original_form ) {
@@ -92,23 +98,18 @@ sub word {
     if( defined $form ) {
 	$self->{'word'} = $form;
     } 	
-    return '' if $self->{'invisible'};
-    return ( $self->placeholder ? $self->placeholder : $self->{'word'} );
+    return $self->{'invisible'} ? '' : $self->{'word'}
 }
 
 =head2 printable
 
-Passes either the canonical form or the placeholder string of the word.
+Return either the word or the 'special', as applicable
 
 =cut
 
 sub printable {
     my $self = shift;
-    if( $self->placeholder ) {
-	return $self->placeholder;
-    } else {
-	return $self->canonical_form;
-    }
+    return $self->special ? $self->special : $self->canonical_form;
 }
 
 =head2 original_form
@@ -172,7 +173,7 @@ sub punctuation {
     if( $punct ) {
 	$self->{'punctuation'} = $punct;
     }
-    return $self->{'punctuation'};
+    return @{$self->{'punctuation'}};
 }
 
 =head2 canonizer
@@ -191,19 +192,45 @@ sub canonizer {
     return $self->{'canonizer'};
 }
 
-=head2 placeholder
+=head2 special
 
-If this word is a placeholder, returns the type (e.g. __DIV__).
-Otherwise returns undef.
+Returns a word's special value.  Used for meta-words like
+BEGIN and END.
 
 =cut
 
-sub placeholder {
+sub special {
     my $self = shift;
-    return exists $self->{'placeholder'} ? $self->{'placeholder'} : undef;
+    return unless exists( $self->{'special'} );
+    return $self->{'special'};
 }
 
-1; 
+=head2 placeholders
+
+Returns the sectional markers, if any, that go before the word.
+
+=cut
+
+sub placeholders {
+    my $self = shift;
+    return exists $self->{'placeholders'} ? @{$self->{'placeholders'}} : ();
+}
+
+=head2 add_placeholder
+
+Adds a sectional marker that should precede the word in question.
+
+=cut
+
+sub add_placeholder {
+    my $self = shift;
+    my $new_ph = shift;
+    unless( $self->{'placeholders'} ) {
+	$self->{'placeholders'} = [];
+    }
+    push( @{$self->{'placeholders'}}, $new_ph );
+}
+    
 
 =head2 ms_sigil
 

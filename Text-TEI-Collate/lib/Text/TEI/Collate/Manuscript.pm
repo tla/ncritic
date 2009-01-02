@@ -103,9 +103,7 @@ sub _init_from_xml {
 	    } else {
 		$place_str = '__DIV__';
 	    }
-	    push( @words, Text::TEI::Collate::Word->new( placeholder => $place_str,
-							 ms_sigil => $self->{'sigil'} ) );
-	    push( @words, $self->_read_paragraphs( $_ ) );
+	    push( @words, $self->_read_paragraphs( $_, $place_str ) );
 	}  # foreach <div/>
 	
 	# But maybe we don't have any divs.  Just paragraphs.
@@ -120,14 +118,12 @@ sub _init_from_xml {
 }
 
 sub _read_paragraphs {
-    my( $self, $element ) = @_;
+    my( $self, $element, $divmarker ) = @_;
 
     my @words;
     my @pgraphs = $element->getElementsByTagName( 'p' );
     return () unless @pgraphs;
     foreach my $pg( @pgraphs ) {
-	push( @words, Text::TEI::Collate::Word->new( placeholder => '__PG__', 
-						     ms_sigil => $self->{'sigil'} ) );
 	# If there are any #text nodes that are direct children of
 	# this paragraph, the whole thing needs to be processed.
 	my $xpc = XML::LibXML::XPathContext->new( $pg );
@@ -136,9 +132,17 @@ sub _read_paragraphs {
 	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
-	    push( @words, $self->_split_words( $string ) );
+	    my @pg_words = $self->_split_words( $string );
+	    # Set the relevant sectioning markers on the first word.
+	    if( $divmarker ) {
+		$pg_words[0]->add_placeholder( $divmarker );
+		$divmarker = undef;
+	    }
+	    $pg_words[0]->add_placeholder( '__PG__' );
+	    push( @words, @pg_words );
 	} else {  # if everything is wrapped in w / seg tags
 	    # Get the text of each node
+	    my $first_word = 1;
 	    foreach my $c ( $pg->childNodes() ) {
 		# Trickier.  Need to parse the component tags.
 		my $text = _get_text_from_node( $c );
@@ -153,10 +157,19 @@ sub _read_paragraphs {
 		print STDERR "DEBUG: space found in element node "
 		    . $c->nodeName . "\n" if scalar @textwords > 1;
 		foreach( @textwords ) {
-		    push( @words, 
-			  Text::TEI::Collate::Word->new( 'string' => $_,
-				 'ms_sigil' => $self->{'sigil'},
-				 'canonizer' => $self->{'canonizer'} ) );
+		    my $w = Text::TEI::Collate::Word->new( 'string' => $_,
+				   'ms_sigil' => $self->{'sigil'},
+				   'canonizer' => $self->{'canonizer'} );
+		    if( $first_word ) {
+			$first_word = 0;
+			# Set the relevant sectioning markers 
+			if( $divmarker ) {
+			    $w->add_placeholder( $divmarker );
+			    $divmarker = undef;
+			}
+			$w->add_placeholder( '__PG__' );
+		    }
+		    push( @words, $w );
 		}
 	    }
 	}
