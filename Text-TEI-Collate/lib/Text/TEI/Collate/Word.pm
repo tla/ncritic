@@ -66,22 +66,12 @@ sub evaluate_word {
     my @punct_instances = $word =~ /([[:punct:]])/;
     foreach my $p ( @punct_instances ) {
 	next if( grep /\Q$p\E/, @{$self->{'not_punct'}} );
-	next if( grep /\Q$p\E/, @{$self->{'accents'}} );
 	push( @$punct, $p );
 	$word =~ s/\Q$p\E//g;
     }
     $self->punctuation( $punct );
+    # TODO: something sensible with accent marks
 
-    my $accent_pattern = join( '', @{$self->{accents}} );
-    # Has it an accent over a letter?  If so, record the accented form.
-    # TODO: Make this work with composed characters.
-    if( length $accent_pattern ) {
-	if( $word =~ /[$accent_pattern]/ ) {
-	    $self->accented_form( $word );
-	    $word =~ s/[$accent_pattern]//g; # Strip all accents
-	}
-    }
-    
     $self->word( $word );
 }
 
@@ -101,7 +91,8 @@ sub word {
     my $form = shift;
     if( defined $form ) {
 	$self->{'word'} = $form;
-    }
+    } 	
+    return '' if $self->{'invisible'};
     return ( $self->placeholder ? $self->placeholder : $self->{'word'} );
 }
 
@@ -112,11 +103,11 @@ Passes either the canonical form or the placeholder string of the word.
 =cut
 
 sub printable {
-    my $wordobj = shift;
-    if( $wordobj->placeholder ) {
-	return $wordobj->placeholder;
+    my $self = shift;
+    if( $self->placeholder ) {
+	return $self->placeholder;
     } else {
-	return $wordobj->canonical_form;
+	return $self->canonical_form;
     }
 }
 
@@ -212,47 +203,78 @@ sub placeholder {
     return exists $self->{'placeholder'} ? $self->{'placeholder'} : undef;
 }
 
-## Subs for marking a word as a base, a true variant, or a grammatical /
-## orthographical error.
-
-sub accept_base {
-    my $self = shift;
-    $self->{'is_base'} = 1;
-    $self->{'is_variant'} = 0;
-    $self->{'is_error'} = 0;
-}
-
-sub is_base {
-    my $self = shift;
-    return $self->{'is_base'};
-}
-
-sub accept_variant {
-    my $self = shift;
-    $self->{'is_variant'} = 1;
-    $self->{'is_base'} = 0;
-    $self->{'is_error'} = 0;
-}
-
-sub is_variant {
-    my $self = shift;
-    return $self->{'is_variant'};
-}
-
-sub mark_error {
-    my $self = shift;
-    $self->{'is_error'} = 1;
-    $self->{'is_base'} = 0;
-    $self->{'is_variant'} = 0;
-}
-
-sub is_error {
-    my $self = shift;
-    return $self->{'is_error'};
-}
-
 1; 
 
+=head2 ms_sigil
+
+Returns the sigil of the manuscript wherein this word appears.
+
+=cut
+
+sub ms_sigil {
+    my $self = shift;
+    return exists $self->{'ms_sigil'} ? $self->{'ms_sigil'} : '';
+}
+
+### Links
+
+=head2 links
+
+Returns the list of links, or an empty list.
+
+=cut
+
+sub links {
+    my $self = shift;
+    return exists $self->{'links'} ? @{$self->{'links'}} : ();
+}
+
+=head2 add_link
+
+Adds to the list of 'like' words in this word's column.
+
+=cut
+
+sub add_link {
+    my $self = shift;
+    my $new_obj = shift;
+    unless( ref( $new_obj ) eq 'Text::TEI::Collate::Word' ) {
+	warn "Cannot add a link to a non-word";
+	return;
+    }
+    my $links = exists $self->{'links'} ? $self->{'links'} : [];
+    push( @$links, $new_obj );
+    $self->{'links'} = $links;
+}
+
+=head2 variants
+
+Returns the list of variants, or an empty list.
+
+=cut
+
+sub variants {
+    my $self = shift;
+    return exists $self->{'variants'} ? @{$self->{'variants'}} : ();
+}
+
+=head2 add_variant
+
+Adds to the list of 'different' words in this word's column.
+
+=cut
+
+sub add_variant {
+    my $self = shift;
+    my $new_obj = shift;
+    unless( ref( $new_obj ) eq 'Text::TEI::Collate::Word' ) {
+	warn "Cannot add a non-word as a variant";
+	return;
+    }
+    my $variants = exists $self->{'variants'} ? $self->{'variants'} : [];
+    push( @$variants, $new_obj );
+    $self->{'variants'} = $variants;
+}
 
 =head1 BUGS / TODO
 

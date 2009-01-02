@@ -99,12 +99,7 @@ sub new {
 	    return undef;
 	}
     }
-    
-    # Initialize the "transpositions" array.  This will be a set of
-    # tuples giving the length and start-item of any word
-    # transpositions we find.
-    $self->{'transpositions'} = {};
-    
+        
     if( my $b = $self->{'binmode'} ) {
 	binmode STDERR, ":$b";
     }
@@ -200,10 +195,12 @@ sub align {
 
     # Take the contents of @result_array and put them back into the
     # manuscripts.
-
     foreach my $i ( 0 .. $#result_array ) {
 	$manuscripts[$i]->replace_words( $result_array[$i] );
     }
+
+    # Top and tail each array.
+    $self->begin_end_mark( @manuscripts );
     return @manuscripts;
 }
 
@@ -263,6 +260,7 @@ sub build_array {
     }
 
     $self->check_gaps( \@base_result, \@new_result );
+    $self->link_words( \@base_result, \@new_result );
 
     return( \@base_result, \@new_result );
 }
@@ -305,8 +303,7 @@ sub _handle_diff_interpolation {
 
 # generate_base: Take an array of text arrays and flatten them.  There
 # should not be a blank element in the resulting base.  Currently
-# used for only two input arrays at a time.  Optionally takes a hash to
-# record the dissimilar variants on each base word.
+# used for only two input arrays at a time.  
 
 sub generate_base {
     my $self = shift;
@@ -334,35 +331,13 @@ sub generate_base {
 		last;
 	    }
 	}
-	warn( "No word found in any column at index $idx!" )
-	    if( $word eq $self->empty_word );
+	# Disabled due to BEGIN shenanigans
+	# warn( "No word found in any column at index $idx!" )
+	    # if( $word eq $self->empty_word );
 	push( @new_base, $word );
     }
     
     return \@new_base;
-}
-
-sub _is_near_word_match {
-    my $self = shift;
-    my( $word1, $word2 ) = @_;
-    
-    # Find our distance routine in case we need it.
-    unless( ref $self->{distance_sub} ) {
-	warn "No word distance algorithm specified.  Cannot compare words.";
-	return;
-    }
-    my $distance = $self->{'distance_sub'};
-    my $dist = &$distance( $word1->word, $word2->word );
-    return ( $dist < ( length( $word1->word ) * $self->{fuzziness} / 100 ) );
-}
-
-sub _get_transposition {
-    my ( $self, $word ) = @_;
-    if( exists $self->{'transpositions'}->{ scalar $word } ) {
-	return delete $self->{'transpositions'}->{$word};
-    } else {
-	return 0;
-    }
 }
 
 # Take a word source and convert it into a manuscript object with a
@@ -423,11 +398,98 @@ sub read_manuscript_source {
 	'source' => $docroot,
 	'canonizer' => $self->{'canonizer'} 
 	);
-    
-    # Now get the words.
-    # Assume for now one body text
+
     return $ms_obj;
 }
+
+# link_words: Another example of my startling inefficiency.  Build
+# links on the base wordlist to the new wordlist, saying what is a
+# fuzzy match and what is not.  For later apparatus construction.
+
+sub link_words {
+    my $self = shift;
+    my( $base, $new ) = @_;
+
+    # Again with the bloody index counting.
+    foreach my $i ( 0 .. $#{$base} ) {
+	my $word_obj = $base->[$i];
+	my $new_word_obj = $new->[$i];
+
+	# No links to the empty word.
+	next if $word_obj eq $self->empty_word;
+	next if $new_word_obj eq $self->empty_word;
+
+	print STDERR "Trying to set link for " . $word_obj->word . " / "
+	    . $new_word_obj->word . "..." if $self->{'debug'} > 1;
+
+	# Now we have to repeat the distance checking that we did in
+	# &match_and_align_words.  This cries out for refactoring, but
+	# refactoring is hard because there we need the best match, and
+	# here we need a yes/no answer.  We've partially refactored it
+	# into _index_word_match anyway.
+	my $match_answer = $self->_index_word_match( $base, $new, $i );
+	if( $match_answer ne 'no' ) {
+	    $word_obj->add_link( $new_word_obj );
+	    print STDERR "word match: $match_answer\n" if $self->{'debug'} > 1;
+	} else {
+	    # Trot out the list of variants.
+	    my $found_variant_match = 0;
+	    foreach my $var_obj ( $word_obj->variants ) {
+		$match_answer = $self->_index_word_match( $base, $new, $i, $var_obj );
+		if( $match_answer ne 'no' ) {
+		    $var_obj->add_link( $new_word_obj );
+		    $found_variant_match = 1;
+		    print STDERR "variant match: $match_answer to " .
+			$var_obj->word . "\n" if $self->{'debug'} > 1;
+		    last;
+		}
+	    }
+	    unless( $found_variant_match ) {
+		$word_obj->add_variant( $new_word_obj );
+		print STDERR "new variant\n";
+	    }
+	}
+    }
+}
+	
+sub _index_word_match {
+    my $self = shift;
+    my( $words1, $words2, $idx, $alt_start ) = @_;
+
+    # Possible return values are 'yes', 'glom', 'no'
+    my $w1obj = $alt_start ? $alt_start : $words1->[$idx];
+    my $w2obj = $words2->[$idx];
+    return 'yes' if( $self->_is_near_word_match( $w1obj->word, $w2obj->word ) );
+
+    my( $w1glom, $w2glom );
+    if( length( $w1obj->word ) > length( $w2obj->word ) ) {
+	$w1glom = $w1obj->word;
+	$w2glom = $w2obj->word . ( $idx < $#{$words2} ? 
+				   $words2->[$idx+1]->word : '' );
+    } else {
+	$w2glom = $w2obj->word;
+	$w1glom = $w1obj->word . ( $idx < $#{$words1} ? 
+				   $words1->[$idx+1]->word : '' );
+    }
+    return 'glom' if $self->_is_near_word_match( $w1glom, $w2glom );
+    return 'no';
+}
+
+
+sub _is_near_word_match {
+    my $self = shift;
+    my( $word1, $word2 ) = @_;
+    
+    # Find our distance routine in case we need it.
+    unless( ref $self->{distance_sub} ) {
+        warn "No word distance algorithm specified.  Cannot compare words.";
+        return;
+    }
+    my $distance = $self->{'distance_sub'};
+    my $dist = &$distance( $word1, $word2 );
+    return ( $dist < ( length( $word1 ) * $self->{fuzziness} / 100 ) );
+}
+
 
 # check_gaps: Run some heuristics on the new finished array, looking
 # for orphan words in a sea of undefs.  Try to find a contiguous home
@@ -592,6 +654,60 @@ sub _wordlist_slice {
     }
 }
 
+# begin_end_mark: Compress any placeholder sectioning to just before
+# the first real word, and put an "END" placeholder after the last 
+# real word, for each array.
+
+sub begin_end_mark {
+    my $self = shift;
+    my @manuscripts = @_;
+    foreach my $text( @manuscripts ) {
+	my $wordlist = $text->words;
+	my $sigil = $text->sigil;
+	my $first_word_idx = -1;
+	my $last_word_idx = -1;
+	my %placeholders = ();
+	foreach my $idx( 0 .. $#{$wordlist} ) {
+	    my $word_obj = $wordlist->[$idx];
+	    if( $first_word_idx > -1 ) {
+		# We have found and coped with the first word; just
+		# look for the last word now.
+		$last_word_idx = $idx if $word_obj->word;
+	    } elsif( $word_obj->word && !$word_obj->placeholder ) {
+		$first_word_idx = $idx;
+		# We have found the first real word.  Splice in all the
+		# placeholders before this.
+		my @ph_set = Text::TEI::Collate::Word->new( 
+		    placeholder => '__BEGIN__',
+		    ms_sigil => $sigil,
+		    invisible => 1 );
+		foreach my $ph_idx ( sort keys %placeholders ) {
+		    # Clear out the old
+		    push( @ph_set, $placeholders{$ph_idx} );
+		    $wordlist->[$ph_idx] = $self->empty_word;
+		}
+		# Put in the new - we are actually splicing in an
+		# extra BEGIN element for all arrays.
+		my $slicedesc = join( '_', 'begin', 
+				      scalar( @ph_set) - 1, 
+				      $idx-1 );
+		$self->_wordlist_slice( $wordlist, $slicedesc, \@ph_set );
+	    } else {
+		$placeholders{$idx} = $word_obj if $word_obj->placeholder;
+	    }
+	} ## end foreach
+
+	# Now put in the END element after the last word found.
+	# First account for the fact that we shifted the end of the array.
+	my $end_idx = $last_word_idx == $#{$wordlist} - 1 ? 
+	    $last_word_idx+1 : $last_word_idx;
+	my $slicedesc = join( '_', 'end', 0, $end_idx );
+	$self->_wordlist_slice( $wordlist, $slicedesc, 
+			       [ Text::TEI::Collate::Word->new( placeholder => '__END__', ms_sigil => $sigil, invisible => 1 ) ] );
+    }
+}
+		
+
 # match_and_align_words: Do the fuzzy matching necessary to roughly
 # align two columns (i.e. arrays) of words.  Takes two word arrays;
 # returns two word arrays aligned via empty-string element padding.
@@ -743,8 +859,6 @@ sub match_and_align_words {
 	}
     }
 
-    ### TODO: Look for transpositions before we return.
-
     # Make sure we are returning the same number of word items per array.
     unless( scalar @aligned1 == scalar @aligned2 ) {
 	warn "Uneven collation! " . join( ",", _stripped_words( \@aligned1 ) ) . " / "
@@ -830,10 +944,6 @@ sub _return_alpha_string {
 =head1 BUGS / TODO
 
 =over
-
-=item *
-
-Make transposition work properly
 
 =item *
 
