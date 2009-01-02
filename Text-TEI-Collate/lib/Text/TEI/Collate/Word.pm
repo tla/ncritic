@@ -205,6 +205,68 @@ sub special {
     return $self->{'special'};
 }
 
+=head2 state
+
+Returns a hash of all the values that might be changed by a 
+re-comparison.  Useful to 'back up' a word before attempting a
+rematch.  Currently does not expect any of the 'mutable' keys
+to contain data structure refs.
+
+=cut
+
+my @mutable_keys = qw( glommed );
+sub state {
+    my $self = shift;
+    my $opts = {};
+    foreach my $key( @mutable_keys ) {
+	warn( "Not making full copy of ref stored in $key" ) 
+	    if ref( $self->{$key} );
+	$opts->{$key} = $self->{$key};
+    }
+    return $opts;
+}
+
+sub restore_state {
+    my $self = shift;
+    my $opts = shift;
+    return unless ref( $opts ) eq 'HASH';
+    foreach my $key( @mutable_keys ) {
+	$self->{$key} = $opts->{$key};
+    }
+}
+
+=head2 is_glommed
+
+Returns true if the word has been matched together with its
+following word.  If passed with an argument, sets this value.
+
+=cut
+
+sub is_glommed {
+    my $self = shift;
+    my $val = shift;
+    if( defined( $val ) ) {
+	$self->{'glommed'} = $val;
+    }
+    return $self->{'glommed'};
+}
+
+=head2 is_base
+
+Returns true if the word has been matched together with its
+following word.  If passed with an argument, sets this value.
+
+=cut
+
+sub is_base {
+    my $self = shift;
+    my $val = shift;
+    if( defined( $val ) ) {
+	$self->{'base'} = $val;
+    }
+    return $self->{'base'};
+}
+
 =head2 placeholders
 
 Returns the sectional markers, if any, that go before the word.

@@ -28,14 +28,22 @@ my @results = $aligner->align( @files );
 my $ns_uri = 'http://www.tei-c.org/ns/1.0';
 my ( $doc, $body ) = make_tei_doc( @results );
 
-# Get the new base.  This should have all the links.
+### Initialization 
+##  Generate a base by flattening all the results
 my $initial_base = $aligner->generate_base( map { $_->words } @results );
-# Undef if not begun, 1 if begun and not ended, 0 if ended
-my $app_id_ctr = 0;
-my %text_active;
-my %text_on_vacation;  # We all need a break sometimes.
-my $in_app = 0;
-my @app_waiting = ();
+
+##  Counter variables
+my $app_id_ctr = 0;  # for xml:id of <app/> tags
+
+## Loop state variables
+my %text_active;            # those texts BEGUN but not ENDed
+my %text_on_vacation;       # We all need a break sometimes.
+my $in_app = 0;             # Whether we have deferred apparatus creation
+my @app_waiting = ();       # List of deferred entries
+my $ANCHORPAT = '__GLOM__'; # Tags that tell us whether we want to anchor
+                            #   deferred entries to the next unencumbered one
+my $anchor_to_next = 0;     # The result of matching $ANCHORPAT
+
 foreach my $idx ( 0 .. $#{$initial_base} ) {
     # Mark which texts are on duty
     foreach my $w ( map { $_->words->[$idx] } @results ) {
@@ -53,13 +61,11 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 				    && !$text_on_vacation{$_} ) } 
         keys( %text_active );
     if( keys( %text_unseen ) ) {
-	my @links = $word_obj->links;
-	my @variants = $word_obj->variants;
-	
+	# A hash will go into @line_words for each run of &class_words
+	# for a given line.
 	my @line_words;
-	# The main word makes a group in %line_words, and then each variant
-	# makes its own group.
 	push( @line_words, class_words( $word_obj, \%text_unseen ) );
+	my @variants = $word_obj->variants;
 	foreach( @variants ) {
 	    push( @line_words, class_words( $_, \%text_unseen ) );
 	}
@@ -68,13 +74,21 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 	if( keys( %text_unseen ) ) {
 	    push( @app_waiting, \@line_words );
 	    $in_app = 1;
+	    $anchor_to_next = grep /$ANCHORPAT/, keys( %text_unseen ) ? 1 : 0;
 	} else {
 	    if( $in_app ) {
-		make_app( @app_waiting );
+		if( $anchor_to_next ) {
+		    make_app( @app_waiting, \@line_words );
+		} else {
+		    make_app( @app_waiting );
+		    make_app( \@line_words );
+		}
+		# Reset state vars
 		@app_waiting = ();
-		$in_app = 0;
+		$in_app = $anchor_to_next = 0;
+	    } else {
+		make_app( \@line_words );
 	    }
-	    make_app( \@line_words );
 	}
     }
 
@@ -142,6 +156,13 @@ sub class_words {
     my $varhash = {};
     my $meta = {};
     _add_word_to_varhash( $varhash, $meta, $word_obj );
+    # Nasty hack.  If the word in question was matched by being glommed
+    # onto the next word, we want to defer the call to &make_app.  So
+    # we add a bogus entry to the unseen hash.
+    if ( $word_obj->is_glommed ) {
+	print STDERR "DEBUG: glom logic at $app_id_ctr\n";
+	$unseen->{'__GLOM__'} = 1;
+    }
     delete $unseen->{ $word_obj->ms_sigil };
     foreach my $w ( $word_obj->links ) {
 	_add_word_to_varhash( $varhash, $meta, $w );

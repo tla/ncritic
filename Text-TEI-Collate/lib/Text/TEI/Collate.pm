@@ -328,6 +328,7 @@ sub generate_base {
 	foreach my $col ( 0 .. $width - 1 ) {
 	    if( $texts[$col]->[$idx]->word() ne '' ) {
 		$word = $texts[$col]->[$idx];
+		$word->is_base( 1 );
 		last;
 	    }
 	}
@@ -495,10 +496,11 @@ sub _is_near_word_match {
 # for orphan words in a sea of undefs.  Try to find a contiguous home
 # for them.
 
-# TODO: check & fix gaps in the base (i.e. previous arrays.)
+# TODO: check & fix gaps in the base (i.e. previous arrays.)  Which is
+# actually kind of hard.
 sub check_gaps {
     my $self = shift;
-    my( $base, $new, @results ) = @_;
+    my( $base, $new ) = @_;
     
     # Will need some state vars.
     my @seq;
@@ -574,8 +576,10 @@ sub check_gaps {
 
     foreach( @orphans ) {
 	my @orphaned_words;
+	my @saved_state;
 	foreach my $block ( @{$_->{'words'}} ) {
 	    push( @orphaned_words, $self->_wordlist_slice( $new, $block ) );
+	    @saved_state = map { $_->state } @orphaned_words;
 	}
 	
 	# First try the after.
@@ -588,6 +592,7 @@ sub check_gaps {
 	    # extra words.
 	    my @base_words = 
 		@{$base}[ ($idx - 4 - scalar @orphaned_words) .. ($idx) ];
+	    my @base_state = map { $_->state } @base_words;
 	    $base_entry = 'base_' . scalar( @base_words ) . "_$idx";
 	    $self->debug( "Will try new alignment on words " 
 			  . join( ' ', _stripped_words( \@orphaned_words ) ) 
@@ -598,6 +603,14 @@ sub check_gaps {
 	    if( $quality > 49 ) {
 		$self->debug( "...match has quality $quality; will fix the array with this" );
 		$better_match = [ $rematch_base, $rematch_new ];
+	    } else {
+		# Return the words to status quo.
+		foreach my $jdx( 0 .. $#orphaned_words ) {
+		    $orphaned_words[$jdx]->restore_state( $saved_state[$jdx] );
+		}
+		foreach my $jdx( 0 .. $#base_words ) {
+		    $base_words[$jdx]->restore_state( $base_state[$jdx] );
+		}
 	    }
 	}
 	if( !$better_match && $_->{'before'} ) {
@@ -607,6 +620,7 @@ sub check_gaps {
 	    $idx = $idx - $size;
 	    my @base_words = @{$base}[ ($idx+1) .. 
 				       ($idx+scalar(@orphaned_words)+4) ];
+	    my @base_state = map { $_->state } @base_words;
 	    $base_entry = 'base_' . scalar( @base_words ) . '_'
 		. ( $idx+scalar(@orphaned_words)+4 );
 	    $self->debug( "Will try next new alignment on words " 
@@ -617,6 +631,14 @@ sub check_gaps {
 	    if( $quality > 49 ) {
 		$self->debug( "...match has quality $quality; will fix the array with this" );
 		$better_match = [ $rematch_base, $rematch_new ];
+	    } else {
+		# Return the words to status quo.
+		foreach my $jdx( 0 .. $#orphaned_words ) {
+		    $orphaned_words[$jdx]->restore_state( $saved_state[$jdx] );
+		}
+		foreach my $jdx( 0 .. $#base_words ) {
+		    $base_words[$jdx]->restore_state( $base_state[$jdx] );
+		}
 	    }
 	}
 
@@ -786,13 +808,25 @@ sub match_and_align_words {
 		    $distplus = &$distance( $wplus, $w2 );
 		    if( $self->_is_match( $wplus, $distplus ) ) {
 			$self->debug( "Using glommed match $wplus / $w2", 1 );
+			$words1[$curr_idx]->is_glommed( 1 );
 			$dist = $distplus * ( length($w) / length($wplus) );
+		    } else {
+			# If this is a base word, remember any previous
+			# glomming.
+			$words1[$curr_idx]->is_glommed( 0 )
+			    unless $words1[$curr_idx]->is_base;
 		    }
 		} else {
 		    $distplus = &$distance( $w, $w2plus );
 		    if( $self->_is_match( $w, $distplus ) ) {
 			$self->debug( "Using glommed match $w / $w2plus", 1 );
+			$words2[$curr_idx2]->is_glommed( 1 );
 			$dist = $distplus;
+		    } else {
+			# If this is a base word, remember any previous
+			# glomming.
+			$words2[$curr_idx2]->is_glommed( 0 )
+			    unless $words2[$curr_idx2]->is_base;
 		    }
 		}
 	    }
