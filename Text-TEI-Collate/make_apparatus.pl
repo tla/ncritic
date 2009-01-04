@@ -3,6 +3,8 @@
 use strict;
 use lib 'lib';
 use Data::Dumper;
+use Getopt::Long;
+use Storable;
 use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
 use Words::Armenian;
@@ -10,20 +12,37 @@ use XML::LibXML;
 
 eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
+my( $debug, $fuzziness ) = ( undef, 50 );
+GetOptions( 
+	    'debug:i' => \$debug,
+	    'fuzziness=i' => \$fuzziness,
+    );
+## Option checking
+if( defined $debug ) {
+    # If it's defined but false, no level was passed.  Use default 1.
+    $debug = 1 unless $debug;
+} else {
+    $debug = 0;
+}
+
 my( @files ) = @ARGV;
 
-# and how fuzzy a match we can tolerate.
-my $fuzziness = "50";  # this is n%
-
+# how fuzzy a match we can tolerate
 my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
-				       'debug' => 0,
+				       'debug' => $debug,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 				       'canonizer' => \&Words::Armenian::canonize_word,
 				       'TEI' => 1,
     );
-
-
-my @results = $aligner->align( @files );
+my @results;
+if( scalar ( @files ) == 1 ) {
+    no warnings 'once'; 
+    $Storable::Eval = 1;
+    my $savedref = retrieve( $files[0] );
+    @results = @$savedref;
+} else {
+    @results = $aligner->align( @files );
+}
 
 my $ns_uri = 'http://www.tei-c.org/ns/1.0';
 my ( $doc, $body ) = make_tei_doc( @results );
@@ -34,15 +53,15 @@ my $initial_base = $aligner->generate_base( map { $_->words } @results );
 
 ##  Counter variables
 my $app_id_ctr = 0;  # for xml:id of <app/> tags
+my $word_id_ctr = 0; # for xml:id of <w/> tags that have witDetails
 
 ## Loop state variables
 my %text_active;            # those texts BEGUN but not ENDed
 my %text_on_vacation;       # We all need a break sometimes.
 my $in_app = 0;             # Whether we have deferred apparatus creation
 my @app_waiting = ();       # List of deferred entries
-my $ANCHORPAT = '__GLOM__'; # Tags that tell us whether we want to anchor
-                            #   deferred entries to the next unencumbered one
-my $anchor_to_next = 0;     # The result of matching $ANCHORPAT
+my @special_unseen = qw( __GLOM__ );  # Tags that might turn up in the
+                                      # text_unseen hash
 
 foreach my $idx ( 0 .. $#{$initial_base} ) {
     # Mark which texts are on duty
@@ -72,23 +91,18 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 	
 	# Either make the apparatus entry, or defer it.
 	if( keys( %text_unseen ) ) {
+	    # Add a reading for the omitted words
+	    push( @line_words, class_words( 'omitted', \%text_unseen ) );
 	    push( @app_waiting, \@line_words );
 	    $in_app = 1;
-	    $anchor_to_next = grep /$ANCHORPAT/, keys( %text_unseen ) ? 1 : 0;
 	} else {
 	    if( $in_app ) {
-		if( $anchor_to_next ) {
-		    make_app( @app_waiting, \@line_words );
-		} else {
-		    make_app( @app_waiting );
-		    make_app( \@line_words );
-		}
+		make_app( @app_waiting );
 		# Reset state vars
 		@app_waiting = ();
-		$in_app = $anchor_to_next = 0;
-	    } else {
-		make_app( \@line_words );
+		$in_app = 0;
 	    }
+	    make_app( \@line_words );
 	}
     }
 
@@ -155,21 +169,31 @@ sub class_words {
     my( $word_obj, $unseen ) = @_;
     my $varhash = {};
     my $meta = {};
-    _add_word_to_varhash( $varhash, $meta, $word_obj );
-    # Nasty hack.  If the word in question was matched by being glommed
-    # onto the next word, we want to defer the call to &make_app.  So
-    # we add a bogus entry to the unseen hash.
-    if ( $word_obj->is_glommed ) {
-	print STDERR "DEBUG: glom logic at $app_id_ctr\n";
-	$unseen->{'__GLOM__'} = 1;
-    }
-    delete $unseen->{ $word_obj->ms_sigil };
-    foreach my $w ( $word_obj->links ) {
-	_add_word_to_varhash( $varhash, $meta, $w );
-	delete $unseen->{ $w->ms_sigil };
-    }
-    if( keys %$meta ) {
-	$varhash->{'meta'} = $meta;
+    if( ref $word_obj ) {
+	_add_word_to_varhash( $varhash, $meta, $word_obj );
+	# Nasty hack.  If the word in question was matched by being glommed
+	# onto the next word, we want to defer the call to &make_app.  So
+	# we add a bogus entry to the unseen hash.
+	if ( $word_obj->is_glommed ) {
+	    $unseen->{'__GLOM__'} = 1;
+	}
+	delete $unseen->{ $word_obj->ms_sigil };
+	foreach my $w ( $word_obj->links ) {
+	    _add_word_to_varhash( $varhash, $meta, $w );
+	    delete $unseen->{ $w->ms_sigil };
+	}
+	if( keys %$meta ) {
+	    $varhash->{'meta'} = $meta;
+	}
+    } elsif ( $word_obj eq 'omitted' ) {
+	# Do we really have any unseen entries, or just specials?
+	foreach my $sig ( keys %$unseen ) {
+	    unless( grep { $sig eq $_} @special_unseen ) {
+		_add_hash_entry( $varhash, '__OMITTED__', $sig );
+	    }
+	}
+    } else {
+	warn "Unsupported argument to \&class_words: $word_obj.  Doing nothing.";
     }
     return $varhash;
 }
@@ -189,16 +213,16 @@ sub _add_word_to_varhash {
     my( $varhash, $meta, $word_obj ) = @_;
     _add_hash_entry( $varhash, $word_obj->word, $word_obj->ms_sigil );
     if( $word_obj->punctuation ) {
-	$meta->{'punct'} = {} unless $meta->{'punct'};
+	$meta->{'punctuation'} = {} unless $meta->{'punctuation'};
 	foreach my $punct( $word_obj->punctuation ) {
-	    _add_hash_entry( $meta->{'punct'}, $punct,
+	    _add_hash_entry( $meta->{'punctuation'}, $punct,
 			     $word_obj->ms_sigil );
 	}
     }
     if( $word_obj->placeholders ) {
-	$meta->{'sections'} = {} unless $meta->{'sections'};
+	$meta->{'section_div'} = {} unless $meta->{'section_div'};
 	foreach my $ph( $word_obj->placeholders ) {
-	    _add_hash_entry( $meta->{'sections'}, $ph, $word_obj->ms_sigil );
+	    _add_hash_entry( $meta->{'section_div'}, $ph, $word_obj->ms_sigil );
 	}
     }
 }
@@ -210,135 +234,159 @@ sub make_app {
     $app->setAttribute( 'xml:id', "App$app_id_ctr" );
     $app_id_ctr++;
     if( scalar( @app_entries ) == 1 ) {
+	# Only a single row.
 	my $line_entry = $app_entries[0];
-	my $single_reading = scalar( @$line_entry ) == 1;
+	my $single_reading = scalar( @$line_entry ) == 1 ;
 	foreach my $entry ( @$line_entry ) {
+	    # Each reading group in the row
 	    my $meta;
 	    my $el;
-	    if( $single_reading ) {
+	    if( $single_reading || 
+		( scalar ( @$line_entry ) == 2 &&
+		  grep { exists $_->{'__OMITTED__'} } @$line_entry ) ) {
+		# Don't make an explicit rdgGrp unless we have two
+		# positive variants.
 		$el = $app;
 	    } else {
 		my $rdg_grp = $app->addNewChild( $ns_uri, 'rdgGrp' );
 		$rdg_grp->setAttribute( 'type', 'subvariants' );
 		$el = $rdg_grp;
 	    }
+	    my $child_type = $single_reading 
+		&& scalar( keys %$entry ) == 1 ? 'lem' : 'rdg';
+	    # Get the meta information for this word.
+	    $meta = delete $entry->{'meta'};
 	    foreach my $rdg_word ( keys %$entry ) {
-		if( $rdg_word eq 'meta' ) {
-		    $meta = $entry->{$rdg_word};
-		    next;
-		}
 		my $wits = $entry->{$rdg_word};
 		my $wit_string = _make_wit_string( @$wits );
-		my $rdg = $el->addNewChild( $ns_uri, 'rdg' );
+		my $rdg = $el->addNewChild( $ns_uri, $child_type );
 		$rdg->setAttribute( 'wit', $wit_string );
-		$rdg->appendText( $rdg_word );
+		if( $rdg_word eq '__OMITTED__' ) {
+		    $rdg->setAttribute( 'type', 'omission' );
+		} else {
+		    _add_word( $rdg, $rdg_word, $meta, $wits );
+		}
 	    }
-	    add_meta_info( $app, $meta ) if $meta;
 	}
     } else {
 	# Combine the entries into distinct phrases, keyed by sigil.
 	my %phrases;
-	# Keep track of the meta-information we have seen.  It will be
-	# placemarked via the $mmidx.
-	my $mmidx = 0;
-	my %meta_mark;
+	# Keep track of the meta-information we have seen.  This is 
+	# a sanity check to make sure we have used it all.
+	my @meta_info;
 	foreach my $entry ( @app_entries ) {
 	    foreach my $reading ( @$entry ) {
 		my $meta;
 		if ( exists $reading->{'meta'} ) {
 		    $meta = delete $reading->{'meta'};
-		    $meta_mark{++$mmidx} = $meta;
+		    push( @meta_info, $meta );
 		}
 		foreach my $word ( keys %$reading ) {
 		    foreach my $sigil ( @{$reading->{$word}} ) {
-			my $wordstr = $word;
-			$wordstr .= '_META_MARK_' . $mmidx . '_'
-			    if $meta;
-			if( $phrases{$sigil} ) {
-			    $phrases{$sigil} .= " $wordstr";
-			} else {
-			    $phrases{$sigil} = $wordstr;
-			}
+			_add_hash_entry( \%phrases, $sigil, { 'word' => $word,
+							      'meta' => $meta }
+			    );
 		    }
 		}
 	    }
 	}
 	
-	# Now invert the hash, so to speak.
-	my %distinct_phrases = invert_hash( %phrases );
+	# Make a lookup for arrayref phrase to plaintext phrase_key.
+	# We need both ways, irritatingly.
+	my( %phrase_key, %phrase_array );
+	foreach my $k ( keys %phrases ) {
+	    my $plaintext = join( ' ', map { $_->{'word'} } @{$phrases{$k}} );
+	    $phrase_key{ scalar( $phrases{$k} ) } = $plaintext;
+	    $phrase_array{ $plaintext } = $phrases{$k};
+	}
+	
+	# Now invert the hash, keying on unique phrases.
+	my %distinct_phrases = invert_hash( \%phrases, \%phrase_key );
 	foreach my $phrase ( keys %distinct_phrases ) {
-	    my $wit_string = _make_wit_string( @{$distinct_phrases{$phrase}} );
+	    my $wits = $distinct_phrases{$phrase}; 
+	    my $wit_string = _make_wit_string( @$wits );
 	    my $rdg = $app->addNewChild( $ns_uri, 'rdg' );
 	    $rdg->setAttribute( 'wit', $wit_string );
-	    metamark_subst( $rdg, $phrase, \%meta_mark );
+	    foreach my $phr_el ( @{$phrase_array{$phrase}} ) {
+		my $word = $phr_el->{'word'};
+		my $meta = $phr_el->{'meta'};
+		if ( $word ne '__OMITTED__' ) {
+		    _add_word( $rdg, $word, $meta, $wits );
+		} # else there is no point adding an omission in the
+	    }     #   middle of a compound phrase.
 	}
+	
 	# Sanity check - at this point, all the entries should have
 	# been deleted from every hash in %meta_mark.
-	foreach my $m ( values %meta_mark ) {
-	    warn "Some witDetail got omitted!" if scalar( keys( %$m ) );
+	foreach my $m ( @meta_info ) {
+	    my $used = delete $m->{'used'};
+	    foreach my $k ( keys %$m ) {
+		foreach my $i ( keys %{$m->{$k}} ) {
+		    warn "witDetail $k/$i got omitted at $app_id_ctr!" 
+			unless $used->{"$k/$i"};
+		}
+	    }
 	}
     }
 }
 
 sub metamark_subst {
-    my( $rdg, $phrase, $meta_marks ) = @_;
-    while( $phrase =~ /^(.*?)_META_MARK_(\d+)_(.*)$/ ) {
-	my( $text, $mmidx, $rest ) = ( $1, $2, $3 );
-	$rdg->appendText( $text );
-	add_meta_info( $rdg, $meta_marks->{$mmidx} );
-	$phrase = $rest;
-    }
-    if( $phrase ) {
-	$rdg->appendText( $phrase );
-    }
+    my( $rdg, $phrase_elements, $wits ) = @_;
 }
 
-sub add_meta_info {
-    my( $element, $meta ) = @_;
-    # Find an XML id.
-    my $xmlid;
-    if( $element->hasAttribute( 'xml:id' ) ) {
-	$xmlid = $element->getAttribute( 'xml:id' );
-    } elsif( $element->parentNode()->hasAttribute( 'xml:id' ) ) {
-	$xmlid = $element->parentNode()->getAttribute( 'xml:id' );
-    } else {
-	warn "Could not find ID for element!";
-	$xmlid = 'NONE';
-    }
-    # See if the element in question has a witness restriction.
-    my %relevant_witnesses;
-    if( $element->hasAttribute( 'wit' ) ) {
-	my @wits = map { substr( $_, 1 ) } 
-	               split( /\s+/, $element->getAttribute( 'wit' ) );
-	@relevant_witnesses{@wits} = ( 1 ) x scalar @wits;
+
+# Add a word, and any meta info relevant to that word, to the
+# given element.
+sub _add_word {
+    my( $el, $word, $meta, $witnesses ) = @_;
+
+    my( @sect, @punct );
+    my $word_id;
+    if( $meta ) {
+	my %relevant_witnesses;
+	@relevant_witnesses{@$witnesses} = ( 1 ) x scalar @$witnesses;
+	foreach my $key ( qw( section_div punctuation ) ) {
+	    if( $meta->{$key} ) {
+		foreach my $item ( keys %{$meta->{$key}} ) {
+		    my @wits = @{$meta->{$key}->{$item}};
+		    if( keys %relevant_witnesses ) {
+			my @rwits = grep { $relevant_witnesses{$_} } @wits;
+			next unless scalar( @rwits );
+			@wits = @rwits;
+		    }
+		    my $wit_string = _make_wit_string( @wits );
+		    my $witDetail = XML::LibXML::Element->new( 'witDetail' );
+		    $word_id = 'Word' . $word_id_ctr;
+		    $witDetail->setAttribute( 'target', '#'.$word_id );
+		    $witDetail->setAttribute( 'wit', $wit_string );
+		    $witDetail->setAttribute( 'type', $key );
+		    $witDetail->appendText( $item );
+
+		    if( $key eq 'section_div' ) {
+			push( @sect, $witDetail );
+		    } else {
+			push( @punct, $witDetail );
+		    }
+		    
+		    # Use this to check that all meta tags got used
+		    $meta->{'used'} = {} unless $meta->{'used'};
+		    $meta->{'used'}->{join( '/', $key, $item )} = 1;
+		}
+	    }
+	}
     }
 
-    foreach my $key ( qw( sections punct ) ) {
-	if( $meta->{$key} ) {
-	    foreach my $item ( keys %{$meta->{$key}} ) {
-		my @wits = @{$meta->{$key}->{$item}};
-		if( keys %relevant_witnesses ) {
-		    my $relevant = 0;
-		    foreach ( @wits ) {
-			if( $relevant_witnesses{$_} ) {
-			    $relevant = 1;
-			    last;
-			}
-		    }
-		    next unless $relevant;
-		}
-		my $wit_string = _make_wit_string( @wits );
-		my $witDetail = $element->addNewChild( $ns_uri, 'witDetail' );
-		$witDetail->setAttribute( 'target', '#'.$xmlid );
-		$witDetail->setAttribute( 'wit', $wit_string );
-		my $type = $key eq 'punct' ? 'punctuation' : 'sectionDivision';
-		$witDetail->setAttribute( 'type', $type );
-		$witDetail->appendText( $item );
-		# Use this to check that all meta tags got used
-		delete $meta->{$key}->{$item};
-	    }
-	    delete $meta->{$key} unless keys( %{$meta->{$key}} )
-	}
+    foreach( @sect ) {
+	$el->appendChild( $_ );
+    }
+    my $w_el = $el->addNewChild( $el->namespaceURI, 'w' );
+    if( $word_id ) {
+	$w_el->setAttribute( 'xml:id', $word_id );
+	$word_id_ctr++;
+    }
+    $w_el->appendText( $word );
+    foreach( @punct ) {
+	$el->appendChild( $_ );
     }
 }
 
@@ -346,16 +394,25 @@ sub _make_wit_string {
     return join( ' ', map { '#'.$_ } @_ );
 }
 
-# general utility function
+# general utility function.  Takes a bunch of key/value pairs and
+# returns a bunch of value/list-of-keys pairs.
+# Second argument holds plaintext reference keys in case the 
+# original values are arrayrefs.
 sub invert_hash {
-    my %hash = @_;
+    my ( $hash, $plaintext_keys ) = @_;
     my %new_hash;
-    foreach my $key ( keys %hash ) {
-	my $val = $hash{$key};
-	if( exists ( $new_hash{$val} ) ) {
-	    push( @{$new_hash{$val}}, $key );
+    foreach my $key ( keys %$hash ) {
+	my $val = $hash->{$key};
+	my $valkey = $val;
+	if( $plaintext_keys 
+	    && ref( $val ) ) {
+	    $valkey = $plaintext_keys->{ scalar( $val ) };
+	    warn( "No plaintext value given for $val" ) unless $valkey;
+	}
+	if( exists ( $new_hash{$valkey} ) ) {
+	    push( @{$new_hash{$valkey}}, $key );
 	} else {
-	    $new_hash{$val} = [ $key ];
+	    $new_hash{$valkey} = [ $key ];
 	}
     }
     return %new_hash;
