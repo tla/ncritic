@@ -3,6 +3,8 @@
 use strict;
 use lib 'lib';
 use Data::Dumper;
+use Getopt::Long;
+use Storable qw( store_fd );
 use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
 use Words::Armenian;
@@ -12,46 +14,60 @@ binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
-# Control what we print.
-my $col_width = 25;  # if we aren't printing CSV
-my $CSV = 1;         # use CSV format
+# Default option values
+my( $col_width, $fuzziness ) = ( 25, 50 );
+my( $CSV, $storable, $outfile, $text, $debug, %argspec );
 
-my $type = shift @ARGV;
-unless( $type eq 'txt' ) {
-    unshift( @ARGV, $type );
-    $type = 'xml';
+GetOptions( 'csv' => \$CSV,
+	    'width' => \$col_width,
+	    'storable' => \$storable,
+	    'outfile=s' => \$outfile,
+	    'text' => \$text,
+	    'debug:i' => \$debug,
+	    'argspec=s' => \%argspec,
+	    'fuzziness=i' => \$fuzziness,
+    );
+
+## Option checking
+if( defined $debug ) {
+    # If it's defined but false, no level was passed.  Use default 1.
+    $debug = 1 unless $debug;
+} else {
+    $debug = 0;
 }
+if( $storable && !$outfile ) {
+    warn( "Cannot output Storable data without an output file target" );
+    exit;
+}
+if( $outfile ) {
+    open( OUT, ">$outfile" ) or die "Cannot open $outfile for writing";
+}
+my $fuzzy_hash = { 'short' => 6, 'shortval' => 50 };
+$fuzzy_hash->{'val'} = $fuzziness;
 
+## Get busy. 
 my( @files ) = @ARGV;
-
-# and how fuzzy a match we can tolerate.
-my $fuzziness = "50";  # this is n%
-
-my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
-				       'debug' => 2,
+my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
+				       'debug' => $debug,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-				       # 'accents' => [ "\x{55b}" ],
 				       'canonizer' => \&Words::Armenian::canonize_word,
-				       'TEI' => ( $type eq 'xml' ),
+				       'TEI' => !$text,
     );
 
 
 my @results = $aligner->align( @files );
 
-my $length = 0;
-my $arr_idx = 0;
-foreach( map { $_->words } @results ) {
-    $length = scalar( @$_ ) unless $length;
-    if( scalar @$_ != $length ) {
-        warn "Array $arr_idx is " . @$_ . " instead of $length items long\n";
-	$length = scalar @$_ if scalar @$_ < $length;
-    }
-    $arr_idx++
-}
+if( $storable ) {
+    # Store the array.
+    no warnings 'once';
+    $Storable::Deparse = 1;
+    store_fd( \@results, \*OUT );
+    exit;
+} 
 
 # Print the array.
 print_fnames() if $CSV;
-foreach my $i ( 0 .. $length-1 ) {
+foreach my $i ( 0 .. $#{$results[0]} ) {
     my $output_str;
     if( $CSV ) {
 	$output_str = join( ',', map { '"' . $_->words->[$i]->printable . '"' } @results ) . "\n";
@@ -83,4 +99,25 @@ sub print_fnames {
     }
 }
 
-
+sub fuzzy_match {
+    my ( $str1, $str2, $dist ) = @_;
+    my $ref_str;
+    if( $argspec{'word'} eq 'first' ) {
+	$ref_str = $str1;
+    } elsif( $argspec{'word'} eq 'longer' ) {
+	 $ref_str = length( $str1 ) > length( $str2 ) ? $str1 : $str2;
+    } elsif( $argspec{'word'} eq 'shorter' ) {
+	 $ref_str = length( $str1 ) < length( $str2 ) ? $str1 : $str2;
+    }
+    
+    my $fuzz = $fuzzy_hash->{'val'};
+    if( length( $ref_str ) <= $fuzzy_hash->{'short'} 
+	&& $argspec{'sliding'} ) {
+	$fuzz = $fuzzy_hash->{'shortval'};
+    }
+    if( $argspec{'inclusive'} ) {
+	return( $dist <= ( length( $ref_str ) * $fuzz / 100 ) );
+    } else {
+	return( $dist < ( length( $ref_str ) * $fuzz / 100 ) );
+    }
+}

@@ -80,7 +80,7 @@ sub new {
     my $self = {
 	debug => 0,
 	distance_sub => undef,
-	fuzziness => 40,
+	fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
 	binmode => 'utf8',
 	punct_as_word => 0,
 	not_punct => [],
@@ -272,14 +272,17 @@ sub build_array {
 
 sub _handle_diff_same {
     my $self = shift;
-    my( $diff, $base_text, $new_text, $base_result, $new_result ) = @_;
+    my( $diff, $base_text, $new_text, $base_result, $new_result, $msg ) = @_;
     # Get the index range.
+    $msg = 'same' unless $msg;
     my @rbase = $diff->Range( 1 );
     my @rnew = $diff->Range( 2 );
     my @base_wlist = @{$base_text}[@rbase];
     my @new_wlist = @{$new_text}[@rnew];
-    $self->debug( "Diff: pushing same words " 
-		  . join( ' ', _stripped_words( \@base_wlist ) ), 2 );
+    my $msg_words = join( ' ', _stripped_words( \@base_wlist ) );
+    $msg_words .= ' / ' . join( ' ', _stripped_words( \@new_wlist ) )
+	unless( $msg eq 'same' );
+    $self->debug( "Diff: pushing $msg words $msg_words", 2 );
     push( @$base_result, @base_wlist );
     push( @$new_result, @new_wlist );
 }
@@ -488,7 +491,7 @@ sub _is_near_word_match {
     }
     my $distance = $self->{'distance_sub'};
     my $dist = &$distance( $word1, $word2 );
-    return( $self->_is_match( $word1, $dist ) );
+    return( $self->_is_match( $word1, $word2, $dist ) );
 }
 
 
@@ -801,12 +804,13 @@ sub match_and_align_words {
 	    # If the words are not a match but start with the same letter,
 	    # check to see what happens if you glom the next word onto the
 	    # shorter of the current words.
-	    if( !($self->_is_match( $w, $dist )) &&
+	    if( !($self->_is_match( $w, $w2, $dist )) &&
 		substr( $w, 0, 2 ) eq substr( $w2, 0, 2 ) ) {
 		my $distplus;
 		if( length( $w2 ) > length( $w ) ) {
+		    $self->debug( "Trying glommed match $wplus / $w2", 3 );
 		    $distplus = &$distance( $wplus, $w2 );
-		    if( $self->_is_match( $wplus, $distplus ) ) {
+		    if( $self->_is_match( $wplus, $w2, $distplus ) ) {
 			$self->debug( "Using glommed match $wplus / $w2", 1 );
 			$words1[$curr_idx]->is_glommed( 1 );
 			$dist = $distplus * ( length($w) / length($wplus) );
@@ -817,8 +821,9 @@ sub match_and_align_words {
 			    unless $words1[$curr_idx]->is_base;
 		    }
 		} else {
+		    $self->debug( "Trying glommed match $w / $w2plus", 3 );
 		    $distplus = &$distance( $w, $w2plus );
-		    if( $self->_is_match( $w, $distplus ) ) {
+		    if( $self->_is_match( $w, $w2plus, $distplus ) ) {
 			$self->debug( "Using glommed match $w / $w2plus", 1 );
 			$words2[$curr_idx2]->is_glommed( 1 );
 			$dist = $distplus;
@@ -840,16 +845,16 @@ sub match_and_align_words {
 	}
 	 
 	# So did we find a match?  Test against our configured fuzziness
-	# value.  Distance should be no more than $fuzziness percent of
-	# length.
-	if( $self->_is_match( $w, $best_distance ) ) {
+	# values.
+	my $best_w2 = $words2[$best_idx]->word();
+	if( $self->_is_match( $w, $best_w2, $best_distance ) ) {
 	    # this is enough of a match.
-	    $self->debug( "matched $w to " . $words2[$best_idx]->word() 
+	    $self->debug( "matched $w to " . $best_w2
 			  . "...", 1 );
 	    # Make index_array2 match index_array1 for this word.
 	    if( $index_array2[$best_idx] =~ /^[A-Z]+$/ ) {
 		# Skip it.  This word has had an earlier match.
-		$self->debug( "...but " . $words2[$best_idx]->word() . 
+		$self->debug( "...but " . $best_w2 .
 			      " already has a match.  Skipping.", 1 );
 	    } else {
 		$index_array2[$best_idx] = $index_array1[$curr_idx];
@@ -872,7 +877,7 @@ sub match_and_align_words {
     my( @aligned1, @aligned2 );
     while( $minidiff->Next() ) {
 	if( $minidiff->Same() ) {
-	    $self->_handle_diff_same( $minidiff, \@words1, \@words2, \@aligned1, \@aligned2 );
+	    $self->_handle_diff_same( $minidiff, \@words1, \@words2, \@aligned1, \@aligned2, 'matched' );
 	} elsif( !scalar( $minidiff->Range( 1 ) ) ) {
 	    $self->_handle_diff_interpolation( $minidiff, 2, \@words2, \@aligned2, \@aligned1 );
 	} elsif( !scalar( $minidiff->Range( 2 ) ) ) {
@@ -912,8 +917,13 @@ sub match_and_align_words {
 
 sub _is_match {
     my $self = shift;
-    my ( $str, $dist ) = @_;
-    return( $dist < ( length( $str ) * $self->{fuzziness} / 100 ) );
+    my ( $str1, $str2, $dist ) = @_;
+    if( defined( $self->{'fuzziness_sub'} ) ) {
+	return &{$self->{'fuzziness_sub'}}( @_ );
+    } else {
+	my $ref_str = $str1;
+	return( $dist < ( length( $ref_str ) * $self->{'fuzziness'} / 100 ) );
+    }
 }
 
 # Helper function.  Returns a string composed of upper-case ASCII
