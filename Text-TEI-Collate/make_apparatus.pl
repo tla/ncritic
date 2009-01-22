@@ -145,6 +145,7 @@ sub make_tei_doc {
     # Make the body element
     my $body_p = $root->addNewChild( $ns_uri, 'text' )->
 	addNewChild( $ns_uri, 'body' )->
+	addNewChild( $ns_uri, 'div' )->
 	addNewChild( $ns_uri, 'p' );
     
     # Set the root...
