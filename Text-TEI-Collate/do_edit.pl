@@ -25,52 +25,35 @@ unless( defined( $infile ) && defined( $outfile ) ) {
     exit;
 }
 
+my $ns_uri = 'http://www.tei-c.org/ns/1.0';
 my $parser = XML::LibXML->new();
-my $input_doc = $parser->parse_file( $infile );
+my $doc = $parser->parse_file( $infile );
 
 # This is where the action happens.
-my $output_doc = make_edition( $input_doc );
-
-# Write it all out.
-$output_doc->toFile( $outfile, 1 );
-
+make_edition( $doc );
+print_results();
 print STDERR "Done.\n";
 
 sub make_edition {
-    my ( $infile ) = @_;
+    my ( $doc ) = @_;
 
     # Look for the head and body of the input document
-    my $ns_uri = 'http://www.tei-c.org/ns/1.0';
-    my $xpc = XML::LibXML::XPathContext->new( $infile );
+    my $xpc = XML::LibXML::XPathContext->new( $doc );
     $xpc->registerNs( 'tei', $ns_uri );
-    my $header = $xpc->find( '//tei:teiHeader' )->get_node( 1 );
+    
     # TODO: separate appLists for each element that can be in <text/>
     my $appList = $xpc->find( '//tei:app' );
-
-    # Create the new document
-    my $doc = XML::LibXML->createDocument( '1.0', 'UTF-8' );
-    $doc->createProcessingInstruction( 'oxygen', 
-			       'RNGSchema="tei_ms_crit.rng" type="xml"' );
-    my $root = $doc->createElementNS( $ns_uri, 'TEI' );
-
-    # Clone the header wholesale.
-    $root->appendChild( $header->cloneNode( 1 ) );
-
-    # Now make the body, which is the dirty work.
-    process_apps( $root, $appList );
-
-    # And finally...
-    $doc->setDocumentElement( $root );
+    
+    my $context = [];
+    foreach my $app( $appList->get_nodelist() ) {
+	process_app( $app, $context );
+    }
     return $doc;
 }
 
-sub process_apps {
-    my( $root, $app_node_list ) = @_;
+sub process_app {
+    my( $app, $context ) = @_;
     
-    # First make a body.
-    my $body = $root->addNewChild( $root->namespaceURI, 'text' )->
-	addNewChild( $root->namespaceURI, 'body' );
-
     # Now, for each thing in the app node list, do the following:
     # - Look for section breaks, ask user if we want one
     # - Un-app any words that have no divergence
@@ -79,27 +62,208 @@ sub process_apps {
     # - Ask what we can't figure out
     # - Ask about punctuation (maybe as a last pass? )
 
-    foreach my $app ( $app_node_list->get_nodelist() ) {
-	my $id = $app->getAttribute( 'xml:id' );
+    # If it already has a lemma, it is processed.
+    # TODO: add option for reprocessing
+    my $id = $app->getAttribute( 'xml:id' );
+    my $curr_lemma;
+    my @new_context;
+    if( my @lemmas = $app->getChildrenByTagName( 'lem' ) ) {
+	print STDERR "app $id already has a lemma\n";
+	$curr_lemma = $lemmas[0];
+    } else {
+	print "Context: " . join( ' ', @$context ) . "\n\n";
+	
 	print STDERR "Looking at app $id\n";
-	my $xpc = XML::LibXML::XPathContext->new( $app );
-	$xpc->registerNs( 'tei', $app->namespaceURI );
-	my @groups = $xpc->findnodes( '//tei:rdgGrp' );
-	if( @groups ) {
-	    print STDERR "Will cope with rdgGrp later\n";
-	    # will have to make some choices 
-	} else {
-	    # no rdgGrp, only rdg.  how many?
-	    my @readings = $xpc->findnodes( '//tei:rdg' );
-	    if( scalar( @readings ) == 1 ) {
-		print STDERR "Accepting an uncontested reading\n";
-		# Accept it.
-		$readings[0]->setNodeName( 'lem' );
+	# Get the chidren of this app entry
+	my @contents = $app->childNodes();
+	# The children should be either readings or rdgGrps.
+	my( @group, @reading );
+	foreach my $child( @contents ) {
+	    my $node = $child->nodeName;
+	    if( $node eq 'rdgGrp' ) {
+		push( @group, $child );
+	    } elsif( $node eq 'rdg' ) {
+		push( @reading, $child );
+	    } else {
+		warn "Unexpected app child node $node"
+		    unless $node eq '#text';
 	    }
 	}
-	$body->appendChild( $app );
+	if( @reading && @group ) {
+	    warn "Found mixed rdg and rdgGrp in app; " . 
+		"treating top-level readings as one group";
+	}
+	my @to_process;
+	foreach my $rdgGrp ( @group ) {
+	    push( @to_process, $rdgGrp->childNodes() );
+	} 
+	push( @to_process, \@reading );
+	# This return value is not necessarily a lemma.  Display
+	# it differently if not.
+	$curr_lemma = process_reading( $app, @to_process );
     }
 
-    # Finally, return it all.
-    return $root;
+    # Now add the words from the new lemma to the context.
+    foreach my $word ( $curr_lemma->getChildrenByTagName( 'w' ) ) {
+	push( @new_context, $word->textContent() );
+    }
+    unless( $curr_lemma->nodeName eq 'lem' ) {
+	# Surround the thing in some brackets so we know it isn't real.
+	unshift( @new_context, '[' );
+	push( @new_context, ']' );
+    }
+    push( @$context, @new_context );
+    while( scalar @$context > 15 ) {
+	shift @$context;
+    }
+}
+
+sub process_reading {
+    my( $app, @set ) = @_;
+    
+    # We need to know where we are with our sectioning.
+    my $cur_p = $app->parentNode;
+    my $cur_sec;
+    if( $cur_p->parentNode eq 'div' ) {
+	$cur_sec = $cur_p->parentNode;
+    }
+    
+    my %readings;
+    my $rdg_idx = 0;
+    my %witDetails;
+    my $detail_idx = 0;
+    foreach my $rdg_group ( @set ) {
+	# Each group has a list of readings.
+	foreach my $rdg ( @$rdg_group ) {
+	    # Each reading has one or more words and zero or more
+	    # witDetails.
+	    unless ( $rdg->nodeName eq 'rdg') {
+		warn "something that is not a reading is in a reading group!"
+		    . $rdg->nodeName;
+		next;
+	    }
+	    my $xpc = XML::LibXML::XPathContext->new( $rdg );
+	    $xpc->registerNs( 'tei', $ns_uri );
+	    
+	    # Assign each reading to an index, and get the words out while
+	    # we have the xpc object.
+	    $readings{ ++$rdg_idx } = { 'rdg' => $rdg,
+					'words' => $xpc->find( 'tei:w' ) };
+	    
+	    # Now find the witDetails.
+	    my $detailList = $xpc->find( 'tei:witDetail' );
+	    foreach my $det ( $detailList->get_nodelist ) {
+		my $val = $det->textContent();
+		my $target = $det->getAttribute( 'target' );
+		my $detailWitList = $det->getAttribute( 'wit' );
+		# Note the structure of this hash...
+		$witDetails{++$detail_idx} = { 'target' => $target, 
+					       'wit' => $detailWitList,
+					       'val' => $val,
+		};
+	    }
+	}  # foreach reading
+    }  # foreach rdgGrp; we're ignoring the separation of groups at the moment.
+    
+    my $need_answer = 0;  # For sanity check
+    my $return_rdg;
+    my %word_from_id;
+    if( keys %readings > 1 ) {
+	print "Available readings:\n";
+    } else {
+	# There is only one reading.  Lemmatize it.
+	my $rdg = $readings{1}->{'rdg'};
+	$rdg->setNodeName( 'lem' );
+	$return_rdg = $rdg;
+    }
+    foreach my $disp_idx ( keys %readings ) {
+	my $rdg = $readings{$disp_idx}->{'rdg'};
+	my @display_text;
+	foreach my $word_obj ( $readings{$disp_idx}->{'words'}->get_nodelist ) {
+	    my $word = $word_obj->textContent;
+	    if( $word_obj->hasAttribute( 'xml:id' ) ) {
+		$word_from_id{ '#' . $word_obj->getAttribute( 'xml:id' ) }
+		= { 'string' => $word, 'obj' => $word_obj };
+	    }
+	    push( @display_text, $word );
+	}
+	my $witnesses = $rdg->getAttribute( 'wit' );
+	printf( "%-2s: %s (%s )\n", $disp_idx, 
+		join( ' ', @display_text ), $witnesses );
+	$need_answer = 1 unless $return_rdg;
+    }
+    
+    # Do we need to assign punctuation?
+    my %detailClasses;
+    if( keys %witDetails ) {
+	print "\nManuscript details:\n";
+	foreach my $idx ( keys %witDetails ) {
+	    my $detailData = $witDetails{$idx};
+	    my $detail = $detailData->{'val'};
+	    
+	    ## TODO: Work in handling of section divisions.
+	    next if $detail =~ /^__/;
+	    
+	    $detailClasses{'punct'} = 1;
+	    my $pos = $detail =~ /^__/ ? 'before' : 'after';
+	    print "$idx: Witness(es) " . $detailData->{'wit'} .
+		" contain a $detail $pos " 
+		. $word_from_id{ $detailData->{'target'} }->{'string'} . "\n";
+	}
+	$need_answer = 1;
+    }
+    
+    if( $need_answer ) {
+	print " --> ";
+	my $picked = 0;
+	my $detail_needed = scalar keys( %detailClasses );
+	until( $picked && !$detail_needed ) {
+	    my $answer = <STDIN>;
+	    chomp $answer;
+	    if( $answer =~ /^q/ ) {
+		print_results();
+		exit;
+	    } elsif( $answer =~ /^(accept|a)\s+(\d+)/ ) {
+		$return_rdg = $readings{$2}->{'rdg'};
+		$return_rdg->setNodeName( 'lem' );
+		$picked = 1;
+	    } elsif( $answer =~ /^(accept\s+detail|a\s*d)\s+(\d+)/ ) {
+		## TODO add logic here for sectioning.  Right now
+		## it's all about punctuation.
+		## TODO deal with Armenian mid-word punctuation
+		my $id = $2;
+		my $detail = $witDetails{$id};
+		my $word_obj = $word_from_id{ $detail->{'target'} }->{'obj'};
+		# Add the required detail to the relevant word.
+		#  TODO currently assumes append, i.e. assumes punct
+		$word_obj->appendText( $detail->{'val'} );
+		$detail_needed--;
+	    } elsif( $answer =~ /^next/ ) {
+		# Just return the first reading, but don't lemmatize it.
+		$return_rdg = $readings{1}->{'rdg'};
+		$picked = 1;
+		$detail_needed = 0;
+	    } else {
+		print "Huh?  ->";
+	    }
+	}
+    }
+    return $return_rdg;
+}
+
+sub print_results {
+    # Write it all out.
+    $doc->toFile( $outfile, 1 );
+}
+
+
+# general utility function       
+
+sub _add_hash_entry {
+    my( $hash, $key, $entry ) = @_;
+    if( exists( $hash->{$key} ) ) {
+        push( @{$hash->{$key}}, $entry );
+    } else {
+        $hash->{$key} = [ $entry ];
+    }
 }
