@@ -45,6 +45,10 @@ if( $outfile ) {
 my $fuzzy_hash = { 'short' => 6, 'shortval' => 50 };
 $fuzzy_hash->{'val'} = $fuzziness;
 
+unless( keys %argspec ) {
+    %argspec = ( 'word' => 'first', 'sliding' => 0, 'inclusive' => 0 );
+}
+
 ## Get busy. 
 my( @files ) = @ARGV;
 my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
