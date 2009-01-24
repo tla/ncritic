@@ -66,9 +66,7 @@ my @special_unseen = qw( __GLOM__ );  # Tags that might turn up in the
 foreach my $idx ( 0 .. $#{$initial_base} ) {
     # Mark which texts are on duty
     foreach my $w ( map { $_->words->[$idx] } @results ) {
-	$text_active{$w->ms_sigil} = 0 if $w->special && $w->special eq 'END';
-	$text_on_vacation{$w->ms_sigil} = 1 
-	    if $w->special && $w->special eq 'BEGINGAP';
+	_mark_start_end( $w, $body, 'end' );
     }
 
     # Get all the words; if all active texts are accounted for make the
@@ -108,10 +106,7 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 
     # Mark which texts will now turn up
     foreach my $w ( map { $_->words->[$idx] } @results ) {
-	$text_active{$w->ms_sigil} = 1 
-	    if $w->special && $w->special eq 'BEGIN';
-	$text_on_vacation{$w->ms_sigil} = 0 
-	    if $w->special && $w->special eq 'ENDGAP';
+	_mark_start_end( $w, $body, 'start' );
     }
 }
 
@@ -391,9 +386,43 @@ sub _add_word {
     }
 }
 
+## utility functions for various loops
+
 sub _make_wit_string {
     return join( ' ', map { '#'.$_ } @_ );
 }
+
+sub _mark_start_end {
+    my( $word_obj, $body, $mode ) = @_;
+    my $boundary_tag = $word_obj->special || '';
+    my $sig = $word_obj->ms_sigil;
+    if( $mode eq 'start' ) {
+	if( $boundary_tag eq 'BEGIN' ) {
+	    $text_active{$sig} = 1;
+	    _add_collation_note( $body, "$sig incipit" );
+	} elsif( $boundary_tag eq 'ENDGAP' ) {
+	    $text_on_vacation{$sig} = 0;
+	    _add_collation_note( $body, "$sig resumes" );
+	} 
+    } else {
+	if( $boundary_tag eq 'END' ) {
+	    $text_active{$sig} = 0;
+	    _add_collation_note( $body, "$sig explicit" );
+	} elsif( $boundary_tag eq 'BEGINGAP' ) {
+	    $text_on_vacation{$sig} = 1;
+	    _add_collation_note( $body, "$sig pauses" );
+	} 
+    }	    
+}
+
+sub _add_collation_note {
+    my( $element, $text ) = @_;
+    my $note_obj = $element->addNewChild( $ns_uri, 'note' );
+    $note_obj->setAttribute( 'type', 'collation' );
+    $note_obj->appendText( $text );
+    return $note_obj;
+}
+
 
 # general utility function.  Takes a bunch of key/value pairs and
 # returns a bunch of value/list-of-keys pairs.
