@@ -25,9 +25,15 @@ unless( defined( $infile ) && defined( $outfile ) ) {
     exit;
 }
 
+my %SPELLINGS = %Words::Armenian::SPELLINGS;
+my %PREFIXES = %Words::Armenian::PREFIXES;
+my %SUFFIXES = %Words::Armenian::SUFFIXES;
+
 my $ns_uri = 'http://www.tei-c.org/ns/1.0';
 my $parser = XML::LibXML->new();
 my $doc = $parser->parse_file( $infile );
+my $xpc = XML::LibXML::XPathContext->new( $doc );
+$xpc->registerNs( 'tei', $ns_uri );
 
 # This is where the action happens.
 make_edition( $doc );
@@ -37,12 +43,8 @@ print STDERR "Done.\n";
 sub make_edition {
     my ( $doc ) = @_;
 
-    # Look for the head and body of the input document
-    my $xpc = XML::LibXML::XPathContext->new( $doc );
-    $xpc->registerNs( 'tei', $ns_uri );
-    
     # TODO: separate appLists for each element that can be in <text/>
-    my $appList = $xpc->find( '//tei:app' );
+    my $appList = $xpc->find( '//tei:app', $doc );
     
     my $context = [];
     foreach my $app( $appList->get_nodelist() ) {
@@ -127,6 +129,8 @@ sub process_reading {
     if( $cur_p->parentNode eq 'div' ) {
 	$cur_sec = $cur_p->parentNode;
     }
+    my $first_app_id = $xpc->find( 'tei:app[1]/@xml:id', $cur_p )
+	->string_value;
     
     my %readings;
     my $rdg_idx = 0;
@@ -142,23 +146,23 @@ sub process_reading {
 		    . $rdg->nodeName;
 		next;
 	    }
-	    my $xpc = XML::LibXML::XPathContext->new( $rdg );
-	    $xpc->registerNs( 'tei', $ns_uri );
-	    
 	    # Assign each reading to an index, and get the words out while
 	    # we have the xpc object.
 	    $readings{ ++$rdg_idx } = { 'rdg' => $rdg,
-					'words' => $xpc->find( 'tei:w' ) };
+					'words' => $xpc->find( 'tei:w', $rdg ) };
 	    
 	    # Now find the witDetails.
-	    my $detailList = $xpc->find( 'tei:witDetail' );
+	    my $detailList = $xpc->find( 'tei:witDetail', $rdg );
 	    foreach my $det ( $detailList->get_nodelist ) {
 		my $val = $det->textContent();
 		my $target = $det->getAttribute( 'target' );
 		my $detailWitList = $det->getAttribute( 'wit' );
+		my $detailType = $det->getAttribute( 'type' );
 		# Note the structure of this hash...
 		$witDetails{++$detail_idx} = { 'target' => $target, 
 					       'wit' => $detailWitList,
+					       'type' => $detailType,
+					       'obj' => $det,
 					       'val' => $val,
 		};
 	    }
@@ -193,34 +197,45 @@ sub process_reading {
 	$need_answer = 1 unless $return_rdg;
     }
     
-    # Do we need to assign punctuation?
+    # Do we need to assign punctuation or section divisions?
     my %detailClasses;
     if( keys %witDetails ) {
 	print "\nManuscript details:\n";
 	foreach my $idx ( keys %witDetails ) {
 	    my $detailData = $witDetails{$idx};
 	    my $detail = $detailData->{'val'};
+	    my $type = $detailData->{'type'};
 	    
-	    ## TODO: Work in handling of section divisions.
-	    next if $detail =~ /^__/;
+	    # Safeguard...
+	    unless( $type =~ /^(section_div|punctuation)$/ ) {
+		warn( "Unrecognized witDetail type $type" );
+		next;
+	    }
+	    # Section division is irrelevant if we are already at
+	    # the start of a p or div.
+	    next if( $type eq 'section_div'
+		     && $app->getAttribute( 'xml:id' ) eq $first_app_id );
 	    
-	    $detailClasses{'punct'} = 1;
-	    my $pos = $detail =~ /^__/ ? 'before' : 'after';
+	    # Record the fact that a decision needs to be made...
+	    $detailClasses{$type} = 1;
+	    $need_answer = 1;
+	    
+	    # and print the choice.
+	    my $pos = $type eq 'section_div' ? 'before' : 'after';
 	    print "$idx: Witness(es) " . $detailData->{'wit'} .
 		" contain a $detail $pos " 
 		. $word_from_id{ $detailData->{'target'} }->{'string'} . "\n";
 	}
-	$need_answer = 1;
     }
     
     if( $need_answer ) {
 	print " --> ";
-	my $picked = 0;
+	my $picked = defined( $return_rdg );
 	my $detail_needed = scalar keys( %detailClasses );
 	until( $picked && !$detail_needed ) {
 	    my $answer = <STDIN>;
 	    chomp $answer;
-	    if( $answer =~ /^q/ ) {
+	    if( $answer =~ /^q(uit)?\s*$/ ) {
 		print_results();
 		exit;
 	    } elsif( $answer =~ /^(accept|a)\s+(\d+)/ ) {
@@ -228,23 +243,61 @@ sub process_reading {
 		$return_rdg->setNodeName( 'lem' );
 		$picked = 1;
 	    } elsif( $answer =~ /^(accept\s+detail|a\s*d)\s+(\d+)/ ) {
-		## TODO add logic here for sectioning.  Right now
-		## it's all about punctuation.
 		## TODO deal with Armenian mid-word punctuation
 		my $id = $2;
 		my $detail = $witDetails{$id};
+		# The punctuation should get added to the main reading if
+		# applicable; otherwise to the reading on which it was
+		# observed.
 		my $word_obj = $word_from_id{ $detail->{'target'} }->{'obj'};
 		# Add the required detail to the relevant word.
 		#  TODO currently assumes append, i.e. assumes punct
-		$word_obj->appendText( $detail->{'val'} );
+		if( $detail->{'type'} eq 'punctuation' ) {
+		    $word_obj->appendText( $detail->{'val'} );
+		    $word_obj->parentNode->removeChild( $detail->{'obj'} );
+		} else {
+		    print STDERR "TODO: close out a paragraph and/or div here\n";
+		}
 		$detail_needed--;
-	    } elsif( $answer =~ /^next/ ) {
-		# Just return the first reading, but don't lemmatize it.
+	    } elsif( $answer =~ /^n(ext)?\s*$/ ) {
+		# Return the first reading for context purposes, but don't 
+		# lemmatize it.
 		$return_rdg = $readings{1}->{'rdg'};
 		$picked = 1;
 		$detail_needed = 0;
+	    } elsif( $answer =~ /^sp(ell(ing)?)?\s+(\d+)\s+(\d+)/ ) {
+		my( $var, $std ) = ( $3, $4 );
+		$SPELLINGS{$var} = $std;
+	    } elsif( $answer =~ /^emend\s+(\S+.*)$/ ) {
+		# Put a placeholder lemma in this apparatus, and add
+		# an editorial note with the text.
+		# TODO: Can't enter the emendation as utf-8 at the terminal.
+		# This will need a different interface someday.
+		my $ed_note = $1;
+		# Add the unattested lemma...
+		$return_rdg = XML::LibXML::Element->new( 'lem' );
+		$return_rdg->setAttribute( 'resp', '#tla' );
+		$return_rdg->appendTextChild( 'wit', '[unattested]' );
+		$app->insertBefore( $return_rdg, $app->firstChild() );
+		# ...and add the explanatory note.
+		my $note_obj = XML::LibXML::Element->new( 'note' );
+		$note_obj->setAttribute( 'type', 'emendation' );
+		# TODO Should so not be hardcoded.
+		$note_obj->setAttribute( 'resp', '#tla' );
+		$note_obj->appendText( $ed_note );
+		$app->appendChild( $note_obj );
+	    } elsif( $answer =~ /^h(elp)?/ ) {
+		print 'Available commands:
+accept (#)
+accept detail (#)
+spelling (# alternate) (# canonical)
+emend (note)
+next
+help
+quit
+ -->';
 	    } else {
-		print "Huh?  ->";
+		print 'Huh? (h for help) -->';
 	    }
 	}
     }
@@ -254,6 +307,9 @@ sub process_reading {
 sub print_results {
     # Write it all out.
     $doc->toFile( $outfile, 1 );
+    foreach ( sort keys %SPELLINGS ) {
+	print "    $_ => " . $SPELLINGS{$_} . ",\n";
+    }
 }
 
 
