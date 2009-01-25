@@ -30,6 +30,7 @@ sub new {
     my $self = { 'not_punct' => [],
 		 'accents' => [],
 		 'canonizer' => undef,
+		 'comparator' => undef,
 		 %opts,
     };
     
@@ -64,11 +65,10 @@ sub evaluate_word {
     }
     $self->canonical_form( $word );
 
-    my( $punct, $accent ) = ( [], undef );	    
-
     # Need to ascertain a few characteristics.
     # Has it any punctuation to go with the word, that is not in our
     # list of "not really punctuation"?
+    my( $punct, $accent ) = ( [], undef );	    
     my @punct_instances = $word =~ /([[:punct:]])/;
     foreach my $p ( @punct_instances ) {
 	next if( grep /\Q$p\E/, @{$self->{'not_punct'}} );
@@ -77,6 +77,12 @@ sub evaluate_word {
     }
     $self->punctuation( $punct );
     # TODO: something sensible with accent marks
+
+    if( defined $self->comparator ) {
+	$self->comparison_form( &{$self->comparator}( $word ) );
+    } else {
+	$self->comparison_form( $word );
+    }
 
     $self->word( $word );
 }
@@ -160,6 +166,23 @@ sub canonical_form {
     return $self->{'canonical_form'};
 }
 
+=head2 comparison_form
+
+If called with an argument, sets the comparison form of the word
+(using a set standard for orthographic equivalence.)  Returns the
+word's comparison form.
+
+=cut
+
+sub comparison_form {
+    my $self = shift;
+    my $form = shift;
+    if( defined $form ) {
+	$self->{'comparison_form'} = $form;
+    }
+    return $self->{'comparison_form'};
+}
+
 =head2 punctuation
 
 If called with an argument, sets the punctuation marks that were
@@ -190,6 +213,22 @@ sub canonizer {
 	$self->{'canonizer'} = $punct;
     }
     return $self->{'canonizer'};
+}
+
+=head2 comparator
+
+If called with an argument, sets the comparator subroutine that the
+word object should use.  Returns the subroutine.
+
+=cut
+
+sub comparator {
+    my $self = shift;
+    my $punct = shift;
+    if( $punct ) {
+	$self->{'comparator'} = $punct;
+    }
+    return $self->{'comparator'};
 }
 
 =head2 special

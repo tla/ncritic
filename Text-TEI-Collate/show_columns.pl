@@ -55,6 +55,7 @@ my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
 				       'debug' => $debug,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 				       'canonizer' => \&Words::Armenian::canonize_word,
+				       'comparator' => \&Words::Armenian::comparator,
 				       'TEI' => !$text,
     );
 

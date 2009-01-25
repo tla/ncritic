@@ -1,1 +1,3 @@
 write tests for gap detection and 2-word glommed matching
+figure out how to handle orthography variation
+figure out how to handle paragraph / div splitting

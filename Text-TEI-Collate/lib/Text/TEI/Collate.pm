@@ -85,7 +85,9 @@ sub new {
 	punct_as_word => 0,
 	not_punct => [],
 	accents => [],
+	# TODO make this all come from one language module.
 	canonizer => undef,
+	comparator => undef,
 	%opts,
     };
     
@@ -206,7 +208,7 @@ sub align {
 # Small utility to get a string out of an array of word objects.
 sub _stripped_words {
     my $text = shift;
-    my @words = map { $_->word } @$text;
+    my @words = map { $_->comparison_form } @$text;
     return @words;
 }
 
@@ -329,7 +331,7 @@ sub generate_base {
 	                             # word, but just in case there is a
 	                             # gap, it should be the right object.
 	foreach my $col ( 0 .. $width - 1 ) {
-	    if( $texts[$col]->[$idx]->word() ne '' ) {
+	    if( $texts[$col]->[$idx]->comparison_form() ne '' ) {
 		$word = $texts[$col]->[$idx];
 		$word->is_base( 1 );
 		last;
@@ -400,9 +402,10 @@ sub read_manuscript_source {
     my $ms_obj = Text::TEI::Collate::Manuscript->new( 
 	'type' => $parse_input,
 	'source' => $docroot,
-	'canonizer' => $self->{'canonizer'} 
+	'canonizer' => $self->{'canonizer'},
+	'comparator' => $self->{'comparator'},
 	);
-
+    
     return $ms_obj;
 }
 
@@ -423,8 +426,8 @@ sub link_words {
 	next if $word_obj eq $self->empty_word;
 	next if $new_word_obj eq $self->empty_word;
 
-	$self->debug( "Trying to set link for " . $word_obj->word . " / "
-		      . $new_word_obj->word . "...", 1, 1 );
+	$self->debug( "Trying to set link for " . $word_obj->comparison_form . " / "
+		      . $new_word_obj->comparison_form . "...", 1, 1 );
 
 	# Now we have to repeat the distance checking that we did in
 	# &match_and_align_words.  This cries out for refactoring, but
@@ -444,7 +447,7 @@ sub link_words {
 		    $var_obj->add_link( $new_word_obj );
 		    $found_variant_match = 1;
 		    $self->debug( "variant match: $match_answer to " 
-				  . $var_obj->word, 1 );
+				  . $var_obj->comparison_form, 1 );
 		    last;
 		}
 	    }
@@ -463,17 +466,17 @@ sub _index_word_match {
     # Possible return values are 'yes', 'glom', 'no'
     my $w1obj = $alt_start ? $alt_start : $words1->[$idx];
     my $w2obj = $words2->[$idx];
-    return 'yes' if( $self->_is_near_word_match( $w1obj->word, $w2obj->word ) );
+    return 'yes' if( $self->_is_near_word_match( $w1obj->comparison_form, $w2obj->comparison_form ) );
 
     my( $w1glom, $w2glom );
-    if( length( $w1obj->word ) > length( $w2obj->word ) ) {
-	$w1glom = $w1obj->word;
-	$w2glom = $w2obj->word . ( $idx < $#{$words2} ? 
-				   $words2->[$idx+1]->word : '' );
+    if( length( $w1obj->comparison_form ) > length( $w2obj->comparison_form ) ) {
+	$w1glom = $w1obj->comparison_form;
+	$w2glom = $w2obj->comparison_form . ( $idx < $#{$words2} ? 
+				   $words2->[$idx+1]->comparison_form : '' );
     } else {
-	$w2glom = $w2obj->word;
-	$w1glom = $w1obj->word . ( $idx < $#{$words1} ? 
-				   $words1->[$idx+1]->word : '' );
+	$w2glom = $w2obj->comparison_form;
+	$w1glom = $w1obj->comparison_form . ( $idx < $#{$words1} ? 
+				   $words1->[$idx+1]->comparison_form : '' );
     }
     return 'glom' if $self->_is_near_word_match( $w1glom, $w2glom );
     return 'no';
@@ -695,7 +698,7 @@ sub begin_end_mark {
 	    if( $first_word_idx > -1 ) {
 		# We have found and coped with the first word; 
 		# now we are looking for substantive gaps.
-		if ( $word_obj->word ) {
+		if ( $word_obj->comparison_form ) {
 		    $last_word_idx = $idx;
 		    if( $gap_start > 0 &&
 			( $gap_end - $gap_start ) > $GAP_MIN_SIZE ) {
@@ -717,7 +720,7 @@ sub begin_end_mark {
 		    $gap_end = $idx;
 		}
 	    # else we are still looking for the first non-blank word.
-	    } elsif( $word_obj->word ) {
+	    } elsif( $word_obj->comparison_form ) {
 		$first_word_idx = $idx;
 		# We have found the first real word.  Splice in a begin marker.
 		my $slicedesc = join( '_', 'begin', 0, $idx-1 );
@@ -785,16 +788,16 @@ sub match_and_align_words {
 
     my $matched = 0;
     foreach my $curr_idx ( 0 .. $#words1 ) {
-	my $w = $words1[$curr_idx]->word();
+	my $w = $words1[$curr_idx]->comparison_form();
 	my $wplus = $w . ( defined( $words1[$curr_idx+1] ) 
-			   ? $words1[$curr_idx+1]->word() : '' );
+			   ? $words1[$curr_idx+1]->comparison_form() : '' );
 	my $best_distance;
 	my $best_idx;
 
 	foreach my $curr_idx2 ( 0 .. $#words2 ) {
-	    my $w2 = $words2[$curr_idx2]->word();
+	    my $w2 = $words2[$curr_idx2]->comparison_form();
 	    my $w2plus = $w2 . ( defined( $words2[$curr_idx2+1] ) 
-			   ? $words2[$curr_idx2+1]->word() : '' );
+			   ? $words2[$curr_idx2+1]->comparison_form() : '' );
 	    # See if $w best matches $w2.  If so, record the
 	    # corresponding indices, if they aren't the same.
 	    
@@ -846,7 +849,7 @@ sub match_and_align_words {
 	 
 	# So did we find a match?  Test against our configured fuzziness
 	# values.
-	my $best_w2 = $words2[$best_idx]->word();
+	my $best_w2 = $words2[$best_idx]->comparison_form();
 	if( $self->_is_match( $w, $best_w2, $best_distance ) ) {
 	    # this is enough of a match.
 	    $self->debug( "matched $w to " . $best_w2

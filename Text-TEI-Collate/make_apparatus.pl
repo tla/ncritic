@@ -32,6 +32,7 @@ my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
 				       'debug' => $debug,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 				       'canonizer' => \&Words::Armenian::canonize_word,
+				       'comparator' => \&Words::Armenian::comparator,
 				       'TEI' => 1,
     );
 my @results;
@@ -207,7 +208,9 @@ sub _add_hash_entry {
 # utility function for class_words
 sub _add_word_to_varhash {
     my( $varhash, $meta, $word_obj ) = @_;
-    _add_hash_entry( $varhash, $word_obj->word, $word_obj->ms_sigil );
+    _add_hash_entry( $varhash, 
+		     Words::Armenian::print_word( $word_obj->word ), 
+		     $word_obj->ms_sigil );
     if( $word_obj->punctuation ) {
 	$meta->{'punctuation'} = {} unless $meta->{'punctuation'};
 	foreach my $punct( $word_obj->punctuation ) {
@@ -248,14 +251,12 @@ sub make_app {
 		$rdg_grp->setAttribute( 'type', 'subvariants' );
 		$el = $rdg_grp;
 	    }
-	    my $child_type = $single_reading 
-		&& scalar( keys %$entry ) == 1 ? 'lem' : 'rdg';
 	    # Get the meta information for this word.
 	    $meta = delete $entry->{'meta'};
 	    foreach my $rdg_word ( keys %$entry ) {
 		my $wits = $entry->{$rdg_word};
 		my $wit_string = _make_wit_string( @$wits );
-		my $rdg = $el->addNewChild( $ns_uri, $child_type );
+		my $rdg = $el->addNewChild( $ns_uri, 'rdg' );
 		$rdg->setAttribute( 'wit', $wit_string );
 		if( $rdg_word eq '__OMITTED__' ) {
 		    $rdg->setAttribute( 'type', 'omission' );

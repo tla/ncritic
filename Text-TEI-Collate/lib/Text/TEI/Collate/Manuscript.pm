@@ -27,6 +27,7 @@ sub new {
     my $self = { 'sigil' => undef,
 		 'identifier' => 'Unidentified ms',
 		 'canonizer' => undef,
+		 'comparator' => undef,
 		 'type' => 'plaintext',
 		 %opts,
     };
@@ -159,6 +160,7 @@ sub _read_paragraphs {
 		foreach( @textwords ) {
 		    my $w = Text::TEI::Collate::Word->new( 'string' => $_,
 				   'ms_sigil' => $self->{'sigil'},
+				   'comparator' => $self->{'comparator'},
 				   'canonizer' => $self->{'canonizer'} );
 		    if( $first_word ) {
 			$first_word = 0;
@@ -184,7 +186,7 @@ sub _read_paragraphs {
 
 sub _get_text_from_node {
     my( $node ) = @_;
-    my $text;
+    my $text = '';
     # We can have an lb or pb in the middle of a word; if we do, the
     # whitespace (including \n) after the break becomes insignificant
     # and we want to nuke it.
@@ -237,6 +239,7 @@ sub _split_words {
     foreach my $w ( @raw_words ) {
 	my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
 						   'ms_sigil' => $self->{'sigil'},
+						   'comparator' => $self->{'comparator'},
 						   'canonizer' => $self->{'canonizer'} );
 	# Skip any words that have been canonized out of existence.
 	next if( length( $w_obj->word ) == 0 );
