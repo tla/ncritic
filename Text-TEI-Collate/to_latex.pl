@@ -1,10 +1,11 @@
 #!/usr/bin/perl -w -CDS
 
 use strict;
-# use lib 'lib';
+use lib 'lib';
 use Date::Format;
 use Getopt::Long;
 use XML::LibXML;
+use Words::Armenian qw( am_downcase );
 
 eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
@@ -26,6 +27,10 @@ unless( defined( $infile ) && defined( $outfile ) ) {
     print STDERR "Need to define input and output files\n";
     exit;
 }
+$include_spelling = 1 if $include_orthography;
+# TODO pull this entirely from XML.
+my %orth = %Words::Armenian::ORTHOGRAPHY;
+my %spell = %Words::Armenian::SPELLINGS;
 
 my $parser = XML::LibXML->new();
 my $input_doc = $parser->parse_file( $infile );
@@ -54,12 +59,12 @@ sub write_header {
 	    
 	    my @wit_list = $xpc->findnodes( '//tei:listWit/tei:witness' );
 	    if( @wit_list ) {
-		print OUT "\\begin\{itemize\}\n";
+		print OUT "\\begin\{tabular\}\{ll\}\n";
 		foreach my $witness ( @wit_list ) {
-		    print OUT "\\item " . $witness->getAttribute( 'xml:id' )
-			. ": " . $witness->textContent() . "\n";
+		    print OUT $witness->getAttribute( 'xml:id' )
+			. ' & ' . $witness->textContent() . "\\\\\n";
 		}
-		print OUT "\\end\{itemize\}\n";
+		print OUT "\\end\{tabular\}\n";
 	    } else {
 		warn "No witnesses found in header!!";
 	    }
@@ -74,8 +79,8 @@ sub latex_conv {
     my $div_counter = 0;
     foreach my $section ( $xpc->findnodes( '//tei:div' ) ) {
 	$div_counter++;
-	# TODO undo suppression of sections
-	print OUT "\n\\subsection\{Section $div_counter\}\n\n";
+	print OUT "\\pagebreak\n" unless $div_counter == 1;
+	print OUT "\\subsection\{Section $div_counter\}\n\n";
 	print OUT "\\beginnumbering\n";
 
 	# Then the paragraphs.
@@ -112,20 +117,35 @@ sub latex_conv {
 		my @notes = $xpc->findnodes( './/tei:note', $app );
 		
 		my $lem_txt = extract_text( $lemma, 1, $false_lemma );
+		# For dictionary comparison
+		my $lem_str = $lem_txt;
+		$lem_str =~ s/\\arm\{(.*)\}/$1/;
+		$lem_str =~ s/[[:punct:]]//g;
+		$lem_str = am_downcase( $lem_str );
+
 		my $app_footnote;  # For the apparatus.
 		my $ed_footnote = '';   # For editorial notes.
 
 		# Get any readings.
 		my @rdg_out;
 		foreach my $r( @readings ) {
-		    my $type = $r->getAttribute( 'type' ) || '';
-		    print STDERR "Type is $type\n";
-		    next if( $type eq 'spelling_variant' && 
-			     !( $include_spelling || $include_orthography ));
-		    next if( $type eq 'orth_variant' && 
-			     !$include_orthography );
 		    my $wits = witness_string( $r->getAttribute( 'wit' ) );
 		    my( $txt ) = extract_text( $r );
+		    my $rdg_str = $txt;
+		    $rdg_str =~ s/\\arm\{(.*)\}/$1/;
+		    $rdg_str =~ s/[[:punct:]]//g;
+		    $rdg_str = am_downcase( $rdg_str );
+
+		    unless( $include_orthography ) {
+			next if $rdg_str eq $lem_str;
+			next if ( exists $orth{$rdg_str}
+				  && $orth{$rdg_str} eq $lem_str );
+		    }
+		    unless( $include_spelling ) {
+			next if ( exists $spell{$rdg_str} 
+				  && $spell{$rdg_str} eq $lem_str );
+		    }
+		    
 		    push( @rdg_out, { 'txt' => $txt, 'wit' => $wits } );
 		}
 
@@ -280,7 +300,9 @@ sub extract_text {
 	    }
 	    push( @words, $word_str );
 	}
-	$out_str = '\\arm{' . join( ' ', @words ) . '}';
+	# if( @words ) {
+	    $out_str = '\\arm{' . join( ' ', @words ) . '}';
+	# }
     }
     return( $out_str );
 }
@@ -354,4 +376,5 @@ __DATA__
 
 __WITNESSLIST__
 
+\pagebreak
 \section{Text}
