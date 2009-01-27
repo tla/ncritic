@@ -26,8 +26,11 @@ unless( defined( $infile ) && defined( $outfile ) ) {
 }
 
 my %SPELLINGS = %Words::Armenian::SPELLINGS;
+my %ORTHOGRAPHY = %Words::Armenian::ORTHOGRAPHY;
 my %start_sp;
 map { $start_sp{$_} = 1 } keys( %SPELLINGS );
+my %start_orth;
+map { $start_orth{$_} = 1 } keys( %ORTHOGRAPHY );
 my %PREFIXES = %Words::Armenian::PREFIXES;
 my %SUFFIXES = %Words::Armenian::SUFFIXES;
 
@@ -39,7 +42,7 @@ $xpc->registerNs( 'tei', $ns_uri );
 
 # This is where the action happens.
 make_edition( $doc );
-print_results();
+print_results( 'end' );
 print STDERR "Done.\n";
 
 sub make_edition {
@@ -73,12 +76,11 @@ sub process_app {
     my $curr_lemma;
     my @new_context;
     if( my @lemmas = $app->getChildrenByTagName( 'lem' ) ) {
-	print STDERR "app $id already has a lemma\n";
+	# print STDERR "app $id already has a lemma\n";
 	$curr_lemma = $lemmas[0];
     } else {
-	print "Context: " . join( ' ', @$context ) . "\n\n";
-	
 	print STDERR "Looking at app $id\n";
+	print "Context: " . join( ' ', @$context ) . " _____\n";
 	# Get the chidren of this app entry
 	my @contents = $app->childNodes();
 	# The children should be either readings or rdgGrps.
@@ -187,17 +189,25 @@ sub process_reading {
     
     my $need_answer = 0;  # For sanity check
     my $return_rdg;
-    # This annoys me deeply.  There might be only one reading, but we
-    # don't know its key.
-    my @reading_keys = keys( %readings );
-    if( scalar @reading_keys > 1 ) {
-	print "Available readings:\n";
+    my @following_apps = $xpc->findnodes( 
+	'following-sibling::tei:app[position() <= 5]', $app );
+    if( keys( %readings ) > 1 ) {
+	# Gather the text of the next few readings, for display purposes.
+	# Let's say the next five apps.
+	print_following_context( $app, @following_apps );
+	print "\nAvailable readings:\n";
     } else {
+	if( keys( %witDetails ) ) {
+	    # Only one reading, but we still need to see the context.
+	    print_following_context( $app, @following_apps );
+	    print "\n";
+	}
 	# There is only one reading.  Lemmatize it.
-	my $rdg = $readings{$reading_keys[0]}->{'obj'};
-	$rdg->setNodeName( 'lem' );
-	$return_rdg = $rdg;
-    }
+	my @this_is_only_one_value = values( %readings );
+	$return_rdg = $this_is_only_one_value[0]->{'obj'};
+	$return_rdg->setNodeName( 'lem' );
+    }    
+    
     foreach my $disp_idx ( sort keys %readings ) {
 	my $rdg = $readings{$disp_idx};
 	my $rdg_obj = $rdg->{'obj'};
@@ -212,7 +222,9 @@ sub process_reading {
 	my $witnesses = $rdg_obj->getAttribute( 'wit' );
 	my $var_str = '';
 	if( exists $rdg->{'sp_var'} ) {
-	    # Display the spelling variations, for informational purposes.
+	    # Display the spelling and orthographic variations, for 
+	    # informational purposes.
+	    
 	    foreach my $var_desc ( @{$rdg->{'sp_var'}} ) {
 		my $var_wit = $var_desc->{'obj'}->getAttribute( 'wit' );
 		my $var_words = join( ' ', map { $_->textContent } 
@@ -220,9 +232,11 @@ sub process_reading {
 		$var_str .= "\tVariant: $var_words ( $var_wit )\n";
 	    }
 	}
-	printf( "%-2s: %s (%s )\n%s", $disp_idx, 
-		join( ' ', @display_text ), $witnesses, $var_str );
-	$need_answer = 1 unless $return_rdg;
+	unless( $return_rdg && !(keys (%witDetails) ) ) {
+	    printf( "%-2s: %s (%s )\n%s", $disp_idx, 
+		    join( ' ', @display_text ), $witnesses, $var_str );
+	    $need_answer = 1;
+	}
     }
     
     # Do we need to assign punctuation or section divisions?
@@ -264,40 +278,47 @@ sub process_reading {
 	    my $answer = <STDIN>;
 	    chomp $answer;
 	    if( $answer =~ /^q(uit)?\s*$/ ) {
-		print_results();
+		print_results( 'end' );
 		exit;
+	    } elsif( $answer =~ /^save/ ) {
+		# Always good to save your work.
+		print_results();
 	    } elsif( $answer =~ /^(accept|a)\s+(\d+)/ ) {
 		$return_rdg = $readings{$2}->{'obj'};
 		$return_rdg->setNodeName( 'lem' );
 		$picked = 1;
-	    } elsif( $answer =~ /^((accept|sub)\s+detail|(a|s)\s*d)\s+(\d+)(\s+(\S+))?/ ) {
+	    } elsif( $answer =~ /^((accept|sub)\s+detail|(a|s)\s*d)\s+(\d+|none)(\s+(\S+))?/ ) {
 		# Accept the detail with the given ID, or accept the 
 		# substitution given in its place.
 		## TODO deal with Armenian mid-word punctuation
 		my( $op, $id, $new_str ) = ($1, $4, $6 );
-		my $detail = $witDetails{$id};
-		if( !$new_str && $op =~ /^s/ ) {
-		    print "Substitution request without any substitution.  Try gain.\n";
-		    next;
-		}
-		# The punctuation should get added to the main reading if
-		# applicable; otherwise to the reading on which it was
-		# observed.
-		my $word_obj = $word_from_id{ $detail->{'target'} }->{'obj'};
-		# Add the required detail to the relevant word.
-		#  TODO currently assumes append, i.e. assumes punct
-		if( $detail->{'type'} eq 'punctuation' ) {
-		    my $append_val = $op =~ /^s/ ? $new_str : $detail->{'val'};
-		    $word_obj->appendText( $append_val );
-		    $word_obj->parentNode->removeChild( $detail->{'obj'} );
-		} else {
-		    print "TODO: close out a paragraph and/or div here\n";
-		}
+		unless( $id eq 'none' ) {
+		    my $detail = $witDetails{$id};
+		    if( !$new_str && $op =~ /^s/ ) {
+			print "Substitution request without any substitution.  Try gain.\n";
+			next;
+		    }
+		    # The punctuation should get added to the main reading if
+		    # applicable; otherwise to the reading on which it was
+		    # observed.
+		    my $word_obj = $word_from_id{ $detail->{'target'} }->{'obj'};
+		    # Add the required detail to the relevant word.
+		    #  TODO currently assumes append, i.e. assumes punct
+		    if( $detail->{'type'} eq 'punctuation' ) {
+			my $append_val = $op =~ /^s/ ? $new_str : $detail->{'val'};
+			$word_obj->appendText( $append_val );
+			$word_obj->parentNode->removeChild( $detail->{'obj'} );
+		    } else {
+			print "TODO: close out a paragraph and/or div here\n";
+		    }
+		}  # do nothing if we said 'none'
 		$detail_needed--;
 	    } elsif( $answer =~ /^n(ext)?\s*$/ ) {
-		# Return the first reading for context purposes, but don't 
-		# lemmatize it.
+		# Return the first reading for context purposes if we
+		# haven't already got one.
 		$return_rdg = $readings{1}->{'obj'} unless $return_rdg;
+		# De-lemmatize it, since a decision remains to be made.
+		$return_rdg->setNodeName( 'rdg' );
 		$picked = 1;
 		$detail_needed = 0;
 	    } elsif( $answer =~ /^note\s+(.*)$/ ) {
@@ -312,12 +333,21 @@ sub process_reading {
 				    $readings{$var}->{'words'}->get_nodelist );
 		my $std_str = join( ' ', map { $_->textContent } 
 				    $readings{$std}->{'words'}->get_nodelist );
+		$readings{$var}->{'obj'}->setAttribute( 'type', 
+							'spelling_variant' );
 		$SPELLINGS{$var_str} = $std_str;
+	    } elsif( $answer =~ /^orth\s+(\d+)\s+(\d+)/ ) {
+		my( $var, $std ) = ( $1, $2 );
+		my $var_str = join( ' ', map { $_->textContent } 
+				    $readings{$var}->{'words'}->get_nodelist );
+		my $std_str = join( ' ', map { $_->textContent } 
+				    $readings{$std}->{'words'}->get_nodelist );
+		$readings{$var}->{'obj'}->setAttribute( 'type', 
+							'orth_variant' );
+		$ORTHOGRAPHY{$var_str} = $std_str;
 	    } elsif( $answer =~ /^emend\s+(\S+.*)$/ ) {
 		# Put a placeholder lemma in this apparatus, and add
 		# an editorial note with the text.
-		# TODO: Can't enter the emendation as utf-8 at the terminal.
-		# This will need a different interface someday.
 		my $ed_note = $1;
 		# Add the unattested lemma...
 		$return_rdg = XML::LibXML::Element->new( 'lem' );
@@ -331,21 +361,28 @@ sub process_reading {
 		$note_obj->setAttribute( 'resp', '#tla' );
 		$note_obj->appendText( $ed_note );
 		$app->appendChild( $note_obj );
+		$picked = 1;
 	    } elsif( $answer =~ /^h(elp)?/ ) {
 		print 'Available commands:
 accept (#)
 accept detail (#)
+subst detail (#) (value)
 spelling (# alternate) (# canonical)
-emend (note)
+orth (# alternate) (# canonical)
+emend (comment text)
+note (note text)
 next
 help
+save
 quit
 ';
 	    } else {
 		print 'Huh? (h for help)';
 	    }
-	}
+	} # until we have enough answers
     }
+    # Leave some space for the next one.
+    print "-----------\n\n\n";
     return $return_rdg;
 }
 
@@ -358,8 +395,8 @@ sub reorder_app {
 	my @children = $app->childNodes();
 	foreach my $c ( @children ) {
 	    if( $c->nodeType == 1 && $c->nodeName ne 'lem' ) {
-		print STDERR "Moving lemma for app " 
-		    . $app->getAttribute( 'xml:id' ) . "\n";
+		# print STDERR "Moving lemma for app " 
+		#     . $app->getAttribute( 'xml:id' ) . "\n";
 		$app->insertBefore( $lemma, $c );
 		last;
 	    }
@@ -367,9 +404,88 @@ sub reorder_app {
     }
 }
 
+# Given a set of apparatus entries, string together the various readings
+# available in them.
+sub print_following_context {
+    my( @apps ) = @_;
+    my %witnesses;
+    my %wit_details;
+    foreach my $app ( @apps ) {
+	my @readings = $xpc->findnodes( './/tei:rdg', $app );
+	# TODO code reuse!!
+	foreach my $rdg_obj ( @readings ) {
+	    my @words = $xpc->findnodes( './/tei:w', $rdg_obj );
+	    my @wits = split( /\s+/, $rdg_obj->getAttribute( 'wit' ) );
+	    foreach my $w ( @words ) {
+		# Add the word content to each of the witness hashes.
+		my $w_id = $w->getAttribute( 'xml:id' );
+		$w_id = '#' . $w_id if $w_id;
+		foreach my $sigil ( @wits ) {
+		    $witnesses{$sigil} .= $w->textContent;
+		}
+		# Look for witDetails applicable to this word.
+		if( $w_id ) { # The word has witDetails.
+		    my $xpath_expr = './/tei:witDetail[@type=\'punctuation\' and @target=' . "'$w_id']";
+		    my @wit_det = $xpc->findnodes( $xpath_expr, $rdg_obj );
+		    foreach my $wd ( @wit_det ) {
+			foreach my $sigil( split( /\s+/, 
+					  $wd->getAttribute( 'wit' ) ) ) {
+			    $witnesses{$sigil} .= $wd->textContent;
+			}
+		    }
+		}
+
+		# And put a space on the end.  Clumsy but hey.
+		foreach my $seen ( @wits ) {
+		    $witnesses{$seen} .= ' ' 
+			unless $witnesses{$seen} =~ /\s+$/;
+		}
+	    } # foreach word
+	} # foreach reading
+    } # foreach app
+
+    # Now reverse the hash and print them out.
+    my %readings = invert_hash( \%witnesses );
+    # Find how much margin we need for the "witnesses" column.
+    # While we're at it, join the string for easy printing in
+    # the next loop.
+    my $col_width = 0;
+    foreach my $k ( keys %readings ) {
+	my $witstr = join( ' ', @{$readings{$k}} );
+	$readings{$k} = $witstr;
+	$col_width = length( $witstr ) unless $col_width >= length( $witstr );
+    }
+    print "Following context: \n";
+    foreach my $str ( keys %readings ) {
+	printf( "%-${col_width}s: %s\n", $readings{$str}, $str );
+    }
+    print "-----------\n";
+}
+
+sub invert_hash {
+    my ( $hash, $plaintext_keys ) = @_;
+    my %new_hash;
+    foreach my $key ( keys %$hash ) {
+	my $val = $hash->{$key};
+	my $valkey = $val;
+	if( $plaintext_keys 
+	    && ref( $val ) ) {
+	    $valkey = $plaintext_keys->{ scalar( $val ) };
+	    warn( "No plaintext value given for $val" ) unless $valkey;
+	}
+	if( exists ( $new_hash{$valkey} ) ) {
+	    push( @{$new_hash{$valkey}}, $key );
+	} else {
+	    $new_hash{$valkey} = [ $key ];
+	}
+    }
+    return %new_hash;
+}
+
 sub normalize_readings {
     my( $rdg_hash ) = @_;
     my %seen_spelling;
+    my %seen_orth;
     my $next_rdg_idx = scalar keys( %$rdg_hash );
     foreach my $k ( keys %$rdg_hash ) {
 	# Get the nodelist of words.
@@ -381,6 +497,10 @@ sub normalize_readings {
 	    # This is a bad spelling.  Note that we've seen it.
 	    my $corr_spell = $SPELLINGS{$word_str};
 	    _add_hash_entry( \%seen_spelling, $corr_spell, $k );
+	} elsif( exists $ORTHOGRAPHY{$word_str} ) {
+	    # This is a bad spelling.  Note that we've seen it.
+	    my $corr_spell = $ORTHOGRAPHY{$word_str};
+	    _add_hash_entry( \%seen_orth, $corr_spell, $k );
 	} 
     }
 
@@ -390,7 +510,8 @@ sub normalize_readings {
     foreach my $rdg ( @readings ) {
 	my $wordlist = $rdg->{'words'};
 	# String them together into a text.
-	my $word_str = join( ' ', map { $_->textContent } $wordlist->get_nodelist );
+	my $word_str = join( ' ', map { $_->textContent } 
+			              $wordlist->get_nodelist );
 	if( exists $seen_spelling{$word_str} ) {
 	    # This is the normal form of a spelling for which we
 	    # have seen a variant.  Fold the variant into the normal
@@ -402,6 +523,18 @@ sub normalize_readings {
 	    }
 	    delete $seen_spelling{$word_str};
 	}
+	if( exists $seen_orth{$word_str} ) {
+	    # This is the normal form of an orthography
+	    # have seen a variant.  Fold the variant into the normal
+	    # reading.
+	    foreach my $var_idx ( @{$seen_orth{$word_str}} ) {
+		my $var_rdg = delete $rdg_hash->{$var_idx};
+		$var_rdg->{'obj'}->setAttribute( 'type', 'orth_variant' );
+		# Can still chuck them in the same variant-to-display hash.
+		_add_hash_entry( $rdg, 'sp_var', $var_rdg );
+	    }
+	    delete $seen_orth{$word_str};
+	}
     }
 
     # TODO handle case of misspellings that have no properly-spelled variant
@@ -410,10 +543,22 @@ sub normalize_readings {
 
 sub print_results {
     # Write it all out.
+    my( $quitting ) = @_;
     $doc->toFile( $outfile, 1 );
-    foreach ( sort keys %SPELLINGS ) {
-	print "    '$_' => '" . $SPELLINGS{$_} . "',\n"
-	    unless exists( $start_sp{$_} );
+    if( $quitting ) {
+	my( $sp_title, $orth_title );
+	foreach ( sort keys %SPELLINGS ) {
+	    print " New spellings: \n" unless $sp_title;
+	    $sp_title = 1;
+	    print "    '$_' => '" . $SPELLINGS{$_} . "',\n"
+		unless exists( $start_sp{$_} );
+	}
+	foreach ( sort keys %ORTHOGRAPHY ) {
+	    print " New orthography: \n" unless $orth_title;
+	    $orth_title = 1;
+	    print "    '$_' => '" . $ORTHOGRAPHY{$_} . "',\n"
+		unless exists( $start_orth{$_} );
+	}
     }
 }
 
