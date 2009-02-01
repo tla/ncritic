@@ -217,7 +217,7 @@ sub empty_word {
     unless( defined $self->{'null_word'} 
 	    && ref( $self->{'null_word'} ) eq 'Text::TEI::Collate::Word' ) {
 	# Make a null word and save it.
-	$self->{'null_word'} = Text::TEI::Collate::Word->new( string => '' );
+	$self->{'null_word'} = Text::TEI::Collate::Word->new( empty => 1 );
     }
     return $self->{'null_word'};
 }

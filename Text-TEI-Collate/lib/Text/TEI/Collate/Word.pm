@@ -38,6 +38,7 @@ sub new {
     if( $self->{'special'} ) {
 	$self->{'invisible'} = 1;
     }
+    $init_string = '' if( $self->{'empty'} );
     $self->evaluate_word( $init_string );
     return $self;
 }
@@ -69,7 +70,7 @@ sub evaluate_word {
     # Has it any punctuation to go with the word, that is not in our
     # list of "not really punctuation"?
     my( $punct, $accent ) = ( [], undef );	    
-    my @punct_instances = $word =~ /([[:punct:]])/;
+    my @punct_instances = $word =~ /([[:punct:]])/g;
     foreach my $p ( @punct_instances ) {
 	next if( grep /\Q$p\E/, @{$self->{'not_punct'}} );
 	push( @$punct, $p );
@@ -242,6 +243,18 @@ sub special {
     my $self = shift;
     return unless exists( $self->{'special'} );
     return $self->{'special'};
+}
+
+=head2 is_empty
+
+Returns whether this is an empty word.  Useful to distinguish from a
+special word.
+
+=cut
+
+sub is_empty {
+    my $self = shift;
+    return $self->{'empty'};
 }
 
 =head2 state
