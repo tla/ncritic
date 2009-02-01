@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w -CDS
 
 use strict;
+use utf8;
 use lib 'lib';
 use Date::Format;
 use Getopt::Long;
@@ -32,6 +33,13 @@ $include_spelling = 1 if $include_orthography;
 my %orth = %Words::Armenian::ORTHOGRAPHY;
 my %spell = %Words::Armenian::SPELLINGS;
 
+## Extra orthography entries.
+$orth{'Եւ'} = 'և';
+$orth{'և'} = 'Եւ';
+$orth{'եւ'} = 'Եւ';
+$orth{'եւ'} = 'և';
+$orth{'և'} = 'եւ';
+
 my $parser = XML::LibXML->new();
 my $input_doc = $parser->parse_file( $infile );
 my $ns_uri = 'http://www.tei-c.org/ns/1.0';
@@ -60,9 +68,16 @@ sub write_header {
 	    my @wit_list = $xpc->findnodes( '//tei:listWit/tei:witness' );
 	    if( @wit_list ) {
 		print OUT "\\begin\{tabular\}\{ll\}\n";
-		foreach my $witness ( @wit_list ) {
-		    print OUT $witness->getAttribute( 'xml:id' )
-			. ' & ' . $witness->textContent() . "\\\\\n";
+		foreach my $witness ( sort { $a->getAttribute( 'xml:id' )
+						 cmp
+						$b->getAttribute( 'xml:id' ) }
+				      @wit_list ) {
+		    # Hack for our not-really manuscripts.
+		    my $sigil = $witness->getAttribute( 'xml:id' );
+		    my $qualifier = $sigil =~ /^[CGE]$/ 
+			? ' (as found in 1898 Vałaršapat edition)' : '';
+		    print OUT $sigil . ' & ' . $witness->textContent() 
+			. $qualifier . "\\\\\n";
 		}
 		print OUT "\\end\{tabular\}\n";
 	    } else {
@@ -90,6 +105,7 @@ sub latex_conv {
 	    my %need_anchor;
 	    foreach my $app ( $xpc->findnodes( './/tei:app', $pg ) ) {
 		my $app_id = $app->getAttribute( 'xml:id' ) || '';
+		# print STDERR "Looking at $app_id\n";
 		my $lemma = $xpc->find( './/tei:lem', $app );
 		my $false_lemma = 0;
 		my $rdg_xpath = './/tei:rdg';
@@ -106,6 +122,8 @@ sub latex_conv {
 			}
 		    }
 		    $false_lemma = 1;
+		    # Don't show variants, as we haven't really selected
+		    # a lemma.
 		    @readings = ();
 		}
 
@@ -117,6 +135,7 @@ sub latex_conv {
 		my @notes = $xpc->findnodes( './/tei:note', $app );
 		
 		my $lem_txt = extract_text( $lemma, 1, $false_lemma );
+		my $lem_wit = witness_string( $lemma->getAttribute( 'wit' ) );
 		# For dictionary comparison
 		my $lem_str = $lem_txt;
 		$lem_str =~ s/\\arm\{(.*)\}/$1/;
@@ -136,12 +155,15 @@ sub latex_conv {
 		    $rdg_str =~ s/[[:punct:]]//g;
 		    $rdg_str = am_downcase( $rdg_str );
 
+		    my $type = $r->getAttribute( 'type' ) || '';
 		    unless( $include_orthography ) {
+			next if $type eq 'orth_variant';
 			next if $rdg_str eq $lem_str;
 			next if ( exists $orth{$rdg_str}
 				  && $orth{$rdg_str} eq $lem_str );
 		    }
 		    unless( $include_spelling ) {
+			next if $type eq 'spelling_variant';
 			next if ( exists $spell{$rdg_str} 
 				  && $spell{$rdg_str} eq $lem_str );
 		    }
@@ -160,33 +182,32 @@ sub latex_conv {
 		# Do we have a lemma to hang it all on?
 		if( $lem_txt ) {
 		    # TODO Check for orphaned footnotes
-		    if( keys %need_anchor ) {
-			rehome_orphans( \@rdg_out, \@notes,
-					$need_anchor{'rdg'},
-					$need_anchor{'notes'} );
-		    }
-			
-		    my $latex_app = latex_for_lemma( $lem_txt, \@rdg_out,
-						     \@notes );
-		    push( @words_out, $latex_app );
+		    my( $lem_rdg, $lem_note ) = ( \@rdg_out, \@notes );
 		    %last_word = ( 'lemma' => $lem_txt,
-				   'readings' => \@rdg_out,
-				   'notes' => \@notes, );
+				   'readings' => $lem_rdg,
+				   'notes' => $lem_note );
+		    if( keys %need_anchor ) {
+			rehome_orphans( \%last_word, 
+					\%need_anchor );
+		    }
+		    
+		    my $latex_app = latex_for_lemma( %last_word );
+		    push( @words_out, $latex_app );
 		    %need_anchor = ();
 		} else {
 		    # We have no lemma.  If there is a previous lemma
 		    # available, hang the reading on that.  Otherwise
 		    # store it to hang on the next word.
 		    if( exists $last_word{'lemma'} ) {
-			my $lem_rdg = $last_word{'readings'};
-			my $lem_notes = $last_word{'notes'};
-			rehome_orphans( $lem_rdg, $lem_notes, 
-					\@rdg_out, \@notes );
-			pop( @words_out );
-			push( @words_out, latex_for_lemma( $last_word{'lemma'},
-							   $lem_rdg,
-							   $lem_notes ) );
+			# Doing it this way b/c data structure consistency
+			# problems otherwise.
+			my %orphans;
+			_add_hash_entry( \%orphans, 'rdg', \@rdg_out );
+			_add_hash_entry( \%orphans, 'notes', \@notes );
 
+			rehome_orphans( \%last_word, \%orphans );
+			pop( @words_out );
+			push( @words_out, latex_for_lemma( %last_word ) );
 		    } else {
 			_add_hash_entry( \%need_anchor, 'rdg', \@rdg_out );
 			_add_hash_entry( \%need_anchor, 'notes', \@notes );
@@ -206,8 +227,9 @@ sub latex_conv {
 
 sub witness_string {
     my $attr_string = shift;
+    return '' unless $attr_string;
     my @output;
-    foreach( split( /\s+/, $attr_string ) ) {
+    foreach( sort( split( /\s+/, $attr_string ) ) ) {
 	s/^\#//;
 	push( @output, $_ );
     }
@@ -215,12 +237,12 @@ sub witness_string {
 }
 
 sub latex_for_lemma {
-    my( $lemma, $rdg_list, $note_list ) = @_;
-
+    my( %lemma ) = @_;
     my $latex_app;
-    my $app_footnote = join( '; ', map { $_->{txt} . ": " .
-					  $_->{wit} } @$rdg_list );
-    my $ed_footnote .= join( ' // ', map { $_->textContent } @$note_list );
+    my $app_footnote = join( '; ', map { $_->{wit} . " " . $_->{txt} } 
+			     @{$lemma{'readings'}} );
+    my $ed_footnote .= join( ' // ', map { $_->textContent } 
+			     @{$lemma{'notes'}} );
     
     if( $app_footnote || $ed_footnote ) {
 	my $latex_fn = '';
@@ -231,31 +253,49 @@ sub latex_for_lemma {
 	    $latex_fn .= "\\Bfootnote\{$ed_footnote\}";
 	}
 	$latex_app =  sprintf( '\\edtext{%s}{%s}', 
-			       $lemma, $latex_fn );
+			       $lemma{'lemma'}, $latex_fn );
     } else {
-	$latex_app = $lemma;
+	$latex_app = $lemma{'lemma'};
     }
 }
 
 # Add the contents of $orph_* to the reading & note arrays.
 sub rehome_orphans {
-    my( $readings, $notes, $orph_rdgs, $orph_notes ) = @_;
+    my( $current, $orphans ) = @_;
     
     # Notes are easy.  Do them first.
-    push( @$notes, @$orph_notes );
+    foreach ( @{$orphans->{'notes'}} ) {
+	push( @{$current->{'notes'}}, @$_ );
+    }
     
     # Readings are hard.  We have to break them down and
     # join them back up.
-    my $witness_rdg = {};  # keyed by sigil
-    my @all_readings = @$readings;
-    foreach( @$orph_rdgs ) {
-	push( @all_readings, @$_ );
-    }
-    foreach my $rdg( ( @all_readings ) ) {
-	foreach my $wit ( split( /\s+/, $rdg->{'wit'} ) ) {
-	    _add_hash_entry( $witness_rdg, $wit, $rdg->{'txt'} );
+    my $lemma_txt = $current->{'lemma'};
+    my $witness_rdg = {};
+    foreach my $rdg ( @{$current->{'readings'}} ) {
+	my @wits = split( /\s+/, $rdg->{'wit'} );
+	foreach( @wits ) {
+	    _add_hash_entry( $witness_rdg, $_, $rdg->{'txt'} );
 	}
     }
+    # ...and any sigil not now in $witness_rdg should use the lemma text.
+
+    # Now for each set of orphaned readings...
+    foreach my $group( @{$orphans->{'rdg'}} ) {
+	# ...for each reading within the set...
+	foreach my $rdg( @$group ) {
+	    # ...add the word to the string associated with its witness(es).
+	    my @wits = split( /\s+/, $rdg->{'wit'} );
+	    foreach my $wit ( @wits ) {
+		unless( exists( $witness_rdg->{$wit} ) ) {
+		    _add_hash_entry( $witness_rdg, $wit, $lemma_txt );
+		}
+		_add_hash_entry( $witness_rdg, $wit, $rdg->{'txt'} );
+	    }
+	}
+    }
+
+    # Now we have the word lists; join them into strings.
     foreach my $wit( keys %$witness_rdg ) {
 	# Join up the strngs.
 	my $reading_str = join( ' ', @{$witness_rdg->{$wit}} );
@@ -263,12 +303,12 @@ sub rehome_orphans {
     }
 
     my %joined_rdgs = invert_hash( $witness_rdg );
-    $readings = [];
+    my @readings;
     foreach my $rdg_txt ( keys %joined_rdgs ) {
-	push( @$readings, { 'txt' => $rdg_txt,
-			    'wit' => join( ' ', @{$joined_rdgs{$rdg_txt}}) } );
+	push( @readings, { 'txt' => $rdg_txt,
+			   'wit' => join( ' ', @{$joined_rdgs{$rdg_txt}}) } );
     }
-    
+    $current->{'readings'} = \@readings;
 }
     
 
@@ -287,6 +327,12 @@ sub extract_text {
 	my @words;
 	foreach my $word ( $xpc->findnodes( 'tei:w', $rdg ) ) {
 	    my $word_str = $word->textContent;
+	    if( $is_lemma &&
+		exists( $Words::Armenian::PROPER_NAMES{ $word_str } ) ) {
+		# Make any names proper names.
+		$word_str = $Words::Armenian::PROPER_NAMES{ $word_str };
+	    }
+
 	    my $word_id = $word->getAttribute( 'xml:id' );
 	    if( $false_lemma && $word_id ) {
 		my $xpathExp = 'tei:witDetail[@target=' . "'\#$word_id' and "
@@ -300,9 +346,9 @@ sub extract_text {
 	    }
 	    push( @words, $word_str );
 	}
-	# if( @words ) {
+	if( @words ) {
 	    $out_str = '\\arm{' . join( ' ', @words ) . '}';
-	# }
+	}
     }
     return( $out_str );
 }
@@ -347,14 +393,17 @@ __DATA__
 \usepackage{fontspec}
 
 %% Fontspec stuff
-\newfontinstance\armfont[Bold=Mshtakan Bold,Italic=Mshtakan Oblique,BoldItalic=Mshtakan BoldOblique]{Mshtakan}
+\newfontinstance\armfont{Mshtakan}
 \newcommand{\arm}[1]{{\armfont #1}}
 \newfontinstance\gkfont[Scale=0.75]{Lucida Grande}
 \newcommand{\gk}[1]{{\gkfont #1}}
 \newfontinstance\jefont{Times}
-\newcommand{\je}{{\jefont ǰ}}
+\newcommand{\je}{{\jefont Ç°}}
 \setromanfont[Mapping=tex-text]{Palatino}
 \defaultfontfeatures{Mapping=tex-text}
+
+%% Armenian hyphenation
+\hyphenation{գտ-եալ կա-տա-րա-ծի զշա-րա-գրա-կան զհայ-րա-պե-տացս զաս-տու-ածա-սաստ աս-տու-ծոյ աս-տու-ած զհա-տու-ցումն հայ-րա-պե-տու-թեանն հեղ-եալ սո-վոր-ու-թիւն մար-մնոյն վաս-տա-կաւք հար-ստան-ան հան-ճա-րեղք հայ-րա-պե-տու-թեան դառ-նալ այ-սո-րիկ քն-նու-թիւնս զփո-փոխ-մունս ան-կա-տա-րածք զժա-մա-նակն ժո-ղո-վե-ցին}
 
 %% Ledmac stuff
 \setcounter{firstlinenum}{1} 

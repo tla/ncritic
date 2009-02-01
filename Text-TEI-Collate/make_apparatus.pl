@@ -61,8 +61,6 @@ my %text_active;            # those texts BEGUN but not ENDed
 my %text_on_vacation;       # We all need a break sometimes.
 my $in_app = 0;             # Whether we have deferred apparatus creation
 my @app_waiting = ();       # List of deferred entries
-my @special_unseen = qw( __GLOM__ );  # Tags that might turn up in the
-                                      # text_unseen hash
 
 foreach my $idx ( 0 .. $#{$initial_base} ) {
     # Mark which texts are on duty
@@ -89,8 +87,10 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 	}
 	
 	# Either make the apparatus entry, or defer it.
-	if( keys( %text_unseen ) ) {
+	# TODO Now only deferring glommed entries.  Refactor this code.
+	if( grep( /^__GLOM__$/, keys( %text_unseen ) ) ) {
 	    # Add a reading for the omitted words
+	    delete $text_unseen{'__GLOM__'};
 	    push( @line_words, class_words( 'omitted', \%text_unseen ) );
 	    push( @app_waiting, \@line_words );
 	    $in_app = 1;
@@ -114,6 +114,7 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
 print $doc->toString(1);
 print STDERR "Done.\n";
 
+# Creates a TEI document with an empty body.
 sub make_tei_doc {
     my @mss = @_;
     my $doc = XML::LibXML->createDocument( '1.0', 'UTF-8' );
@@ -185,9 +186,7 @@ sub class_words {
     } elsif ( $word_obj eq 'omitted' ) {
 	# Do we really have any unseen entries, or just specials?
 	foreach my $sig ( keys %$unseen ) {
-	    unless( grep { $sig eq $_} @special_unseen ) {
-		_add_hash_entry( $varhash, '__OMITTED__', $sig );
-	    }
+	    _add_hash_entry( $varhash, '__OMITTED__', $sig );
 	}
     } else {
 	warn "Unsupported argument to \&class_words: $word_obj.  Doing nothing.";

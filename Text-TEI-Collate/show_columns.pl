@@ -4,7 +4,7 @@ use strict;
 use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
-use Storable qw( store_fd );
+use Storable qw( store_fd retrieve );
 use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
 use Words::Armenian;
@@ -16,12 +16,13 @@ eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
 # Default option values
 my( $col_width, $fuzziness ) = ( 25, 50 );
-my( $CSV, $storable, $outfile, $text, $debug, %argspec );
+my( $CSV, $storable, $outfile, $infile, $text, $debug, %argspec );
 
 GetOptions( 'csv' => \$CSV,
-	    'width' => \$col_width,
+	    'width=i' => \$col_width,
 	    'storable' => \$storable,
 	    'outfile=s' => \$outfile,
+	    'store=s' => \$infile,
 	    'text' => \$text,
 	    'debug:i' => \$debug,
 	    'argspec=s' => \%argspec,
@@ -37,6 +38,10 @@ if( defined $debug ) {
 }
 if( $storable && !$outfile ) {
     warn( "Cannot output Storable data without an output file target" );
+    exit;
+}
+if( $storable && $infile ) {
+    warn( "You probably don't want to store a Storable.  Try again." );
     exit;
 }
 if( $outfile ) {
@@ -60,7 +65,17 @@ my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
     );
 
 
-my @results = $aligner->align( @files );
+my @results;
+if( $infile ) {
+    no warnings 'once'; 
+    $Storable::Eval = 1;
+    my $savedref = retrieve( $infile );
+    @results = @$savedref;
+    @files = map { $_->sigil } @results;
+} else {
+    @results = $aligner->align( @files );
+}
+
 
 if( $storable ) {
     # Store the array.
@@ -72,15 +87,15 @@ if( $storable ) {
 
 # Print the array.
 print_fnames() if $CSV;
-foreach my $i ( 0 .. $#{$results[0]} ) {
+foreach my $i ( 0 .. $#{$results[0]->words } ) {
     my $output_str;
     if( $CSV ) {
 	$output_str = join( ',', map { '"' . $_->words->[$i]->printable . '"' } @results ) . "\n";
     } else {
 	my $format = '%-' . $col_width . "s";
-	$output_str = join( '| ', map { sprintf( $format, $_->words->[$i]->printable ) } @results ) . "\n";
+	$output_str = sprintf( "%-4d:", $i ) . join( '| ', map { sprintf( $format, $_->words->[$i]->printable ) } @results ) . "\n";
     }
-    print_fnames( $i ) unless ( $CSV || $i % 100 );
+    # print_fnames( $i ) unless ( $CSV || $i % 100 );
     print $output_str;
 }
 

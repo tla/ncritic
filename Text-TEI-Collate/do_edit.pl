@@ -93,7 +93,7 @@ sub process_app {
 		push( @reading, $child );
 	    } else {
 		warn "Unexpected app child node $node"
-		    unless $node eq '#text';
+		    unless ( $node eq '#text' || $node eq 'note' );
 	    }
 	}
 	if( @reading && @group ) {
@@ -142,7 +142,6 @@ sub process_reading {
     my %readings;
     my $rdg_idx = 0;
     my %witDetails;
-    my $detail_idx = 0;
     my %word_from_id;
     foreach my $rdg_group ( @set ) {
 	# Each group has a list of readings.
@@ -174,7 +173,7 @@ sub process_reading {
 		my $detailWitList = $det->getAttribute( 'wit' );
 		my $detailType = $det->getAttribute( 'type' );
 		# Note the structure of this hash...
-		$witDetails{++$detail_idx} = { 'target' => $target, 
+		$witDetails{++$rdg_idx} = { 'target' => $target, 
 					       'wit' => $detailWitList,
 					       'type' => $detailType,
 					       'obj' => $det,
@@ -284,15 +283,24 @@ sub process_reading {
 		# Always good to save your work.
 		print_results();
 	    } elsif( $answer =~ /^(accept|a)\s+(\d+)/ ) {
-		$return_rdg = $readings{$2}->{'obj'};
-		$return_rdg->setNodeName( 'lem' );
-		$picked = 1;
+		my $idx = $2;
+		if( exists $readings{$idx} ) {
+		    $return_rdg = $readings{$idx}->{'obj'};
+		    $return_rdg->setNodeName( 'lem' );
+		    $picked = 1;
+		} else {
+		    print "$idx is not an available reading.  Try again.\n";
+		}
 	    } elsif( $answer =~ /^((accept|sub)\s+detail|(a|s)\s*d)\s+(\d+|none)(\s+(\S+))?/ ) {
 		# Accept the detail with the given ID, or accept the 
 		# substitution given in its place.
 		## TODO deal with Armenian mid-word punctuation
 		my( $op, $id, $new_str ) = ($1, $4, $6 );
 		unless( $id eq 'none' ) {
+		    unless( exists $witDetails{$id} ) {
+			print "$id is not an available witness detail.  Try again.\n";
+			next;
+		    }
 		    my $detail = $witDetails{$id};
 		    if( !$new_str && $op =~ /^s/ ) {
 			print "Substitution request without any substitution.  Try gain.\n";
@@ -329,6 +337,11 @@ sub process_reading {
 		$app->appendChild( $note_obj );
 	    } elsif( $answer =~ /^sp(ell(ing)?)?\s+(\d+)\s+(\d+)/ ) {
 		my( $var, $std ) = ( $3, $4 );
+		unless( exists( $readings{$var} )
+			&& exists( $readings{$std} ) ) {
+		    print "Either $var or $std is not an available reading.  Try again.\n";
+		    next;
+		}
 		my $var_str = join( ' ', map { $_->textContent } 
 				    $readings{$var}->{'words'}->get_nodelist );
 		my $std_str = join( ' ', map { $_->textContent } 
@@ -338,6 +351,11 @@ sub process_reading {
 		$SPELLINGS{$var_str} = $std_str;
 	    } elsif( $answer =~ /^orth\s+(\d+)\s+(\d+)/ ) {
 		my( $var, $std ) = ( $1, $2 );
+		unless( exists( $readings{$var} )
+			&& exists( $readings{$std} ) ) {
+		    print "Either $var or $std is not an available reading.  Try again.\n";
+		    next;
+		}
 		my $var_str = join( ' ', map { $_->textContent } 
 				    $readings{$var}->{'words'}->get_nodelist );
 		my $std_str = join( ' ', map { $_->textContent } 
@@ -345,14 +363,18 @@ sub process_reading {
 		$readings{$var}->{'obj'}->setAttribute( 'type', 
 							'orth_variant' );
 		$ORTHOGRAPHY{$var_str} = $std_str;
-	    } elsif( $answer =~ /^emend\s+(\S+.*)$/ ) {
+	    } elsif( $answer =~ /^emend\s+([^:]+):\s+(\S+.*)$/ ) {
 		# Put a placeholder lemma in this apparatus, and add
 		# an editorial note with the text.
-		my $ed_note = $1;
+		my( $correction, $ed_note ) = ( $1, $2 );
 		# Add the unattested lemma...
 		$return_rdg = XML::LibXML::Element->new( 'lem' );
 		$return_rdg->setAttribute( 'resp', '#tla' );
 		$return_rdg->appendTextChild( 'wit', '[unattested]' );
+		my @corr_words = split( /\s+/, $correction );
+		foreach( @corr_words ) {
+		    $return_rdg->appendTextChild( 'w', $_ );
+		}
 		$app->insertBefore( $return_rdg, $app->firstChild() );
 		# ...and add the explanatory note.
 		my $note_obj = XML::LibXML::Element->new( 'note' );
