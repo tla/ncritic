@@ -433,7 +433,7 @@ sub print_following_context {
     my %witnesses;
     my %wit_details;
     foreach my $app ( @apps ) {
-	my @readings = $xpc->findnodes( './/tei:rdg', $app );
+	my @readings = $xpc->findnodes( './/tei:rdg | .//tei:lem', $app );
 	# TODO code reuse!!
 	foreach my $rdg_obj ( @readings ) {
 	    my @words = $xpc->findnodes( './/tei:w', $rdg_obj );
