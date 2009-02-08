@@ -238,24 +238,12 @@ sub make_app {
 	foreach my $entry ( @$line_entry ) {
 	    # Each reading group in the row
 	    my $meta;
-	    my $el;
-	    if( $single_reading || 
-		( scalar ( @$line_entry ) == 2 &&
-		  grep { exists $_->{'__OMITTED__'} } @$line_entry ) ) {
-		# Don't make an explicit rdgGrp unless we have two
-		# positive variants.
-		$el = $app;
-	    } else {
-		my $rdg_grp = $app->addNewChild( $ns_uri, 'rdgGrp' );
-		$rdg_grp->setAttribute( 'type', 'subvariants' );
-		$el = $rdg_grp;
-	    }
 	    # Get the meta information for this word.
 	    $meta = delete $entry->{'meta'};
 	    foreach my $rdg_word ( keys %$entry ) {
 		my $wits = $entry->{$rdg_word};
 		my $wit_string = _make_wit_string( @$wits );
-		my $rdg = $el->addNewChild( $ns_uri, 'rdg' );
+		my $rdg = $app->addNewChild( $ns_uri, 'rdg' );
 		$rdg->setAttribute( 'wit', $wit_string );
 		if( $rdg_word eq '__OMITTED__' ) {
 		    $rdg->setAttribute( 'type', 'omission' );

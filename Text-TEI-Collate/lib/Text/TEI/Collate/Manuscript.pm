@@ -203,6 +203,7 @@ sub _get_text_from_node {
 	    # get to the next bit of non-whitespace.
 	    $strip_leading_space = 1;
 	} elsif ( $c->nodeName eq 'del'
+		  || $c->nodeName eq 'fw'    # for catchwords
 		  || $c->nodeName eq 'sic'
 		  || $c->nodeName eq 'note'  #TODO: decide how to deal with notes
 		  || $c->textContent eq '' 

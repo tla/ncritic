@@ -103,6 +103,50 @@ sub latex_conv {
 	    my @words_out;
 	    my %last_word;
 	    my %need_anchor;
+
+	    # Before we do anything, build a list of omissions.  Usual plethora of hashes
+	    # for re-jiggering into a better lookup form.
+	    my %omissions_for_wit;
+	    my %omission_start;
+	    my %hold;
+	    my $last_app;
+	    foreach my $rdg ( $xpc->findnodes( './/tei:rdg[@type=\'omission\']', $pg ) ) {
+		my @wits = split( /\s+/, $rdg->getAttribute( 'wit' ) );
+		my $app = $rdg->parentNode;
+		$last_app = $app->getAttribute( 'xml:id' );
+		foreach my $wit ( @wits ) {
+		    if( exists $hold{$wit} ) {
+			$hold{$wit}->{'end'} = $last_app;
+		    } else {
+			$hold{$wit} = { 'start' => $last_app,
+					'end' => $last_app };
+		    }
+		}
+		# Now go through the hold hash and close out any apps that don't
+		# have an ending of 'now'.  And get rid of any apps that have the
+		# same start and end.
+		foreach my $wit ( keys %hold ) {
+		    unless( $hold{$wit}->{'end'} eq $last_app ) {
+			my $om = delete $hold{$wit};
+			next if( $om->{'start'} eq $om->{'end'} );
+			add_hash_entry( \%omissions_for_wit, $wit, $om );
+		    }
+		}
+	    }	    
+	    # One more time to close out the last app entry.
+	    foreach my $wit ( keys %hold ) {
+		my $om = delete $hold{$wit};
+		next if( $om->{'start'} eq $om->{'end'} );
+		add_hash_entry( \%omissions_for_wit, $wit, $om );
+	    }
+	    # Now re-sort the hash by start ID.
+	    foreach my $wit ( keys %omissions_for_wit ) {
+		my $om = $omissions_for_wit{$wit};
+		add_hash_entry( \%omission_start, $om->{'start'}, { $wit => $om->{'end'} } );
+	    }
+
+	    ## TODO next: Use the omissions hash when generating the apparatus.
+	    
 	    foreach my $app ( $xpc->findnodes( './/tei:app', $pg ) ) {
 		my $app_id = $app->getAttribute( 'xml:id' ) || '';
 		# print STDERR "Looking at $app_id\n";
@@ -326,7 +370,21 @@ sub extract_text {
     } else {
 	my @words;
 	foreach my $word ( $xpc->findnodes( 'tei:w', $rdg ) ) {
-	    my $word_str = $word->textContent;
+	    my @word_nodes = $word->childNodes();
+	    my $word_str = '';
+	    my $punct = '';
+	    # In theory we could have a special c element in the middle
+	    # of a word.  Look at the text nodes in a loop.
+	    foreach( @word_nodes ) {
+		if( $_->nodeName eq '#text' ) {
+		    $word_str .= $_->data;
+		} elsif( $_->nodeName eq 'c' 
+			 && $_->hasAttribute( 'type' )
+			 && $_->getAttribute( 'type' ) eq 'punct' ) {
+		    $punct .= $_->textContent;
+		}
+	    }
+
 	    if( $is_lemma &&
 		exists( $Words::Armenian::PROPER_NAMES{ $word_str } ) ) {
 		# Make any names proper names.
@@ -340,11 +398,11 @@ sub extract_text {
 		my @details = $xpc->findnodes( $xpathExp, $rdg );
 		foreach my $det ( @details ) {
 		    if( $det->getAttribute( 'wit' ) =~ /\#A/ ) {
-			$word_str .= $det->textContent;
+			$punct .= $det->textContent;
 		    }
 		}
 	    }
-	    push( @words, $word_str );
+	    push( @words, $word_str . $punct );
 	}
 	if( @words ) {
 	    $out_str = '\\arm{' . join( ' ', @words ) . '}';
