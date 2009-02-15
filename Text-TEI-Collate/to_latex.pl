@@ -51,7 +51,7 @@ open( OUT, ">$outfile" ) or die "Could not open $outfile for writing: $@";
 binmode( OUT, ':utf8' );
 write_header();
 latex_conv();
-print OUT "\\end{document}\n";
+# print OUT "\\end{document}\n";
 print STDERR "Done.\n";
 
 sub write_header {
@@ -104,57 +104,73 @@ sub latex_conv {
 	    my %last_word;
 	    my %need_anchor;
 
-	    # Before we do anything, build a list of omissions.  Usual plethora of hashes
-	    # for re-jiggering into a better lookup form.
+	    # Before we do anything, build a list of omissions for
+	    # this paragraph.  Usual plethora of hashes for
+	    # re-jiggering into a better lookup form.
 	    my %omissions_for_wit;
 	    my %omission_start;
 	    my %hold;
-	    my $last_app;
+	    my $last_app = '';
 	    foreach my $rdg ( $xpc->findnodes( './/tei:rdg[@type=\'omission\']', $pg ) ) {
 		my @wits = split( /\s+/, $rdg->getAttribute( 'wit' ) );
 		my $app = $rdg->parentNode;
-		$last_app = $app->getAttribute( 'xml:id' );
+		my ( $prev_app ) = $xpc->findnodes( 'preceding-sibling::tei:app[position() = 1]', $app );
+		unless( $prev_app &&
+			$last_app eq $prev_app->getAttribute( 'xml:id' ) ) {
+		    # Mark that this is an omission, but it isn't a
+		    # continuing omission yet, so don't do anything.
+		    $last_app = $app->getAttribute( 'xml:id' );
+		    next;
+		}
+		my $this_app = $app->getAttribute( 'xml:id' );
 		foreach my $wit ( @wits ) {
 		    if( exists $hold{$wit} ) {
-			$hold{$wit}->{'end'} = $last_app;
+			$hold{$wit}->{'end'} = $this_app;
 		    } else {
 			$hold{$wit} = { 'start' => $last_app,
-					'end' => $last_app };
+					'end' => $this_app };
 		    }
 		}
-		# Now go through the hold hash and close out any apps that don't
-		# have an ending of 'now'.  And get rid of any apps that have the
-		# same start and end.
+		# Now go through the hold hash and close out any apps
+		# that don't have an ending of 'now'.  And get rid of
+		# any apps that have the same start and end.
 		foreach my $wit ( keys %hold ) {
 		    unless( $hold{$wit}->{'end'} eq $last_app ) {
 			my $om = delete $hold{$wit};
+			# This line shouldn't be necessary anymore
 			next if( $om->{'start'} eq $om->{'end'} );
-			add_hash_entry( \%omissions_for_wit, $wit, $om );
+			_add_hash_entry( \%omissions_for_wit, $wit, $om );
 		    }
 		}
+		$last_app = $this_app;
 	    }	    
 	    # One more time to close out the last app entry.
 	    foreach my $wit ( keys %hold ) {
 		my $om = delete $hold{$wit};
+		# This line shouldn't be necessary anymore
 		next if( $om->{'start'} eq $om->{'end'} );
-		add_hash_entry( \%omissions_for_wit, $wit, $om );
+		_add_hash_entry( \%omissions_for_wit, $wit, $om );
 	    }
 	    # Now re-sort the hash by start ID.
 	    foreach my $wit ( keys %omissions_for_wit ) {
-		my $om = $omissions_for_wit{$wit};
-		add_hash_entry( \%omission_start, $om->{'start'}, { $wit => $om->{'end'} } );
+		foreach my $om ( @{$omissions_for_wit{$wit}} ) {
+		    my $new_om = { 'wit' => $wit, 'end' => $om->{'end'} };
+		    _add_hash_entry( \%omission_start, $om->{'start'}, 
+				     $new_om );
+		}
 	    }
 
-	    ## TODO next: Use the omissions hash when generating the apparatus.
-	    
+
+	    # Now that we have our multi-word omissions, look at each word
+	    # of the apparatus in turn.  Keep track of mss that are in
+	    # the middle of a multi-word omission.
+	    my %currently_omitted;
 	    foreach my $app ( $xpc->findnodes( './/tei:app', $pg ) ) {
 		my $app_id = $app->getAttribute( 'xml:id' ) || '';
-		# print STDERR "Looking at $app_id\n";
+		#print STDERR "Looking at $app_id\n";
 		my $lemma = $xpc->find( './/tei:lem', $app );
 		my $false_lemma = 0;
 		my $rdg_xpath = './/tei:rdg';
-		# TODO I really want to pick the right readings via xpath.
-		# print STDERR "Searching on $rdg_xpath\n";
 		my @readings = $xpc->findnodes( $rdg_xpath, $app );
 		if( $lemma ) {
 		    $lemma = $lemma->get_node( 1 );
@@ -175,8 +191,6 @@ sub latex_conv {
 		    warn "No lemma and no A reading for app $app_id";
 		    next;
 		}
-		# Get all the notes within this apparatus.
-		my @notes = $xpc->findnodes( './/tei:note', $app );
 		
 		my $lem_txt = extract_text( $lemma, 1, $false_lemma );
 		my $lem_wit = witness_string( $lemma->getAttribute( 'wit' ) );
@@ -186,14 +200,28 @@ sub latex_conv {
 		$lem_str =~ s/[[:punct:]]//g;
 		$lem_str = am_downcase( $lem_str );
 
-		my $app_footnote;  # For the apparatus.
-		my $ed_footnote = '';   # For editorial notes.
+		# Look for omissions that begin here.
+		unless( $false_lemma ) {
+		    foreach my $o ( @{$omission_start{$app_id}} ) {
+			$currently_omitted{$o->{'wit'}} = $o->{'end'};
+		    }
+		}
 
 		# Get any readings.
 		my @rdg_out;
 		foreach my $r( @readings ) {
-		    my $wits = witness_string( $r->getAttribute( 'wit' ) );
+		    my @witnesses = split( /\s+/, $r->getAttribute( 'wit' ) );
 		    my( $txt ) = extract_text( $r );
+
+		    # Is this reading part of a multi-word omission?
+		    my @relevant_wit;
+		    foreach my $w ( @witnesses ) {
+			unless( $currently_omitted{$w} ) {
+			    push( @relevant_wit, $w );
+			}
+		    }
+		    next unless @relevant_wit;
+		    
 		    my $rdg_str = $txt;
 		    $rdg_str =~ s/\\arm\{(.*)\}/$1/;
 		    $rdg_str =~ s/[[:punct:]]//g;
@@ -212,14 +240,37 @@ sub latex_conv {
 				  && $spell{$rdg_str} eq $lem_str );
 		    }
 		    
+		    my $wits = witness_string( \@relevant_wit );
 		    push( @rdg_out, { 'txt' => $txt, 'wit' => $wits } );
 		}
 
 		# Get any editorial notes.
-		foreach my $n ( @notes ) {
+		# Get all the notes within this apparatus.
+		my @all_notes = $xpc->findnodes( './/tei:note', $app );
+		my @notes;
+		foreach my $n ( @all_notes ) {
 		    # Assume only one note per apparatus for now.
-		    warn "More than one note for app $app_id" if $ed_footnote;
-		    $ed_footnote .= $n->textContent;
+		    warn "More than one note for app $app_id" if @notes;
+		    my $note_type = $n->getAttribute( 'type' ) || '';
+		    if( $note_type eq 'emend_spelling' ) {
+			next unless $include_spelling;
+		    }
+		    if( $note_type eq 'emend_orth' ) {
+			next unless $include_orthography;
+		    }
+		    push( @notes, $n );
+		}
+
+		# Get any multi-word omissions that start here.
+		my $curr_omission;
+		if( exists $omission_start{$app_id} ) {
+		    $curr_omission = construct_omissions( $app, 
+						  $omission_start{$app_id} );
+		}
+		# ...and unmark any omissions that end here.
+		foreach my $sig ( keys %currently_omitted ) {
+		    delete $currently_omitted{$sig} if
+			$currently_omitted{$sig} eq $app_id;
 		}
 
 		# Now construct the LaTeX expression.
@@ -234,7 +285,11 @@ sub latex_conv {
 			rehome_orphans( \%last_word, 
 					\%need_anchor );
 		    }
-		    
+
+		    # Do we have any omissions to add to the apparatus?
+		    if( keys %$curr_omission ) {
+			$last_word{ 'omissions' } = $curr_omission;
+		    }
 		    my $latex_app = latex_for_lemma( %last_word );
 		    push( @words_out, $latex_app );
 		    %need_anchor = ();
@@ -272,8 +327,14 @@ sub latex_conv {
 sub witness_string {
     my $attr_string = shift;
     return '' unless $attr_string;
+    my @input;
+    if( ref( $attr_string ) eq 'ARRAY' ) {
+	@input = @$attr_string;
+    } else {
+	@input = split( /\s+/, $attr_string );
+    }
     my @output;
-    foreach( sort( split( /\s+/, $attr_string ) ) ) {
+    foreach( sort @input ) {
 	s/^\#//;
 	push( @output, $_ );
     }
@@ -287,6 +348,12 @@ sub latex_for_lemma {
 			     @{$lemma{'readings'}} );
     my $ed_footnote .= join( ' // ', map { $_->textContent } 
 			     @{$lemma{'notes'}} );
+    my @omission_footnotes;
+    foreach my $olem ( keys %{$lemma{'omissions'}} ) {
+	push( @omission_footnotes, 
+	      sprintf( '{\\lemma{\\arm{%s}} \\Afootnote{%s \\emph{om.}}}', 
+		       $olem, $lemma{'omissions'}->{$olem} ) );
+    }
     
     if( $app_footnote || $ed_footnote ) {
 	my $latex_fn = '';
@@ -296,12 +363,58 @@ sub latex_for_lemma {
 	if( $ed_footnote ) {
 	    $latex_fn .= "\\Bfootnote\{$ed_footnote\}";
 	}
+	if( @omission_footnotes ) {
+	    $latex_fn .= join( ' ', @omission_footnotes );
+	}
 	$latex_app =  sprintf( '\\edtext{%s}{%s}', 
 			       $lemma{'lemma'}, $latex_fn );
     } else {
 	$latex_app = $lemma{'lemma'};
     }
 }
+
+# Find the lemmas necessary to represent multi-word omissions.
+sub construct_omissions {
+    my( $app, $omissions ) = @_;
+    my $om_lemma_wit = {};
+    my( $first_follow, $second_follow ) = 
+	$xpc->findnodes( 'following-sibling::tei:app[position() <= 2]', $app );
+    foreach my $o ( @$omissions ) {
+	my @words = ( word_string( $xpc->findnodes( './/tei:lem', $app ) ),
+		      word_string( $xpc->findnodes( './/tei:lem', 
+						    $first_follow ) ) );
+	if( $second_follow &&
+	    $o->{'end'} eq $second_follow->getAttribute( 'xml:id' ) ) {
+	    push( @words, word_string( $xpc->findnodes( './/tei:lem', 
+							$second_follow ) ) );
+	} elsif( $o->{'end'} ne $first_follow->getAttribute( 'xml:id' ) ) {
+	    my $end_path = '//tei:app[@xml:id="' . $o->{'end'} . '"]/tei:lem';
+	    push( @words, '...', word_string( $xpc->findnodes( $end_path ) ) );
+	}
+	# HACK for debug
+	# unshift( @words, $app->getAttribute( 'xml:id' ) );
+
+	# Now flatten out the words into a lemma and add its witness to
+	# our list.
+	_add_hash_entry( $om_lemma_wit, join( ' ', @words ), $o->{'wit'} );
+    }
+    foreach my $lem ( keys %$om_lemma_wit ) {
+	# Fix the witness string.
+	$om_lemma_wit->{$lem} = witness_string( $om_lemma_wit->{$lem} );
+    }
+    return $om_lemma_wit;
+}
+	
+sub word_string {
+    my( $rdg ) = @_;
+    unless( $rdg ) {
+	warn "No reading passed to word_string!  You don't want that.";
+	return '';
+    }
+    my @words = map { $_->textContent } $xpc->findnodes( './/tei:w', $rdg );
+    return join( ' ', @words );
+}
+	
 
 # Add the contents of $orph_* to the reading & note arrays.
 sub rehome_orphans {
@@ -441,44 +554,6 @@ sub invert_hash {
 }
 
 __DATA__
-\documentclass[a4paper]{article} 
-\usepackage{fullpage}
-\usepackage{setspace}
-\usepackage[lmargin=1.25in]{geometry}
-\usepackage{ledmac} 
-\usepackage{setspace}
-\usepackage[UKenglish]{babel} % For English hypenation. 
-\usepackage{fontspec}
-
-%% Fontspec stuff
-\newfontinstance\armfont{Mshtakan}
-\newcommand{\arm}[1]{{\armfont #1}}
-\newfontinstance\gkfont[Scale=0.75]{Lucida Grande}
-\newcommand{\gk}[1]{{\gkfont #1}}
-\newfontinstance\jefont{Times}
-\newcommand{\je}{{\jefont Ç°}}
-\setromanfont[Mapping=tex-text]{Palatino}
-\defaultfontfeatures{Mapping=tex-text}
-
-%% Armenian hyphenation
-\hyphenation{գտ-եալ կա-տա-րա-ծի զշա-րա-գրա-կան զհայ-րա-պե-տացս զաս-տու-ածա-սաստ աս-տու-ծոյ աս-տու-ած զհա-տու-ցումն հայ-րա-պե-տու-թեանն հեղ-եալ սո-վոր-ու-թիւն մար-մնոյն վաս-տա-կաւք հար-ստան-ան հան-ճա-րեղք հայ-րա-պե-տու-թեան դառ-նալ այ-սո-րիկ քն-նու-թիւնս զփո-փոխ-մունս ան-կա-տա-րածք զժա-մա-նակն ժո-ղո-վե-ցին}
-
-%% Ledmac stuff
-\setcounter{firstlinenum}{1} 
-\setcounter{linenumincrement}{1} 
-%% Show some B series familiar footnotes, lettered and paragraphed 
-\renewcommand*{\thefootnoteB}{\alph{footnoteB}} 
-\footparagraphX{B} 
-%% no endnotes 
-\noendnotes 
-%% narrow sidenotes 
-\setlength{\ledrsnotewidth}{4em} 
-\title{__TITLE__} 
-\author{Tara L Andrews}
-\date{__DATE__} 
-\begin{document} 
-\maketitle 
-
 \section{List of witnesses} 
 
 __WITNESSLIST__
