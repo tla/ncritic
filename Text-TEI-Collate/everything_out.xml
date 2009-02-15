@@ -4,8 +4,7 @@
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>Prophecies of Yovhannēs Kozeṙn, as recorded in the Chronicle of Matthew of
-        Edessa</title>
+        <title>Edited text of excerpts from the Chronicle</title>
       </titleStmt>
       <publicationStmt>
         <p>this is a publication statement</p>
@@ -78,12 +77,12 @@
           </app>
           <app xml:id="App7">
             <lem wit="#A">
-              <w xml:id="Word1">վասլի<c type="punct">,</c></w>
+              <w xml:id="Word1">Վասլի<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App8">
             <lem wit="#A">
-              <w>Եղև</w>
+              <w>եղև</w>
             </lem>
           </app>
           <app xml:id="App9">
@@ -158,7 +157,7 @@
           </app>
           <app xml:id="App23">
             <lem wit="#A">
-              <w>3</w>
+              <w>երիս</w>
             </lem>
           </app>
           <app xml:id="App24">
@@ -238,7 +237,7 @@
           </app>
           <app xml:id="App39">
             <lem wit="#A">
-              <w xml:id="Word7">երկինդ<c type="punct">։</c></w>
+              <w xml:id="Word7">երկինդ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App40">
@@ -308,7 +307,7 @@
           </app>
           <app xml:id="App53">
             <lem wit="#A">
-              <w xml:id="Word9">երկիր<c type="punct">։</c></w>
+              <w xml:id="Word9">երկիր<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App54">
@@ -388,7 +387,7 @@
           </app>
           <app xml:id="App69">
             <lem wit="#A">
-              <w xml:id="Word12">արեգակն<c type="punct">՝</c></w>
+              <w xml:id="Word12">արեգակն</w>
             </lem>
           </app>
           <app xml:id="App70">
@@ -513,7 +512,7 @@
           </app>
           <app xml:id="App94">
             <lem wit="#A">
-              <w xml:id="Word16">աւուր<c type="punct">՝</c></w>
+              <w xml:id="Word16">աւուր</w>
             </lem>
           </app>
           <app xml:id="App95">
@@ -558,8 +557,9 @@
           </app>
           <app xml:id="App103">
             <lem wit="#A">
-              <w xml:id="Word17">յովանիսի<c type="punct">։</c></w>
+              <w xml:id="Word17">Յովհաննիսի<c type="punct">,</c></w>
             </lem>
+            <note type="emend_spelling">Spelling corrected to modern orthography.</note>
           </app>
           <app xml:id="App104">
             <lem wit="#A">
@@ -588,12 +588,13 @@
           </app>
           <app xml:id="App109">
             <lem wit="#A">
-              <w>յաւհաննու</w>
+              <w>Յովհաննու</w>
             </lem>
+            <note type="emend_spelling">Spelling corrected to modern orthography.</note>
           </app>
           <app xml:id="App110">
             <lem wit="#A">
-              <w xml:id="Word18">կոզեռանն<c type="punct">,</c></w>
+              <w xml:id="Word18">Կոզեռանն<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App111">
@@ -623,7 +624,7 @@
           </app>
           <app xml:id="App116">
             <lem wit="#A">
-              <w xml:id="Word19">հրեշտակակրաւն<c type="punct">,</c></w>
+              <w xml:id="Word19">հրեշտակակրաւն</w>
             </lem>
           </app>
           <app xml:id="App117">
@@ -658,8 +659,9 @@
           </app>
           <app xml:id="App123">
             <lem wit="#A">
-              <w>գըրոց</w>
+              <w>գրոց</w>
             </lem>
+            <note type="emend_orth">Emended to modern orthography.</note>
           </app>
           <app xml:id="App124">
             <lem wit="#A">
@@ -733,7 +735,7 @@
           </app>
           <app xml:id="App138">
             <lem wit="#A">
-              <w xml:id="Word22">նշանին<c type="punct">։</c></w>
+              <w xml:id="Word22">նշանին<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App139">
@@ -758,8 +760,9 @@
           </app>
           <app xml:id="App143">
             <lem wit="#A">
-              <w xml:id="Word23">յաւհաննէս<c type="punct">՝</c></w>
+              <w xml:id="Word23">յովհաննէս<c type="punct">՝</c></w>
             </lem>
+            <note type="emend_spelling">Spelling corrected to modern orthography.</note>
           </app>
           <app xml:id="App144">
             <lem wit="#A">
@@ -838,7 +841,7 @@
           </app>
           <app xml:id="App159">
             <lem wit="#A">
-              <w xml:id="Word27">ոգով<c type="punct">,</c></w>
+              <w xml:id="Word27">ոգով</w>
             </lem>
           </app>
           <app xml:id="App160">
@@ -853,7 +856,7 @@
           </app>
           <app xml:id="App162">
             <lem wit="#A">
-              <w xml:id="Word28">հառաչանաւք<c type="punct">՝</c></w>
+              <w xml:id="Word28">հառաչանաւք</w>
             </lem>
           </app>
           <app xml:id="App163">
@@ -873,12 +876,12 @@
           </app>
           <app xml:id="App166">
             <lem wit="#A">
-              <w xml:id="Word29">ասաց<c type="punct">։</c></w>
+              <w xml:id="Word29">ասաց<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App167">
             <lem wit="#A">
-              <w xml:id="Word30">Ով<c type="punct">՜</c></w>
+              <w xml:id="Word30"><c type="punct">«</c>Ո<c type="punct">՜</c>վ</w>
             </lem>
           </app>
           <app xml:id="App168">
@@ -893,7 +896,7 @@
           </app>
           <app xml:id="App170">
             <lem wit="#A">
-              <w xml:id="Word32">ինձ<c type="punct">՝</c></w>
+              <w xml:id="Word32">ինձ</w>
             </lem>
           </app>
           <app xml:id="App171">
@@ -1098,12 +1101,13 @@
           </app>
           <app xml:id="App211">
             <lem wit="#A">
-              <w>յաւհաննու</w>
+              <w>Յովհաննու</w>
             </lem>
+            <note type="emend_spelling">Spelling corrected to modern orthography.</note>
           </app>
           <app xml:id="App212">
             <lem wit="#A">
-              <w xml:id="Word37">աւետարանչին<c type="punct">։</c></w>
+              <w xml:id="Word37">աւետարանչին<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App213">
@@ -1128,7 +1132,7 @@
           </app>
           <app xml:id="App217">
             <lem wit="#A">
-              <w xml:id="Word38">աստուծոյ<c type="punct">,</c></w>
+              <w xml:id="Word38">աստուծոյ</w>
             </lem>
           </app>
           <app xml:id="App218">
@@ -1233,7 +1237,7 @@
           </app>
           <app xml:id="App238">
             <lem wit="#A">
-              <w xml:id="Word41">իւրոց<c type="punct">։</c></w>
+              <w xml:id="Word41">իւրոց<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App239">
@@ -1253,17 +1257,7 @@
           </app>
           <app xml:id="App242">
             <lem wit="#A">
-              <w>400</w>
-            </lem>
-          </app>
-          <app xml:id="App243">
-            <lem wit="#A">
-              <w>և</w>
-            </lem>
-          </app>
-          <app xml:id="App244">
-            <lem wit="#A">
-              <w>78</w>
+              <w>478</w>
             </lem>
           </app>
           <app xml:id="App245">
@@ -1273,7 +1267,7 @@
           </app>
           <app xml:id="App246">
             <lem wit="#A">
-              <w xml:id="Word42">է<c type="punct">։</c></w>
+              <w xml:id="Word42">է<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App247">
@@ -1308,22 +1302,12 @@
           </app>
           <app xml:id="App253">
             <lem wit="#A">
-              <w>1000</w>
-            </lem>
-          </app>
-          <app xml:id="App254">
-            <lem wit="#A">
-              <w>և</w>
-            </lem>
-          </app>
-          <app xml:id="App255">
-            <lem wit="#A">
-              <w>30</w>
+              <w>1030</w>
             </lem>
           </app>
           <app xml:id="App256">
             <lem wit="#A">
-              <w xml:id="Word43">ամ<c type="punct">։</c></w>
+              <w xml:id="Word43">ամ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App257">
@@ -1493,12 +1477,12 @@
           </app>
           <app xml:id="App290">
             <lem wit="#A">
-              <w xml:id="Word49">Ոչ<c type="punct">՜</c></w>
+              <w xml:id="Word49">Ոչ</w>
             </lem>
           </app>
           <app xml:id="App291">
             <lem wit="#A">
-              <w xml:id="Word50">հայրապետ<c type="punct">,</c></w>
+              <w xml:id="Word50">հայրապետ</w>
             </lem>
           </app>
           <app xml:id="App292">
@@ -1508,22 +1492,22 @@
           </app>
           <app xml:id="App293">
             <lem wit="#A">
-              <w xml:id="Word51">ոչ<c type="punct">՜</c></w>
+              <w xml:id="Word51">ոչ</w>
             </lem>
           </app>
           <app xml:id="App294">
             <lem wit="#A">
-              <w xml:id="Word52">վարդապետ<c type="punct">։</c></w>
+              <w xml:id="Word52">վարդապետ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App295">
             <lem wit="#A">
-              <w xml:id="Word53">ոչ<c type="punct">՜</c></w>
+              <w xml:id="Word53">ոչ</w>
             </lem>
           </app>
           <app xml:id="App296">
             <lem wit="#A">
-              <w xml:id="Word54">եպիսկոպոս<c type="punct">,</c></w>
+              <w xml:id="Word54">եպիսկոպոս</w>
             </lem>
           </app>
           <app xml:id="App297">
@@ -1538,7 +1522,7 @@
           </app>
           <app xml:id="App299">
             <lem wit="#A">
-              <w xml:id="Word55">քահանայ<c type="punct">։</c></w>
+              <w xml:id="Word55">քահանայ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App300">
@@ -1548,7 +1532,7 @@
           </app>
           <app xml:id="App301">
             <lem wit="#A">
-              <w xml:id="Word56">աբեղայ<c type="punct">,</c></w>
+              <w xml:id="Word56">աբեղայ</w>
             </lem>
           </app>
           <app xml:id="App302">
@@ -1588,7 +1572,7 @@
           </app>
           <app xml:id="App309">
             <lem wit="#A">
-              <w xml:id="Word58">ժողովուրդ<c type="punct">։</c></w>
+              <w xml:id="Word58">ժողովուրդ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App310">
@@ -1748,7 +1732,7 @@
           </app>
           <app xml:id="App341">
             <lem wit="#A">
-              <w xml:id="Word64">կանանց<c type="punct">,</c></w>
+              <w xml:id="Word64">կանանց<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App342">
@@ -1918,7 +1902,7 @@
           </app>
           <app xml:id="App375">
             <lem wit="#A">
-              <w xml:id="Word71">ոչ<c type="punct">,՜</c></w>
+              <w xml:id="Word71">ոչ<c type="punct">.</c></w>
             </lem>
           </app>
           <app xml:id="App376">
@@ -1998,12 +1982,12 @@
           </app>
           <app xml:id="App391">
             <lem wit="#A">
-              <w xml:id="Word78">ամբաստանաւղք<c type="punct">,</c></w>
+              <w xml:id="Word78">ամբաստանաւղք<c type="punct">։</c></w>
             </lem>
           </app>
           <app xml:id="App392">
             <lem wit="#A">
-              <w>և</w>
+              <w>Եւ</w>
             </lem>
           </app>
           <app xml:id="App393">
@@ -2033,12 +2017,12 @@
           </app>
           <app xml:id="App398">
             <lem wit="#A">
-              <w xml:id="Word79">մարդիկ<c type="punct">։</c></w>
+              <w xml:id="Word79">մարդիկ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App399">
             <lem wit="#A">
-              <w>Զի</w>
+              <w>զի</w>
             </lem>
           </app>
           <app xml:id="App400">
@@ -2068,17 +2052,17 @@
           </app>
           <app xml:id="App405">
             <lem wit="#A">
-              <w>շոգմոգք</w>
+              <w>շոգմոգք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App406">
             <lem wit="#A">
-              <w>քսուք</w>
+              <w>քսուք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App407">
             <lem wit="#A">
-              <w xml:id="Word83">ստախաւսք<c type="punct">՝</c></w>
+              <w xml:id="Word83">ստախաւսք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App408">
@@ -2088,17 +2072,17 @@
           </app>
           <app xml:id="App409">
             <lem wit="#A">
-              <w>փառասէրք</w>
+              <w>փառասէրք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App410">
             <lem wit="#A">
-              <w>անձնահաճք</w>
+              <w>անձնահաճք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App411">
             <lem wit="#A">
-              <w>ինքնահաւանք</w>
+              <w>ինքնահաւանք<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App412">
@@ -2128,7 +2112,7 @@
           </app>
           <app xml:id="App417">
             <lem wit="#A">
-              <w>իմ</w>
+              <w>իմ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App418">
@@ -2248,7 +2232,7 @@
           </app>
           <app xml:id="App441">
             <lem wit="#A">
-              <w>ըզհոգս</w>
+              <w>զհոգս</w>
             </lem>
           </app>
           <app xml:id="App442">
@@ -2438,8 +2422,7 @@
               <witDetail target="#Word104" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word104" wit="#F #A #J #O #X #Y #W" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">Most witnesses have the post-classical \arm{եպիսկոպոսունք}; I
-              have chosen to retain the more symmetrical \arm{եպիսկոպոսք}. c.f. Karst 206.</note>
+            <note type="editorial">Most witnesses have the post-classical \arm{եպիսկոպոսունք}; here we retain the more symmetrical \arm{եպիսկոպոսք}. (c.f. Karst p. 206.)</note>
           </app>
           <app xml:id="App464">
             <lem wit="#Jer #F #B #I #A #D #J #O #V #X #Y #Z #W">
@@ -2501,8 +2484,7 @@
               <witDetail target="#Word111" wit="#B" type="punctuation">։</witDetail>
             </rdg>
             <rdg wit="#X" type="omission"/>
-            <note type="editorial">Preponderance of readings omit \arm{զ-}, but neither Karst nor
-              Meillet suggest that is grammatical.</note>
+            <note type="editorial">Preponderance of readings omit \arm{զ-}, but neither Karst nor Meillet suggest that is grammatical.</note>
           </app>
           <app xml:id="App470">
             <lem wit="#Jer #K #B #I #A #D #J #O #V #Y #Z #W">
@@ -2821,12 +2803,12 @@
             <rdg wit="#J #W #Z #D #I" type="omission"/>
           </app>
           <app xml:id="App507e">
-            <lem wit="#B">
-              <w>առաւելոց</w>
-            </lem>
-            <rdg wit="#A #F #O #K #Y #V #X #Jer">
+            <lem wit="#A #F #O #K #Y #V #X #Jer">
               <w>առաւել</w>
               <w>վիրաւորելոց</w>
+            </lem>
+            <rdg wit="#B">
+              <w>առաւելոց</w>
             </rdg>
             <rdg wit="#J #W #Z #D #I" type="omission"/>
           </app>
@@ -2904,19 +2886,17 @@
             </lem>
           </app>
           <app xml:id="App516">
-            <lem wit="#A">
-              <w>զչարչարիլն</w>
-            </lem>
-            <rdg wit="#Jer #F #I #V #X #Y">
+            <lem wit="#Jer #F #I #V #X #Y">
               <w xml:id="Word146">զչարչարելն</w>
               <witDetail target="#Word146" wit="#F #V #Y" type="punctuation">,</witDetail>
+            </lem>
+            <rdg wit="#A">
+              <w>զչարչարիլն</w>
             </rdg>
             <rdg wit="#K #B #D #J #O #Z #W">
               <w xml:id="Word147">զչարչարեալն</w>
               <witDetail target="#Word147" wit="#O" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">\arm{-իլ} infinitive never completely died out; would plausibly
-              have been used by M. c.f. Karst 342</note>
           </app>
           <app xml:id="App517">
             <lem wit="#Jer #K #F #B #I #A #D #J #O #V #X #Y #Z #W">
@@ -2924,12 +2904,12 @@
             </lem>
           </app>
           <app xml:id="App518">
-            <lem wit="#A">
-              <w>զխաչիլն</w>
-            </lem>
-            <rdg wit="#Jer #F #V #X #Y">
+            <lem wit="#Jer #F #V #X #Y">
               <w xml:id="Word148">զխաչելն</w>
               <witDetail target="#Word148" wit="#Y" type="punctuation">,</witDetail>
+            </lem>
+            <rdg wit="#A">
+              <w>զխաչիլն</w>
             </rdg>
             <rdg wit="#K #I #D #J #O #Z #W">
               <w>զխաչեալն</w>
@@ -3000,7 +2980,7 @@
             <rdg wit="#K">
               <w>ամեայ</w>
             </rdg>
-            <note type="editorial">K kind of like \arm{հազարամեան} but not quite.</note>
+            <!-- K kind of like \arm{հազարամեան} but not quite. -->
           </app>
           <app xml:id="App527">
             <lem wit="#F #K #Y #V #Z #A #J #O #W #B #Jer #D #I" type="omission"/>
@@ -3148,7 +3128,7 @@
           </app>
           <app xml:id="App549">
             <lem wit="#Jer #K #F #B #I #A #D #J #O #V #X #Y #Z #W">
-              <w xml:id="Word168">հաւատոց<c type="punct">,</c></w>
+              <w xml:id="Word168">հաւատոց</w>
             </lem>
           </app>
           <app xml:id="App550">
@@ -3217,10 +3197,10 @@
           </app>
           <app xml:id="App558">
             <lem wit="#K #F #I #A #D #J #O #V #X #Y #Z #W">
-              <w xml:id="Word172">արարածս<c type="punct">։</c></w>
+              <w xml:id="Word172">արարածս<c type="punct">։»</c></w>
             </lem>
             <rdg wit="#Jer">
-              <w xml:id="Word173">արարածս<c type="punct">։</c></w>
+              <w xml:id="Word173">արարածս<c type="punct">։»</c></w>
               <witDetail target="#Word173" wit="#Jer" type="punctuation">»</witDetail>
             </rdg>
             <rdg wit="#B">
@@ -3599,24 +3579,11 @@
               <w>հաոց</w>
             </rdg>
           </app>
-          <app xml:id="App602">
-            <lem wit="#K #Y #V #L #O #W #X #B #H #Jer"/>
-            <rdg wit="#F">
-              <w>400</w>
-            </rdg>
-            <rdg wit="#Z #A #J #D #I">
-              <w>400</w>
-              <w>և</w>
-            </rdg>
-          </app>
           <app xml:id="App603">
-            <lem wit="#Jer #K #B #H #O #L #V #X #Y #W">
+            <lem wit="#Jer #K #B #H #O #L #V #X #Y #W #F #I #A #D #J #Z">
               <w xml:id="Word206">485<c type="punct">,</c></w>
               <witDetail target="#Word206" wit="#K" type="punctuation">։</witDetail>
             </lem>
-            <rdg wit="#F #I #A #D #J #Z">
-              <w>85</w>
-            </rdg>
           </app>
           <app xml:id="App604">
             <lem wit="#K #Z #L #A #O #J #W #B #H #Jer #D #I" type="omission"/>
@@ -3678,16 +3645,16 @@
           </app>
           <app xml:id="App611">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word210">տեսլեամբ<c type="punct">,</c></w>
+              <w xml:id="Word210">տեսլեամբ<c type="punct">։</c></w>
               <witDetail target="#Word210" wit="#Jer #K" type="punctuation">։</witDetail>
             </lem>
           </app>
           <app xml:id="App612">
-            <lem wit="#F #V #Z #L #A #O #J #X #B #H #D #I #Y #W">
-              <w>վասն</w>
-            </lem>
-            <rdg wit="#Jer">
+            <lem wit="#Jer">
               <w>Վասն</w>
+            </lem>
+            <rdg wit="#F #V #Z #L #A #O #J #X #B #H #D #I #Y #W">
+              <w>վասն</w>
             </rdg>
             <rdg wit="#K" type="omission"/>
           </app>
@@ -3805,7 +3772,6 @@
               <w>յայսմ</w>
               <w>ժամանակի</w>
             </rdg>
-            <note type="editorial">Interesting addition here, clarifies things, but prob. not original.</note>
           </app>
           <app xml:id="App627">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -4392,7 +4358,7 @@
             <rdg wit="#K #D #O #Z #W">
               <w>տեսանելն</w>
             </rdg>
-            <note type="editorial">The infinitive is here a substantive; the use of the \arm{-ն} suffix is perfectly valid but not necessary. c.f. Meillet §123.</note>
+            <!-- The infinitive is here a substantive; the use of the \arm{-ն} suffix is perfectly valid but not necessary. c.f. Meillet §123. -->
           </app>
           <app xml:id="App703">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -4489,7 +4455,7 @@
               <w xml:id="Word254">մեռեալ</w>
               <witDetail target="#Word254" wit="#Jer #K #F #B #I #A #D #J #O #V #X #Y #Z #W" type="punctuation">։</witDetail>
             </rdg>
-            <note type="editorial">c.f. Matthew 28:4?</note>
+            <!-- c.f. Matthew 28:4? -->
           </app>
         </p>
         <p>
@@ -4689,7 +4655,7 @@
             <rdg wit="#Jer #K #B #A #O #V #Y" type="spelling_variant">
               <w>աղետեալ</w>
             </rdg>
-            <note type="editorial">From \arm{աղէտանամ}</note>
+            <note type="editorial">From \arm{աղէտանամ}.</note>
           </app>
           <app xml:id="App736">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -5404,7 +5370,7 @@
           </app>
           <app xml:id="App821">
             <lem wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z">
-              <w xml:id="Word319">հայոց<c type="punct">,</c></w>
+              <w xml:id="Word319">հայոց</w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word320">Հայոց</w>
@@ -6244,7 +6210,7 @@
               <w xml:id="Word380">յաւհանիսի</w>
               <witDetail target="#Word380" wit="#H #L" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">Lemma reflects standard spelling of the name.</note>
+            <note type="emend_spelling">Lemma reflects standard spelling of the name.</note>
           </app>
           <app xml:id="App907">
             <lem wit="#F #K #Z #L #A #O #J #W #X #B #H #D #I" type="omission"/>
@@ -6630,7 +6596,6 @@
               <w xml:id="Word409">քահանականութեան</w>
               <witDetail target="#Word409" wit="#O" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">Going with a majority vote here.</note>
           </app>
           <app xml:id="App956">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -6781,7 +6746,6 @@
               <w>ծածկեալ</w>
             </lem>
             <rdg wit="#L #H #D" type="omission"/>
-            <note type="editorial">TODO trans `in which divine [things] are concealed'.</note>
           </app>
           <app xml:id="App975">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -6883,7 +6847,7 @@
           </app>
           <app xml:id="App985">
             <lem wit="#F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word427">ով<c type="punct">՜</c></w>
+              <w xml:id="Word427"><c type="punct">«</c>ո<c type="punct">՜</c>վ</w>
               <witDetail target="#Word427" wit="#H #V #Y" type="punctuation">՞</witDetail>
             </lem>
             <rdg wit="#Jer #K">
@@ -7161,10 +7125,10 @@
             </rdg>
           </app>
           <app xml:id="App1013">
-            <lem wit="#L #H #B" type="omission"/>
-            <rdg wit="#Y #V #Z #A #O #W #X #Jer #I #F #K #J #D">
+            <lem wit="#Y #V #Z #A #O #W #X #Jer #I #F #K #J #D">
               <w>էր</w>
-            </rdg>
+            </lem>
+            <rdg wit="#L #H #B" type="omission"/>
           </app>
           <app xml:id="App1013a">
             <lem wit="#B #Y #V #Z #A #O #W #X #Jer #I">
@@ -7175,13 +7139,12 @@
               <witDetail target="#Word449" wit="#J" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#L #H" type="omission"/>
-            <note type="editorial">Not liking the \arm{զնա} here, but no reading gives a way around it.</note>
           </app>
           <app xml:id="App1013b">
-            <lem wit="#Y">
+            <lem wit="#B #L #H #V #Z #A #O #W #X #Jer #I #F #K #J #D" type="omission"/>
+            <rdg wit="#Y">
               <w>ի</w>
-            </lem>
-            <rdg wit="#B #L #H #V #Z #A #O #W #X #Jer #I #F #K #J #D" type="omission"/>
+            </rdg>
           </app>
           <app xml:id="App1014">
             <lem wit="#K #F #H #A #D #J #O #L #V #Y #Z #W">
@@ -7289,9 +7252,7 @@
               <w xml:id="Word457">չորեքտասան</w>
               <witDetail target="#Word457" wit="#F" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">A gives a number that tallies with the placement of this prophecy
-              within the Chronicle, and is thus accepted. The others seem to place the first
-              prophecy of Kozeṙn in 471 (1022/3).</note>
+            <note type="editorial">A gives a number that tallies with the placement of this prophecy within the Chronicle, and is thus accepted. The others seem to suggest, no doubt thanks to lack of context, that Kozeṙn made an earlier prophecy in 471 (1022/3).</note>
           </app>
           <app xml:id="App1027">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -7507,7 +7468,7 @@
               <w xml:id="Word479">ևս</w>
               <witDetail target="#Word479" wit="#H #L" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">This reading comes from K and is almost certainly an emendation, but it is clear that some word is missing here, and the suggestion of HL is not much better.</note>
+            <note type="editorial">This reading comes from K and is almost certainly an emendation, but it is clear that some word is missing here, and the reading of HL is of no assistance.</note>
           </app>
           <app xml:id="App1050a">
             <lem wit="#Y #K #F #V #Z #A #J #O #W #X #B #Jer #D #I #L #H">
@@ -8207,7 +8168,7 @@
           </app>
           <app xml:id="App1118">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word527">հաւատոց<c type="punct">,</c></w>
+              <w xml:id="Word527">հաւատոց</w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word528">հաւատոցն</w>
@@ -8334,8 +8295,8 @@
             </rdg>
           </app>
           <app xml:id="App1133">
-            <lem resp="#tla">
-              <wit>[unattested]</wit>
+            <lem wit="#Jer #B #H #I #A #J #O #W">
+              <w xml:id="Word542">յաստուածպաշտութեանցն<c type="punct">.</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word540">աստուածպաշտութիւնն</w>
@@ -8345,11 +8306,6 @@
               <w xml:id="Word541">աստուածպաշտութեանցն</w>
               <witDetail target="#Word541" wit="#F #D #L #V #Y" type="punctuation">,</witDetail>
             </rdg>
-            <rdg wit="#Jer #B #H #I #A #J #O #W">
-              <w xml:id="Word542">յաստուածպաշտութեանցն<c type="punct">.</c></w>
-            </rdg>
-            <note type="emendation" resp="#tla">We want the dative, but not the post-medieval
-              \arm{-ց} ending.</note>
           </app>
           <app xml:id="App1134">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -8956,7 +8912,7 @@
               <w xml:id="Word587">զհաւատն</w>
               <witDetail target="#Word587" wit="#Jer #K #F #H #I #A #D #J #O #L #Y #Z" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">The word for `faith' needs to be plural as a substantive, thus reading W is accepted.</note>
+            <note type="editorial">The word for `faith' should be plural as a substantive, thus reading W is accepted.</note>
           </app>
           <app xml:id="App1207">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -8969,12 +8925,9 @@
             </lem>
           </app>
           <app xml:id="App1209">
-            <lem wit="#Jer #K #F #I #A #D #J #O #V #Y #W">
+            <lem wit="#Jer #K #F #I #A #D #J #O #V #X #Y #W">
               <w>աւրհներգութիւնք</w>
             </lem>
-            <rdg wit="#X" type="spelling_variant">
-              <w>աւրհներգուիք</w>
-            </rdg>
             <rdg wit="#L" type="spelling_variant">
               <w>յաւհներգութիւնք</w>
             </rdg>
@@ -8987,7 +8940,6 @@
             <rdg wit="#B">
               <w>աւրհներգութիւն</w>
             </rdg>
-            <note type="editorial">TODO emend missing X abbreviation</note>
           </app>
           <app xml:id="App1210">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -9117,15 +9069,11 @@
             </rdg>
           </app>
           <app xml:id="App1227">
-            <lem wit="#Jer #K #F #B #I #A #D #J #O #L #V #X #Y #Z #W">
+            <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
               <w xml:id="Word595">մտաց<c type="punct">.</c></w>
               <witDetail target="#Word595" wit="#K" type="punctuation">։</witDetail>
+              <witDetail target="#Word595" wit="#H" type="punctuation">`</witDetail>
             </lem>
-            <rdg wit="#H">
-              <w xml:id="Word594">մտաց<c type="punct">,</c></w>
-              <witDetail target="#Word594" wit="#H" type="punctuation">`</witDetail>
-            </rdg>
-            <note type="editorial">TODO fix H</note>
           </app>
           <app xml:id="App1228">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #L #V #X #Y #Z #W">
@@ -9413,16 +9361,12 @@
             </lem>
           </app>
           <app xml:id="App1266">
-            <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #X #Y #Z #W">
+            <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
               <w xml:id="Word610">ստախաւսք</w>
               <witDetail target="#Word610" wit="#K" type="punctuation">։</witDetail>
-              <witDetail target="#Word610" wit="#F #A #D #J #O #Y" type="punctuation">,</witDetail>
+              <witDetail target="#Word610" wit="#F #A #D #J #O #Y #V" type="punctuation">,</witDetail>
+              <witDetail target="#Word610" wit="#V" type="punctuation">՜</witDetail>
             </lem>
-            <rdg wit="#V">
-              <w xml:id="Word609">ստախաւսք<c type="punct">,</c></w>
-              <witDetail target="#Word609" wit="#V" type="punctuation">՜</witDetail>
-            </rdg>
-            <note type="editorial">TODO fix V</note>
           </app>
           <app xml:id="App1267">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -9828,7 +9772,6 @@
             <rdg wit="#F" type="spelling_variant">
               <w>պաւռնկասէրք</w>
             </rdg>
-            <note type="editorial">TODO fix V</note>
           </app>
           <app xml:id="App1322">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -9922,7 +9865,6 @@
             <rdg wit="#F" type="spelling_variant">
               <w>Պաւռնկութեամբ</w>
             </rdg>
-            <note type="editorial">TODO get another opinion</note>
           </app>
           <app xml:id="App1334">
             <lem wit="#Jer #K #B #H #A #D #L #X #Y">
@@ -10000,16 +9942,10 @@
             </rdg>
           </app>
           <app xml:id="App1342">
-            <lem wit="#F #V #Z #L #A #O #J #W #X #B #H #Jer #D #I">
+            <lem wit="#F #V #Y #Z #L #A #O #J #W #X #B #H #Jer #D #I">
               <w>և</w>
             </lem>
             <rdg wit="#K" type="omission"/>
-            <rdg wit="#Y">
-              <w>և</w>
-              <w>զ</w>
-              <w>և</w>
-            </rdg>
-            <note type="editorial">TODO check Y</note>
           </app>
           <app xml:id="App1343">
             <lem wit="#K #B #H #I #A #D #O #L #Z #W">
@@ -10362,7 +10298,6 @@
             <rdg wit="#O">
               <w>աստուածեն</w>
             </rdg>
-            <note type="editorial">TODO emend O</note>
           </app>
           <app xml:id="App1384">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -11430,11 +11365,11 @@
             </rdg>
           </app>
           <app xml:id="App1499">
-            <lem wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w>այս</w>
-            </lem>
-            <rdg wit="#Jer">
+            <lem wit="#Jer">
               <w>Այս</w>
+            </lem>
+            <rdg wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
+              <w>այս</w>
             </rdg>
           </app>
           <app xml:id="App1500">
@@ -12046,9 +11981,7 @@
           </app>
           <app xml:id="App1584">
             <lem wit="#Jer">
-              <w xml:id="Word795">Ընկեր</w>
-              <witDetail target="#Word795" wit="#Jer" type="punctuation">«</witDetail>
-              <witDetail target="#Word795" wit="#Jer" type="punctuation">,</witDetail>
+              <w xml:id="Word795"><c type="punct">«</c>Ընկեր<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W" type="orth_variant">
               <w xml:id="Word794" type="orth_variant">ընկեր</w>
@@ -12058,7 +11991,7 @@
           <app xml:id="App1585">
             <lem wit="#Y #Z #L #A #O #X #B #H #Jer #D #V #J">
               <w>վասն</w>
-              <w xml:id="Word796">որոյ<c type="punct">՞</c></w>
+              <w xml:id="Word796">որո<c type="punct">՞</c>յ</w>
             </lem>
             <rdg wit="#K">
               <w>ընդէր</w>
@@ -12105,7 +12038,7 @@
               <w>ոչ</w>
               <w>ունէիր</w>
               <w>հանդերձ</w>
-              <w>հարսանեաց<c type="punct">։</c></w>
+              <w>հարսանեաց<c type="punct">»։</c></w>
             </lem>
             <rdg wit="#F #V #Z #A #J #O #W #B #D #X #Jer">
               <w xml:id="Word799">հարսանիսս</w>
@@ -12220,7 +12153,6 @@
             <rdg wit="#K #B">
               <w>ժողովեցան</w>
             </rdg>
-            <note type="editorial">TODO check K and B</note>
           </app>
           <app xml:id="App1603">
             <lem wit="#Jer #K #F #B #I #A #D #J #O #V #Y #Z #W">
@@ -12722,7 +12654,7 @@
             <rdg wit="#F" type="spelling_variant">
               <w>յարձակումք</w>
             </rdg>
-            <note type="editorial">Together with the substantial variant above, DIJWZ (possibly together with C) gives `[saints]; this was the reason that the sun darkened.  Those who stand for this nation henceforth will become deliverance from outsiders...'  HL preserves `invasion' rather than `deliverance'; it is thus unclear what that scribe intended.</note>
+            <note type="editorial">Together with the substantial variant above, DIJWZ (possibly together with C) gives `[saints]; this was the reason that the sun darkened.  Those who stand for this nation henceforth will become deliverance from outsiders...'  HL preserves `invasion' rather than `deliverance'; it is unclear which reading the scribe intended.</note>
           </app>
           <app xml:id="App1666">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #Z">
@@ -13014,7 +12946,6 @@
               <w>զաւրութիւն</w>
               <w>սրբոցն</w>
             </rdg>
-            <note type="editorial">TODO plural can be `faculties'</note>
           </app>
           <app xml:id="App1694">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -13189,15 +13120,15 @@
             </rdg>
           </app>
           <app xml:id="App1716">
-            <lem wit="#B #A">
-              <w xml:id="Word875">հարցն<c type="punct">,</c></w>
-            </lem>
-            <rdg wit="#Jer #K #F #H #I #D #J #O #L #V #Y #Z #W">
-              <w xml:id="Word874">հարս</w>
+            <lem wit="#Jer #K #F #H #I #D #J #O #L #V #Y #Z #W">
+              <w xml:id="Word874">հարս<c type="punct">,</c></w>
               <witDetail target="#Word874" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word874" wit="#Jer #I #D #J #O #V #Y #Z #W" type="punctuation">,</witDetail>
+            </lem>
+            <rdg wit="#B #A">
+              <w xml:id="Word875">հարցն</w>
+              <witDetail target="#Word875" wit="#B #A" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">TODO not thoroughly sure of the grammar.</note>
           </app>
           <app xml:id="App1717">
             <lem wit="#F #K #Y #V #Z #A #O #J #W #B #Jer #D #I" type="omission"/>
@@ -13391,7 +13322,6 @@
               <w>ցամաքեսցի</w>
             </lem>
             <rdg wit="#F" type="omission"/>
-            <note type="editorial">TODO F copied from a two-column ms?</note>
           </app>
           <app xml:id="App1740a">
             <lem wit="#K #Y #V #Z #L #A #O #J #W #H #Jer #D #I #B">
@@ -14408,8 +14338,9 @@
               <witDetail target="#Word973" wit="#B" type="punctuation">։</witDetail>
               <witDetail target="#Word973" wit="#F #V #Y #W" type="punctuation">,</witDetail>
             </rdg>
-            <rdg wit="#K">
-              <w xml:id="Word974">հռաւմայեցւոցն</w>
+            <rdg wit="#K" type="spelling_variant">
+              <!-- NOTE changed spelling for apparatus.  Need to handle this better. -->
+              <w xml:id="Word974">հռոմայեցւոցն</w>
               <witDetail target="#Word974" wit="#K" type="punctuation">։</witDetail>
             </rdg>
             <rdg wit="#H" type="spelling_variant">
@@ -14420,7 +14351,6 @@
               <w xml:id="Word976">հռոմէացւոց</w>
               <witDetail target="#Word976" wit="#I #J #O #Z" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">TODO emend K</note>
           </app>
           <app xml:id="App1847">
             <lem wit="#Jer #Y">
@@ -14439,13 +14369,13 @@
             </rdg>
           </app>
           <app xml:id="App1849">
-            <lem wit="#A #B">
-              <w>ամացն</w>
-            </lem>
-            <rdg wit="#F #Y #V #Z #L #O #J #W #H #Jer #D #I #C #G #E">
+            <lem wit="#F #Y #V #Z #L #O #J #W #H #Jer #D #I #C #G #E">
               <w>յիսուն</w>
               <w xml:id="Word977">ամացն</w>
               <witDetail target="#Word977" wit="#F #W" type="punctuation">,</witDetail>
+            </lem>
+            <rdg wit="#A #B">
+              <w>ամացն</w>
             </rdg>
             <rdg wit="#K">
               <w>այսորիկ</w>
@@ -14727,7 +14657,7 @@
           </app>
           <app xml:id="App1887">
             <lem wit="#Z">
-              <w>հռոմայեցւոց</w>
+              <w>հռոմայեցւոց<c type="punct">,</c></w>
             </lem>
             <rdg wit="#F #D #V #Y #Jer #G #E">
               <w xml:id="Word994">հոռոմոց</w>
@@ -14757,7 +14687,6 @@
               <w xml:id="Word1000">հռաւմայէցւոց</w>
               <witDetail target="#Word1000" wit="#K" type="punctuation">։</witDetail>
             </rdg>
-            <note type="editorial">TODO punct</note>
           </app>
           <app xml:id="App1888">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -15052,7 +14981,7 @@
           </app>
           <app xml:id="App1924">
             <lem wit="#K #Jer #G #E">
-              <w xml:id="Word1019">ջահունից</w>
+              <w xml:id="Word1019">ջահունից<c type="punct">։</c></w>
               <witDetail target="#Word1019" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#F #I #D #J #O #V #Y #Z #W">
@@ -15076,7 +15005,6 @@
               <w xml:id="Word1022">ջանունիցին</w>
               <witDetail target="#Word1022" wit="#H #L" type="punctuation">։</witDetail>
             </rdg>
-            <note type="editorial">The question of the original form of this name is a vexed one.  Dostourian has evidently taken it to refer to the Pyramus river in Cilicia, which is known in Arabic as the Jeyḥān, but the pseudo-Methodian origin of this prophecy renders that implausible.  The Syriac version of the prophecy gives no obvious clues.  One possibility might be the Tigris (Jilah).</note>
           </app>
         </p>
         <p>
@@ -15381,7 +15309,6 @@
               <witDetail target="#Word1043" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1043" wit="#I #D #J #W" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">TODO emend to singular?</note>
           </app>
           <app xml:id="App1960">
             <lem wit="#K #F #B #H #I #A #D #J #O #L #Y #Z #W">
@@ -15421,7 +15348,6 @@
               <witDetail target="#Word1047" wit="#K" type="punctuation">։</witDetail>
             </rdg>
             <rdg wit="#B" type="omission"/>
-            <note type="editorial">A's reading makes a little more sense, as the editorial scribe of K must have agreed.</note>
           </app>
           <app xml:id="App1964">
             <lem resp="#tla">
@@ -15431,7 +15357,7 @@
             <rdg wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W" type="orth_variant">
               <w>և</w>
             </rdg>
-            <note type="emendation" resp="#tla">capitalize for new sentence</note>
+            <note type="emend_orth" resp="#tla">capitalize for new sentence</note>
           </app>
           <app xml:id="App1965">
             <lem wit="#Jer #K #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -15553,7 +15479,7 @@
               <w>և</w>
             </rdg>
             <rdg wit="#Y" type="omission"/>
-            <note type="emendation" resp="#tla">capitalize start of sentence</note>
+            <note type="emend_orth" resp="#tla">capitalize start of sentence</note>
           </app>
           <app xml:id="App1975">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -15612,7 +15538,6 @@
             <rdg wit="#W">
               <w>հռոմոց</w>
             </rdg>
-            <note type="editorial">TODO punct</note>
           </app>
           <app xml:id="App1979">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -16133,7 +16058,7 @@
               <witDetail target="#Word1103" wit="#B" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#Z #L #J #W #H #D #I" type="omission"/>
-            <note type="editorial">Taking minority reading KO for stylistic purposes.</note>
+            <!-- Taking minority reading KO for stylistic purposes. -->
           </app>
           <app xml:id="App2041">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -16379,7 +16304,7 @@
           </app>
           <app xml:id="App2054">
             <lem wit="#F">
-              <w>յովհաննէս</w>
+              <w>յովհաննէս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#O" type="spelling_variant">
               <w xml:id="Word1133">ոհաննէս</w>
@@ -16405,7 +16330,6 @@
               <w xml:id="Word1135">յոհանէս</w>
               <witDetail target="#Word1135" wit="#B" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">TODO punct</note>
           </app>
           <app xml:id="App2055">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -16644,7 +16568,7 @@
           </app>
           <app xml:id="App2081">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1147">ամաց<c>,</c></w>
+              <w xml:id="Word1147">ամաց<c type="punct">,</c></w>
               <witDetail target="#Word1147" wit="#V" type="punctuation">`</witDetail>
             </lem>
             <rdg wit="#K">
@@ -16705,7 +16629,7 @@
           </app>
           <app xml:id="App2089">
             <lem wit="#Jer #K #B #H #I #A #D #J #O #L #X #Y #Z #W #V">
-              <w xml:id="Word1153">եղաք<c>,</c></w>
+              <w xml:id="Word1153">եղաք<c type="punct">,</c></w>
               <witDetail target="#Word1153" wit="#Jer" type="punctuation">։</witDetail>
               <witDetail target="#Word1153" wit="#H" type="punctuation">՝</witDetail>
               <witDetail target="#Word1153" wit="#V" type="punctuation">՞։</witDetail>
@@ -16749,7 +16673,7 @@
           </app>
           <app xml:id="App2094">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1154">լսողացն<c>,</c></w>
+              <w xml:id="Word1154">լսողացն</w>
             </lem>
             <rdg wit="#K" type="orth_variant">
               <w xml:id="Word1155">լսաւղացն</w>
@@ -16788,7 +16712,7 @@
           </app>
           <app xml:id="App2100">
             <lem wit="#Jer #K #F #B #H #A #D #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1157">ծնեալք<c>,</c></w>
+              <w xml:id="Word1157">ծնեալք<c type="punct">,</c></w>
             </lem>
             <rdg wit="#I #J">
               <w>ծնեալքն</w>
@@ -16918,7 +16842,6 @@
             <rdg wit="#H #L #W">
               <w>յայսոցիկ</w>
             </rdg>
-            <note type="editorial">Following K F X for this line.</note>
           </app>
           <app xml:id="App2115">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -16966,7 +16889,7 @@
           </app>
           <app xml:id="App2119">
             <lem wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z">
-              <w xml:id="Word1165">հայոց<c>։</c></w>
+              <w xml:id="Word1165">հայոց<c type="punct">։</c></w>
               <witDetail target="#Word1165" wit="#H #I #D #J #O #L #Y #Z" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
@@ -17060,7 +16983,7 @@
           </app>
           <app xml:id="App2127b">
             <lem wit="#Y #V #A #O #Jer #B">
-              <w xml:id="Word1174">եմ<c>,</c></w>
+              <w xml:id="Word1174">եմ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#F #Z #L #J #W #X #H #I #D">
               <w xml:id="Word1171">իմ</w>
@@ -17142,14 +17065,14 @@
           </app>
           <app xml:id="App2132">
             <lem wit="#F #X">
-              <w xml:id="Word1178">կոտորածսն<c>,</c></w>
+              <w xml:id="Word1178">կոտորածսն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Z">
-              <w xml:id="Word1177">կտրածսն</w>
+              <w xml:id="Word1177">կտ՟ր՟ածսն</w>
               <witDetail target="#Word1177" wit="#Z" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#W">
-              <w xml:id="Word1179">կտծսն</w>
+              <w xml:id="Word1179">կտ՟ծսն</w>
               <witDetail target="#Word1179" wit="#W" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#Jer #B #H #I #A #D #J #O #L">
@@ -17157,13 +17080,13 @@
               <witDetail target="#Word1180" wit="#Jer #I #D #J" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#V #Y">
-              <w xml:id="Word1181">կտրծսն</w>
+              <w xml:id="Word1181">կտ՟ր՟ծսն</w>
               <witDetail target="#Word1181" wit="#V #Y" type="punctuation">։</witDetail>
             </rdg>
             <rdg wit="#K">
               <w>թողուլ</w>
             </rdg>
-            <note type="editorial">Many of the readings for this word (Z, W, V, Y) are ambiguously abbreviated.</note>
+            <note type="editorial">The ambiguously abbreviated readings for this word are retained in the apparatus here and below.</note>
           </app>
           <app xml:id="App2133">
             <lem wit="#Jer #B #H #I #A #D #O #L #Z #W">
@@ -17301,7 +17224,7 @@
           </app>
           <app xml:id="App2147">
             <lem wit="#K #F #B #I #A #D #J #O #V #X #Y #Z #W">
-              <w xml:id="Word1189">թուրքաց<c>,</c></w>
+              <w xml:id="Word1189">թուրքաց<c type="punct">,</c></w>
               <witDetail target="#Word1189" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#Jer">
@@ -17349,7 +17272,7 @@
           </app>
           <app xml:id="App2152">
             <lem wit="#K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1192">հոռոմոց<c>.</c></w>
+              <w xml:id="Word1192">հոռոմոց<c type="punct">.</c></w>
               <witDetail target="#Word1192" wit="#K #F #H #I #D #J #O #L #V #X #Y #Z #W" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
@@ -17418,7 +17341,7 @@
           </app>
           <app xml:id="App2160">
             <lem wit="#B #H #I #A #D #J #O #L #Z #W">
-              <w xml:id="Word1197">իմոյ<c>,</c></w>
+              <w xml:id="Word1197">իմոյ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#F #K #Y #V #X #Jer" type="omission"/>
           </app>
@@ -17460,7 +17383,7 @@
           </app>
           <app xml:id="App2166">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1200">համարելով<c>,</c></w>
+              <w xml:id="Word1200">համարելով<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2167">
@@ -17470,7 +17393,6 @@
             <rdg wit="#F" type="orth_variant">
               <w>գըտանել</w>
             </rdg>
-            <note type="editorial">TODO Consider reading K.</note>
             <rdg wit="#K">
               <w>տեսանել</w>
             </rdg>
@@ -17491,18 +17413,17 @@
           </app>
           <app xml:id="App2170">
             <lem wit="#Jer #K #F #B #H #A #O #L #X">
-              <w xml:id="Word1204">կատարածի<c>.</c></w>
+              <w xml:id="Word1204">կատարածի<c type="punct">.</c></w>
               <witDetail target="#Word1204" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#V #Y">
-              <w xml:id="Word1202">կտրածի</w>
+              <w xml:id="Word1202">կտ՟ր՟ածի</w>
               <witDetail target="#Word1202" wit="#V #Y" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#I #D #J #Z #W">
-              <w xml:id="Word1203">կտրծի</w>
+              <w xml:id="Word1203">կտ՟ր՟ծի</w>
               <witDetail target="#Word1203" wit="#I #D #J #Z #W" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">Readings for V, Y, I, D, J, Z, W ambiguous.</note>
           </app>
           <app xml:id="App2171">
             <lem wit="#F #Y #V #Z #L #A #J #W #X #B #H #Jer #D #I #O">
@@ -17664,7 +17585,7 @@
           </app>
           <app xml:id="App2192">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1214">ասացաք<c>,</c></w>
+              <w xml:id="Word1214">ասացաք<c type="punct">,</c></w>
             </lem>
           </app>
           <note type="collation">B pauses</note>
@@ -17727,21 +17648,21 @@
           </app>
           <app xml:id="App2193f">
             <lem wit="#F #A #O #I #L #H #X #Jer">
-              <w xml:id="Word1217">կատարածիս<c>,</c></w>
+              <w xml:id="Word1217">կատարածիս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#W">
-              <w xml:id="Word1215">կտրիս</w>
+              <w xml:id="Word1215">կտ՟ր՟իս</w>
               <witDetail target="#Word1215" wit="#W" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="Z">
-              <w>կտծիս</w>
+              <w>կտ՟ծիս</w>
             </rdg>
             <rdg wit="#D #Y #J">
-              <w xml:id="Word1222">կտրծիս</w>
+              <w xml:id="Word1222">կտ՟ր՟ծիս</w>
               <witDetail target="#Word1222" wit="#Y" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#V">
-              <w xml:id="Word1220">կտրածիս</w>
+              <w xml:id="Word1220">կտ՟րածիս</w>
               <witDetail target="#Word1220" wit="#V" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#K">
@@ -17750,7 +17671,6 @@
               <w xml:id="Word1221">զբանս</w>
               <witDetail target="#Word1221" wit="#K" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">Many readings are ambiguous (W, Z, D, Y, J, V).</note>
           </app>
           <app xml:id="App2193g">
             <lem wit="#W #F #A #O #I #D #L #H #V #K #Y #J #X #Z #Jer">
@@ -17780,7 +17700,7 @@
           </app>
           <app xml:id="App2196">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1224">մերոց<c>,</c></w>
+              <w xml:id="Word1224">մերոց<c type="punct">,</c></w>
               <witDetail target="#Word1224" wit="#K #A" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -17813,7 +17733,7 @@
           </app>
           <app xml:id="App2204">
             <lem wit="#Jer #K #B #H #I #A #D #J #O #L #V #Y #Z #W">
-              <w xml:id="Word1225">իւրեանց<c>.</c></w>
+              <w xml:id="Word1225">իւրեանց<c type="punct">.</c></w>
               <witDetail target="#Word1225" wit="#Jer" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#F #X">
@@ -17875,7 +17795,7 @@
           </app>
           <app xml:id="App2212">
             <lem wit="#B #H #I #A #D #J #O #L #Z">
-              <w xml:id="Word1231">զայս<c>,</c></w>
+              <w xml:id="Word1231">զայս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer #K #F #V #X #Y #W">
               <w xml:id="Word1230">այս</w>
@@ -17918,7 +17838,7 @@
           </app>
           <app xml:id="App2218">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z">
-              <w xml:id="Word1233">կացի<c>,</c></w>
+              <w xml:id="Word1233">կացի<c type="punct">,</c></w>
               <witDetail target="#Word1233" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#W">
@@ -18005,7 +17925,7 @@
           </app>
           <app xml:id="App2229">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1236">գրով<c>,</c></w>
+              <w xml:id="Word1236">գրով<c type="punct">,</c></w>
               <witDetail target="#Word1236" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -18021,7 +17941,7 @@
           </app>
           <app xml:id="App2231b">
             <lem wit="#F #K #Y #V #Z #A #O #J #W #X #B #Jer #D #I #L #H">
-              <w xml:id="Word1238">մի<c>՜</c></w>
+              <w xml:id="Word1238">մի<c type="punct">՛</c></w>
             </lem>
           </app>
           <app xml:id="App2231c">
@@ -18057,7 +17977,7 @@
             <rdg wit="#A #O">
               <w>կորիցի</w>
             </rdg>
-            <note type="editorial">c.f. Thomson p. 67</note>
+            <!-- c.f. Thomson p. 67 -->
           </app>
           <app xml:id="App2234">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -18077,7 +17997,7 @@
           </app>
           <app xml:id="App2237">
             <lem wit="#Jer #K #F #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1242">մոռասցի<c>։</c></w>
+              <w xml:id="Word1242">մոռասցի<c type="punct">։</c></w>
               <witDetail target="#Word1242" wit="#F #H #D #J #O #L #V #X #Y #Z #W" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#B" type="spelling_variant">
@@ -18196,7 +18116,7 @@
           </app>
           <app xml:id="App2248">
             <lem wit="#Jer #K #F #B #I #A #D #J #O #X #Y #Z">
-              <w xml:id="Word1251">համարեցայ<c>,</c></w>
+              <w xml:id="Word1251">համարեցայ<c type="punct">,</c></w>
               <witDetail target="#Word1251" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#V #W" type="spelling_variant">
@@ -18255,7 +18175,7 @@
           </app>
           <app xml:id="App2255">
             <lem wit="#Jer #K #F #I #A #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1255">ժամանակագրութեանց<c>,</c></w>
+              <w xml:id="Word1255">ժամանակագրութեանց<c type="punct">,</c></w>
               <witDetail target="#Word1255" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#D" type="spelling_variant">
@@ -18322,7 +18242,7 @@
           </app>
           <app xml:id="App2264">
             <lem wit="#Jer #K #F #B #H #I #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1260">անցելոցն<c>,</c></w>
+              <w xml:id="Word1260">անցելոցն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#A">
               <w xml:id="Word1259">անցելոց</w>
@@ -18389,7 +18309,7 @@
           </app>
           <app xml:id="App2270">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1264">զժամանակս<c>,</c></w>
+              <w xml:id="Word1264">զժամանակս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word1265">զժամանակ</w>
@@ -18406,13 +18326,13 @@
               <w>զկատարած</w>
             </lem>
             <rdg wit="#J #L #V #Y">
-              <w>զկտրած</w>
+              <w>զկտ՟ր՟ած</w>
             </rdg>
             <rdg wit="#F #X">
               <w>զկոտորած</w>
             </rdg>
             <rdg wit="#I #D #Z">
-              <w>զկտրծ</w>
+              <w>զկտ՟ր՟ծ</w>
             </rdg>
             <rdg wit="#B">
               <w>զկատարածի</w>
@@ -18421,9 +18341,8 @@
               <w>զգործն</w>
             </rdg>
             <rdg wit="#W">
-              <w>զկտծ</w>
+              <w>զկտ՟ծ</w>
             </rdg>
-            <note type="editorial">About half of these readings are ambiguous (J, L, V, Y, I, D, Z, W).</note>
           </app>
           <app xml:id="App2273">
             <lem wit="#Jer #F #H #I #A #D #J #O #L #V #Y #Z #W">
@@ -18456,7 +18375,7 @@
           </app>
           <app xml:id="App2277">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1266">գտանիցեն<c>,</c></w>
+              <w xml:id="Word1266">գտանիցեն<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2278">
@@ -18503,7 +18422,7 @@
           </app>
           <app xml:id="App2285">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1267">բարկութիւնն<c>՝</c></w>
+              <w xml:id="Word1267">բարկութիւնն<c type="punct">՝</c></w>
             </lem>
           </app>
           <app xml:id="App2286">
@@ -18513,7 +18432,7 @@
             <rdg wit="#Y">
               <w>զոր</w>
             </rdg>
-            <note type="editorial">Y may fit better with the grammar, but the evidence for \arm{զորս} is overwhelming.</note>
+            <note type="editorial">Y is a grammatically better reading, but the evidence for \arm{զորս} is overwhelming.</note>
           </app>
           <app xml:id="App2287">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -18572,7 +18491,7 @@
           </app>
           <app xml:id="App2294">
             <lem wit="#F #H #D #L #X">
-              <w xml:id="Word1272">յաստուծոյ<c>.</c></w>
+              <w xml:id="Word1272">յաստուծոյ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K #B #I #A #J #O #V #Y #Z #W">
               <w xml:id="Word1273">աստուծոյ</w>
@@ -18582,7 +18501,7 @@
               <w xml:id="Word1274">Աստուծոյ</w>
               <witDetail target="#Word1274" wit="#Jer" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">I want the distributive \arm{յ-} there, even if most of the witnesses don't.</note>
+            <!-- I want the distributive \arm{յ-} there, even if most of the witnesses don't. -->
           </app>
           <app xml:id="App2295">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -18620,7 +18539,7 @@
             <rdg wit="#F #X">
               <w>կողմանծ</w>
             </rdg>
-            <note type="editorial">Difficult to make sense of this reading.  A clue may lie with G, but that can't be accepted without access to the manuscript.</note>
+            <note type="editorial">This is a difficult reading.  A clue may lie with G, but it cannot be accepted without access to the original manuscript.</note>
           </app>
           <app xml:id="App2297">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
@@ -18709,7 +18628,7 @@
           </app>
           <app xml:id="App2308">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1282">մեր<c>.</c></w>
+              <w xml:id="Word1282">մեր<c type="punct">.</c></w>
               <witDetail target="#Word1282" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -18793,7 +18712,7 @@
           </app>
           <app xml:id="App2320">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1286">մեր<c>։</c></w>
+              <w xml:id="Word1286">մեր<c type="punct">։</c></w>
             </lem>
           </app>
           <app xml:id="App2321">
@@ -18860,7 +18779,7 @@
           </app>
           <app xml:id="App2331">
             <lem wit="#Jer #F #B #H #I #A #D #J #O #X #Y #Z">
-              <w xml:id="Word1289">մերոյ<c>,</c></w>
+              <w xml:id="Word1289">մերոյ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#V #W" type="spelling_variant">
               <w xml:id="Word1290">մերո</w>
@@ -18931,7 +18850,7 @@
           </app>
           <app xml:id="App2340">
             <lem wit="#Jer #F #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1295">շրջիմք<c>,</c></w>
+              <w xml:id="Word1295">շրջիմք<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="omission"/>
             <rdg wit="#B" type="spelling_variant">
@@ -18946,7 +18865,6 @@
             <rdg wit="#Jer #K #F #B #I #A #D #J #O #V #X #Y #Z #W">
               <w>զորս</w>
             </rdg>
-            <note type="editorial">HL is more grammatical despite preponderance of the other.</note>
           </app>
           <app xml:id="App2342">
             <lem wit="#Jer #K #F #B #H #I #A #D #J #O #V #X #Y #Z #W">
@@ -18977,50 +18895,12 @@
           </app>
           <app xml:id="App2346">
             <lem wit="#Jer #K #B #H #I #A #D #J #O #L #V #X #Y #Z #W">
-              <w xml:id="Word1298">զհատուցումն<c>.</c></w>
+              <w xml:id="Word1298">զհատուցումն<c type="punct">.</c></w>
               <witDetail target="#Word1298" wit="#B #H #I #J #O #L #Y #Z #W" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#F" type="orth_variant">
               <w xml:id="Word1297">զհատուցումըն</w>
               <witDetail target="#Word1297" wit="#F" type="punctuation">,</witDetail>
-            </rdg>
-          </app>
-          <app xml:id="App2350">
-            <lem wit="#Jer #K #B #H #I #A #F #J #O #L #V #X #Y #Z #W" type="omission"/>
-            <rdg wit="#D" type="colophon_inline">
-              <w>Որ</w>
-              <w>ողորմի</w>
-              <w>քրիստոս</w>
-              <w>աստուած</w>
-              <w>մեղաւոր</w>
-              <w>և</w>
-              <w>անարժան</w>
-              <w>աբիկար</w>
-              <w>գրչիս</w>
-              <w>Կաֆայեցի</w>
-              <w>խաչիկին</w>
-              <w>և</w>
-              <w>ծնաւղացն</w>
-              <w>և</w>
-              <w xml:id="Word1300">ազգականացն<c>,</c></w>
-              <w>և</w>
-              <w>ամենայն</w>
-              <w>արեան</w>
-              <w>մերձաւորաց</w>
-              <w xml:id="Word1301">իւրոց<c>։</c></w>
-              <w>և</w>
-              <w>աւրինակի</w>
-              <w>շնորհողիս</w>
-              <w>խճյ</w>
-              <w xml:id="Word1302">յոհանին<c>։</c></w>
-              <w>Կարդացեղոց</w>
-              <w>և</w>
-              <w>լսողաց</w>
-              <w>և</w>
-              <w>որք</w>
-              <w>զողորմին</w>
-              <w>ասեն</w>
-              <w xml:id="Word1303">ամէն<c>։</c></w>
             </rdg>
           </app>
           <app xml:id="App2347">
@@ -19158,7 +19038,7 @@
           </app>
           <app xml:id="App2390">
             <lem wit="#Jer #F #B #H #J #O #L #V #Y #Z #W">
-              <w xml:id="Word1313">երիցու<c>։</c></w>
+              <w xml:id="Word1313">երիցու<c type="punct">։</c></w>
             </lem>
             <rdg wit="#K #I #A #D #X" type="spelling_variant">
               <w xml:id="Word1314">իրիցու</w>
@@ -19207,15 +19087,12 @@
             </rdg>
           </app>
           <app xml:id="App2394">
-            <lem resp="#tla">
-              <wit>[unattested]</wit>
+            <lem wit="#B #A">
+              <w>չորեքհարիւրերորդի</w>
+              <w>հինգհարիւրերորդի</w>
             </lem>
             <rdg wit="#F #D #X #Jer">
               <w>չորեքհարիւրերորդի</w>
-            </rdg>
-            <rdg wit="#B #A">
-              <w>չորեքհարիւրերորդի</w>
-              <w>հինգհարիւրերորդի</w>
             </rdg>
             <rdg wit="#O" type="spelling_variant">
               <w>չորեքհարիւրերրորդի</w>
@@ -19230,10 +19107,10 @@
             <note type="emendation" resp="#tla">TODO some serious date problems here.</note>
           </app>
           <app xml:id="App2395">
+            <lem wit="#A #B #O #F #X #D" type="omission"/>
             <rdg wit="#Jer #K #V">
               <w>և</w>
             </rdg>
-            <rdg wit="#A #B #O #F #X #D" type="omission"/>
           </app>
           <app xml:id="App2396">
             <lem wit="#Jer #K #F #B #A #D #X">
@@ -19264,7 +19141,6 @@
             <rdg wit="#B">
               <w>այլ</w>
             </rdg>
-            <note type="editorial">A reading chosen with reservations.</note>
           </app>
           <app xml:id="App2400">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -19278,8 +19154,7 @@
             <rdg wit="#K">
               <w>ըստ</w>
             </rdg>
-            <note type="editorial">K reading is `the eras one after another' or `according to the
-              eras'.</note>
+            <note type="editorial">K reading is `the eras one after another' or `according to the eras'.</note>
           </app>
           <app xml:id="App2402">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -19301,7 +19176,7 @@
           </app>
           <app xml:id="App2405">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1320">ամաց<c>,</c></w>
+              <w xml:id="Word1320">ամաց<c type="punct">,</c></w>
               <witDetail target="#Word1320" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#X">
@@ -19344,8 +19219,7 @@
               <w xml:id="Word1323">դատարեցաք</w>
               <witDetail target="#Word1323" wit="#D" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">No verb \arm{դատարեմ} attested; this is presumably simply a
-              spelling shift.</note>
+            <!-- No verb \arm{դատարեմ} attested; this is presumably simply a spelling shift but TODO check MAD -->
           </app>
           <app xml:id="App2411">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -19377,7 +19251,7 @@
           </app>
           <app xml:id="App2414">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1324">մերմէ<c>,</c></w>
+              <w xml:id="Word1324">մերմէ<c type="punct">,</c></w>
               <witDetail target="#Word1324" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -19452,11 +19326,11 @@
             <rdg wit="#B #D #O #V" type="spelling_variant">
               <w>պաքարումն</w>
             </rdg>
-            <note type="editorial">The word \arm{պաքսամուր} (FX) appears to be unattested.</note>
+            <!-- TODO check MAD The word \arm{պաքսամուր} (FX) appears to be unattested. -->
           </app>
           <app xml:id="App2425">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1328">խորհրդոց<c>,</c></w>
+              <w xml:id="Word1328">խորհրդոց<c type="punct">,</c></w>
               <witDetail target="#Word1328" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -19540,7 +19414,7 @@
           </app>
           <app xml:id="App2437">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1333">քննողաց<c>,</c></w>
+              <w xml:id="Word1333">քննողաց<c type="punct">,</c></w>
               <witDetail target="#Word1333" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -19590,12 +19464,12 @@
           </app>
           <app xml:id="App2443">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1337">ասէ<c>,</c></w>
+              <w xml:id="Word1337">ասէ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2444">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w>եթէ</w>
+              <w><c type="punct">«</c>եթէ</w>
             </lem>
             <rdg wit="#Jer">
               <w xml:id="Word1338">Եթէ</w>
@@ -19608,15 +19482,18 @@
             </lem>
           </app>
           <app xml:id="App2446">
-            <lem wit="#Jer #K #F #B #A #D #O #V #X">
+            <lem>
+              <wit>[unattested]</wit>
+              <w>յայտնեսցէ</w>
+            </lem>
+            <rdg wit="#Jer #K #F #B #A #D #O #V #X">
               <w>յատենի</w>
-            </lem>
-          </app>
-          <app xml:id="App2447">
-            <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1339">ելցէ<c>,</c></w>
+            </rdg>
+            <rdg wit="#Jer #K #F #B #A #D #O #V #X">
+              <w xml:id="Word1339">ելցէ<c type="punct">,</c></w>
               <witDetail target="#Word1339" wit="#A" type="punctuation">՝</witDetail>
-            </lem>
+            </rdg>
+            <note type="editorial">This is a corrupted quote of 1Cor 14:30, which reads `\arm{եթէ այլ ումեք որ նստիցին՝ յայտնեսցի, առաջինն լռեսցէ։}' The words \arm{յատենի ելցէ} have therefore been emended to \arm{յայտնեսցէ}.</note>
           </app>
           <app xml:id="App2448">
             <lem wit="#Jer #K #F #B #A #D #X">
@@ -19631,16 +19508,13 @@
           </app>
           <app xml:id="App2449">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1340">լռեսցէ<c>։</c></w>
+              <w xml:id="Word1340">լռեսցէ<c type="punct">։»</c></w>
               <witDetail target="#Word1340" wit="#F #A #D #O #V #X" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer">
-              <w xml:id="Word1342">լռեսցէ<c>։</c></w>
+              <w xml:id="Word1342">լռեսցէ<c type="punct">։</c></w>
               <witDetail target="#Word1342" wit="#Jer" type="punctuation">»</witDetail>
             </rdg>
-            <note type="editorial">This is a corrupted quote of 1Cor 14:30, which reads `\arm{եթէ
-              այլ ումեք որ նստիցին՝ յայտնեսցի, առաջինն լռեսցէ։}' The wordds \arm{յատենի ելցէ} should
-              then become \arm{յայտնեսցէ}.</note>
           </app>
           <app xml:id="App2450">
             <lem wit="#Jer #K">
@@ -19721,7 +19595,7 @@
           </app>
           <app xml:id="App2459">
             <lem wit="#K #A #D #O #V">
-              <w xml:id="Word1346">բարսղի<c>,</c></w>
+              <w xml:id="Word1346">բարսղի<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1344">Բարսղի</w>
@@ -19766,7 +19640,7 @@
           </app>
           <app xml:id="App2464">
             <lem wit="#B #A #O">
-              <w xml:id="Word1348">երկրապատմութեանս<c>,</c></w>
+              <w xml:id="Word1348">երկրապատմութեանս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer #K #D #V #X #G #E">
               <w xml:id="Word1347">երկրպագութեանս</w>
@@ -19830,7 +19704,7 @@
           </app>
           <app xml:id="App2472">
             <lem wit="#F #A #D #O #V #X">
-              <w xml:id="Word1354">կոստանդնուպաւլիս<c>՝</c></w>
+              <w xml:id="Word1354">կոստանդնուպաւլիս<c type="punct">՝</c></w>
               <witDetail target="#Word1354" wit="#V" type="punctuation">։</witDetail>
               <witDetail target="#Word1354" wit="#O" type="punctuation">^</witDetail>
               <witDetail target="#Word1354" wit="#F #X" type="punctuation">,</witDetail>
@@ -19855,7 +19729,7 @@
           </app>
           <app xml:id="App2474">
             <lem wit="#K #B #A #D #O #X">
-              <w xml:id="Word1355">նիկաւլայ<c>,</c></w>
+              <w xml:id="Word1355">նիկաւլայ<c type="punct">,</c></w>
               <witDetail target="#Word1355" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
@@ -19925,12 +19799,9 @@
             <rdg wit="#V #Jer" type="omission"/>
           </app>
           <app xml:id="App2479">
-            <lem resp="#tla">
-              <wit>[unattested]</wit>
+            <lem wit="#Jer">
+              <w xml:id="Word1363">Յովհաննու<c type="punct">,</c></w>
             </lem>
-            <rdg wit="#Jer">
-              <w xml:id="Word1363">Յովհաննու<c>,</c></w>
-            </rdg>
             <rdg wit="#K #B #D">
               <w xml:id="Word1364">յոհաննու</w>
               <witDetail target="#Word1364" wit="#K" type="punctuation">։</witDetail>
@@ -19948,7 +19819,6 @@
               <witDetail target="#Word1366" wit="#V" type="punctuation">։</witDetail>
             </rdg>
             <rdg wit="#F #X" type="omission"/>
-            <note type="emendation" resp="#tla">Get the right spelling for John.</note>
           </app>
           <app xml:id="App2480">
             <lem wit="#Jer #F #B #A #D #X">
@@ -20007,7 +19877,7 @@
           </app>
           <app xml:id="App2481b">
             <lem wit="#D #A">
-              <w xml:id="Word1368">սիմէաւնի<c>,</c></w>
+              <w xml:id="Word1368">սիմէաւնի<c type="punct">,</c></w>
             </lem>
             <rdg wit="#F #X #B #O" type="spelling_variant">
               <w xml:id="Word1367">սիմէոնի</w>
@@ -20072,7 +19942,7 @@
           </app>
           <app xml:id="App2482">
             <lem wit="#X">
-              <w xml:id="Word1383">յովհաննու<c>,</c></w>
+              <w xml:id="Word1383">յովհաննու<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1382">Յովհաննու</w>
@@ -20145,7 +20015,7 @@
               <witDetail target="#Word1388" wit="#K" type="punctuation">,</witDetail>
               <witDetail target="#Word1388" wit="#Jer" type="punctuation">՝</witDetail>
             </rdg>
-            <note type="editorial">Emendation corrects spelling of \arm{Ասորւոց}.</note>
+            <note type="emend_spelling">Emendation corrects spelling of \arm{Ասորւոց}.</note>
           </app>
           <app xml:id="App2484c">
             <lem wit="#F #O #B #A #X #V #D #Jer"/>
@@ -20155,7 +20025,7 @@
           </app>
           <app xml:id="App2485">
             <lem wit="#K #F #B #A #D #O #X">
-              <w xml:id="Word1391">աթանասի<c>։</c></w>
+              <w xml:id="Word1391">աթանասի<c type="punct">։</c></w>
               <witDetail target="#Word1391" wit="#F #B #D #O" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer #V" type="orth_variant">
@@ -20218,7 +20088,7 @@
               <w>վեց</w>
               <w>հարիւր</w>
               <w>և</w>
-              <w xml:id="Word1396">տասն<c>,</c></w>
+              <w xml:id="Word1396">տասն<c type="punct">,</c></w>
               <witDetail target="#Word1396" wit="#F #A #D #X #V" type="punctuation">,</witDetail>
               <witDetail target="#Word1396" wit="#K #Jer" type="punctuation">։</witDetail>
             </lem>
@@ -20290,7 +20160,7 @@
           </app>
           <app xml:id="App2500">
             <lem wit="#Jer #F #D #V #X">
-              <w xml:id="Word1406">ժամանակագրութեանսշ</w>
+              <w xml:id="Word1406">ժամանակագրութեանս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K #B #A #O">
               <w xml:id="Word1405">ժամանակագրութեանցս</w>
@@ -20342,7 +20212,7 @@
           </app>
           <app xml:id="App2507">
             <lem wit="#Jer #F #A #D #O #V #X">
-              <w xml:id="Word1408">գրչութեանցս<c>.</c></w>
+              <w xml:id="Word1408">գրչութեանցս<c type="punct">.</c></w>
             </lem>
             <rdg wit="#K #B">
               <w xml:id="Word1407">գրչութեանց</w>
@@ -20407,7 +20277,7 @@
           </app>
           <app xml:id="App2518">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1411">քրիստոնէից<c>,</c></w>
+              <w xml:id="Word1411">քրիստոնէից<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2519">
@@ -20465,7 +20335,7 @@
           <app xml:id="App2527">
             <lem wit="#A">
               <w>զաւրաց</w>
-              <w xml:id="Word1415">հաւատացելոցն<c>,</c></w>
+              <w xml:id="Word1415">հաւատացելոցն<c type="punct">,</c></w>
               <w>և</w>
             </lem>
             <rdg wit="#X">
@@ -20568,7 +20438,7 @@
           </app>
           <app xml:id="App2541">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1420">հաւաքել<c>,</c></w>
+              <w xml:id="Word1420">հաւաքել<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2543">
@@ -20615,7 +20485,6 @@
             <rdg wit="#D #V">
               <w>կտրծս</w>
             </rdg>
-            <note type="editorial">TODO think very carefully about whether this isn't wrong.</note>
           </app>
           <app xml:id="App2550">
             <lem wit="#Jer #K #F #B #A #D #O #V">
@@ -20640,7 +20509,7 @@
           </app>
           <app xml:id="App2554">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1425">ժամանակն<c>,</c></w>
+              <w xml:id="Word1425">ժամանակն</w>
             </lem>
           </app>
           <app xml:id="App2555">
@@ -20684,7 +20553,7 @@
           </app>
           <app xml:id="App2561">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1426">ժամանակին<c>,</c></w>
+              <w xml:id="Word1426">ժամանակին<c type="punct">,</c></w>
               <witDetail target="#Word1426" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -20724,7 +20593,7 @@
           </app>
           <app xml:id="App2562e">
             <lem wit="#V #A #B #D #K #Jer #O #X">
-              <w xml:id="Word1427">զժամանակն<c>,</c></w>
+              <w xml:id="Word1427">զժամանակն<c type="punct">,</c></w>
               <witDetail target="#Word1427" wit="#Jer" type="punctuation">՝</witDetail>
             </lem>
             <rdg wit="#F" type="omission"/>
@@ -20760,7 +20629,7 @@
           </app>
           <app xml:id="App2568">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1431">ուրախութեամբ<c>.</c></w>
+              <w xml:id="Word1431">ուրախութեամբ<c type="punct">.</c></w>
               <witDetail target="#Word1431" wit="#Jer" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -20862,7 +20731,7 @@
           </app>
           <app xml:id="App2582">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1437">ինձ<c>,</c></w>
+              <w xml:id="Word1437">ինձ<c type="punct">,</c></w>
               
             </lem>
           </app>
@@ -20937,7 +20806,7 @@
           </app>
           <app xml:id="App2593">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1443">յիշատակս<c>.</c></w>
+              <w xml:id="Word1443">յիշատակս<c type="punct">.</c></w>
               <witDetail target="#Word1443" wit="#Jer" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#K">
@@ -21000,7 +20869,7 @@
           </app>
           <app xml:id="App2602">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1447">զարդարեալ<c>,</c></w>
+              <w xml:id="Word1447">զարդարեալ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2603">
@@ -21027,7 +20896,7 @@
           </app>
           <app xml:id="App2606">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1449">հոգևոր<c>,</c></w>
+              <w xml:id="Word1449">հոգևոր<c type="punct">,</c></w>
             </lem>
             <rdg wit="#X">
               <w xml:id="Word1448">հոգևորս</w>
@@ -21075,7 +20944,7 @@
           </app>
           <app xml:id="App2611">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1452">ինչ<c>,</c></w>
+              <w xml:id="Word1452">ինչ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="omission"/>
           </app>
@@ -21108,9 +20977,8 @@
           </app>
           <app xml:id="App2615">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1453">տեառն</w>
+              <w xml:id="Word1453">տեառն<c type="punct">,</c></w>
               <witDetail target="#Word1453" wit="#K" type="punctuation">՝</witDetail>
-              <witDetail target="#Word1453" wit="#X" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1454">Տեառն</w>
@@ -21205,7 +21073,7 @@
           </app>
           <app xml:id="App2629">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1458">մեր<c>,</c></w>
+              <w xml:id="Word1458">մեր<c type="punct">,</c></w>
               <witDetail target="#Word1458" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -21251,19 +21119,18 @@
           </app>
           <app xml:id="App2637">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1461">նորա<c>։</c></w>
-              <witDetail target="#Word1461" wit="#Jer #F #A #D #X" type="punctuation">,</witDetail>
+              <w xml:id="Word1461">նորա<c type="punct">.</c></w>
+              <witDetail target="#Word1461" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
           <app xml:id="App2638">
-            <lem wit="#Jer #K">
+            <lem wit="#F #B #A #D #O #V #X">
+              <w>և</w>
+            </lem>
+            <rdg wit="#Jer #K">
               <witDetail target="#Word1463" wit="#Jer" type="section_div">__PG__</witDetail>
               <w xml:id="Word1463">Եւ</w>
-            </lem>
-            <rdg wit="#F #B #A #D #O #V #X">
-              <w>և</w>
             </rdg>
-            <note type="editorial">TODO reconsider this sentence break</note>
           </app>
           <app xml:id="App2639">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -21343,7 +21210,7 @@
           </app>
           <app xml:id="App2650">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1469">ժամանակիս<c>,</c></w>
+              <w xml:id="Word1469">ժամանակիս<c type="punct">,</c></w>
               <witDetail target="#Word1469" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -21368,7 +21235,7 @@
             <rdg wit="#X">
               <w>զսա</w>
             </rdg>
-            <note type="editorial">Following the dual-verb construction, no \arm{և} necessary</note>
+            <!-- Following the dual-verb construction, no \arm{և} necessary -->
           </app>
           <app xml:id="App2654">
             <lem wit="#Jer #F #B #A #D #O #V #X">
@@ -21390,7 +21257,7 @@
           </app>
           <app xml:id="App2656">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1472">ծնանելոցն<c>,</c></w>
+              <w xml:id="Word1472">ծնանելոցն<c type="punct">,</c></w>
               <witDetail target="#Word1472" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -21437,7 +21304,7 @@
           </app>
           <app xml:id="App2665">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1474">մեր<c>,</c></w>
+              <w xml:id="Word1474">մեր<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2666">
@@ -21452,16 +21319,16 @@
           </app>
           <app xml:id="App2668">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1475">ժողովեցին<c>.</c></w>
-              <witDetail target="#Word1475" wit="#K #Jer" type="punctuation">։</witDetail>
+              <w xml:id="Word1475">ժողովեցին<c type="punct">։</c></w>
+              <witDetail target="#Word1475" wit="#F #A #G #D #E #X" type="punctuation">,</witDetail>
             </lem>
           </app>
           <app xml:id="App2669">
-            <lem wit="#F #B #A #D #O #V #X">
-              <w>և</w>
-            </lem>
-            <rdg wit="#Jer #K">
+            <lem wit="#Jer #K">
               <w>Եւ</w>
+            </lem>
+            <rdg wit="#F #B #A #D #O #V #X">
+              <w>և</w>
             </rdg>
           </app>
           <app xml:id="App2670">
@@ -21492,7 +21359,7 @@
           </app>
           <app xml:id="App2674">
             <lem wit="#D">
-              <w xml:id="Word1480">մատթէոս<c>՝</c></w>
+              <w xml:id="Word1480">մատթէոս<c type="punct">՝</c></w>
             </lem>
             <rdg wit="#F #B #A #O #V #X" type="spelling_variant">
               <w xml:id="Word1478">մաթէոս</w>
@@ -21540,12 +21407,11 @@
             <rdg wit="#K">
               <w>Ողորմութեամբն</w>
             </rdg>
-            <note type="editorial">KVJer reading is `I Matthew who am unworthy, with the
-              mercy of God have spent many years...'</note>
+            <note type="editorial">KVJer reading is `I Matthew who am unworthy, with the mercy of God have spent many years...'</note>
           </app>
           <app xml:id="App2679">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1483">աստուծոյ<c>,</c></w>
+              <w xml:id="Word1483">աստուծոյ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1484">Աստուծոյ</w>
@@ -21581,7 +21447,7 @@
           </app>
           <app xml:id="App2684">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1486">կացի<c>,</c></w>
+              <w xml:id="Word1486">կացի<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2685">
@@ -21672,7 +21538,7 @@
           </app>
           <app xml:id="App2696">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1493">վայր<c>,</c></w>
+              <w xml:id="Word1493">վայր<c type="punct">,</c></w>
               <witDetail target="#Word1493" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1493" wit="#V" type="punctuation">՜</witDetail>
             </lem>
@@ -21728,7 +21594,7 @@
           </app>
           <app xml:id="App2706">
             <lem wit="#Jer #K #F #A #D #O #V">
-              <w xml:id="Word1496">հաւաքել<c>.</c></w>
+              <w xml:id="Word1496">հաւաքել<c type="punct">.</c></w>
               <witDetail target="#Word1496" wit="#Jer #K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B #X">
@@ -21784,7 +21650,7 @@
             <lem wit="#K #F #B #A #D #O #X">
               <w>և</w>
             </lem>
-            <rdg wit="#Jer #V"/>
+            <rdg wit="#Jer #V" type="omission"/>
           </app>
           <app xml:id="App2713">
             <lem wit="#F #B #A #D #O #X #V #Jer">
@@ -21846,8 +21712,6 @@
               <w xml:id="Word1502">տկարութեանցս</w>
               <witDetail target="#Word1502" wit="#F #A #D" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">TODO There must be something about the \arm{-թեանց} ending that I
-              don't know. Can't find anything in Karst.</note>
           </app>
           <app xml:id="App2721">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -21866,7 +21730,7 @@
           </app>
           <app xml:id="App2724">
             <lem wit="#K">
-              <w xml:id="Word1504">գիտութեանս<c>։</c></w>
+              <w xml:id="Word1504">գիտութեանս<c type="punct">։</c></w>
             </lem>
             <rdg wit="#Jer #F #B #A #D #O #V #X">
               <w xml:id="Word1505">գիտութեանցս</w>
@@ -21901,7 +21765,7 @@
           </app>
           <app xml:id="App2729">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1508">աստուծոյ<c>,</c></w>
+              <w xml:id="Word1508">աստուծոյ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1509">Աստուծոյ</w>
@@ -21962,7 +21826,7 @@
           </app>
           <app xml:id="App2739">
             <lem wit="#Jer #F #B #A #D #V #X">
-              <w xml:id="Word1512">պահանջէ<c>.</c></w>
+              <w xml:id="Word1512">պահանջէ<c type="punct">.</c></w>
             </lem>
             <rdg wit="#O" type="spelling_variant">
               <w>պահանճէ</w>
@@ -22049,7 +21913,7 @@
           </app>
           <app xml:id="App2748">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1519">նոցա<c>,</c></w>
+              <w xml:id="Word1519">նոցա<c type="punct">,</c></w>
               <witDetail target="#Word1519" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22129,7 +21993,7 @@
             <rdg wit="#Jer #F #B #A #D #O #V #X">
               <w xml:id="Word1524">յագենան</w>
             </rdg>
-            <note type="editorial">Majority reading is a synonym for K.</note>
+            <!-- Majority reading is a synonym for K. -->
           </app>
           <app xml:id="App2761">
             <lem wit="#B #A #O">
@@ -22144,7 +22008,7 @@
           </app>
           <app xml:id="App2762">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1525">նոցա<c>,</c></w>
+              <w xml:id="Word1525">նոցա<c type="punct">,</c></w>
               <witDetail target="#Word1525" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22189,7 +22053,7 @@
           </app>
           <app xml:id="App2769">
             <lem wit="#Jer #K #F #A #D #O #V #X">
-              <w xml:id="Word1526">նոցա<c>,</c></w>
+              <w xml:id="Word1526">նոցա<c type="punct">,</c></w>
               <witDetail target="#Word1526" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B" type="spelling_variant">
@@ -22223,7 +22087,7 @@
           </app>
           <app xml:id="App2774">
             <lem wit="#F #B #D #O #X #A">
-              <w xml:id="Word1528">փառաւորի<c>.</c></w>
+              <w xml:id="Word1528">փառաւորի<c type="punct">.</c></w>
               <witDetail target="#Word1528" wit="#A" type="punctuation">՜</witDetail>
             </lem>
             <rdg wit="#V #Jer">
@@ -22241,11 +22105,10 @@
             <lem wit="#F #V #A #O #X #B #Jer #D" type="omission"/>
             <rdg wit="#K">
               <w>իշխանաց</w>
-              <w xml:id="Word1530">գայ<c>։</c></w>
+              <w xml:id="Word1530">գայ<c type="punct">։</c></w>
               <w>Եւ</w>
             </rdg>
-            <note type="editorial">K reading is `it stands praised/glorious before kings and
-              princes'.</note>
+            <note type="editorial">K reading is `it stands praised/glorious before kings and princes'.</note>
           </app>
           <app xml:id="App2777">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -22287,7 +22150,7 @@
           </app>
           <app xml:id="App2783">
             <lem wit="#Jer #K #F #A #D #O #V #X">
-              <w xml:id="Word1533">կենդանանայ<c>,</c></w>
+              <w xml:id="Word1533">կենդանանայ<c type="punct">,</c></w>
               <witDetail target="#Word1533" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B" type="spelling_variant">
@@ -22356,7 +22219,7 @@
           </app>
           <app xml:id="App2794">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1538">զիշխանս<c>,</c></w>
+              <w xml:id="Word1538">զիշխանս<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2795">
@@ -22409,7 +22272,7 @@
               <w>հարսընան</w>
             </rdg>
             <rdg wit="#X" type="omission"/>
-            <note>Readings ABO, as well as K, seem to agree on \arm{հարսնանան} (are wed), but that
+            <note type="editorial">Readings ABO, as well as K, seem to agree on \arm{հարսնանան} (are wed), but that
               makes little sense in this context.</note>
           </app>
           <app xml:id="App2796">
@@ -22419,7 +22282,7 @@
           </app>
           <app xml:id="App2797">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1539">զարդարանաւք<c>.</c></w>
+              <w xml:id="Word1539">զարդարանաւք<c type="punct">.</c></w>
               <witDetail target="#Word1539" wit="#Jer #K #A" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22456,7 +22319,7 @@
           </app>
           <app xml:id="App2803">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1542">էառ<c>,</c></w>
+              <w xml:id="Word1542">էառ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2804">
@@ -22559,7 +22422,7 @@
           </app>
           <app xml:id="App2818">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1549">զայս<c>,</c></w>
+              <w xml:id="Word1549">զայս<c type="punct">,</c></w>
               <witDetail target="#Word1549" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1549" wit="#V" type="punctuation">՜</witDetail>
             </lem>
@@ -22576,8 +22439,7 @@
             <rdg wit="#Jer #F #B #A #D #O #V #X">
               <w>յանձին</w>
             </rdg>
-            <note type="editorial">K is the more classically correct reading; this usage may have
-              shifted in post-classical times.</note>
+            <note type="editorial">K is the more classically correct reading; this usage may have shifted in post-classical times.</note>
           </app>
           <app xml:id="App2821">
             <lem wit="#Jer #K #F #B #A #D #O #V">
@@ -22589,16 +22451,12 @@
             </rdg>
           </app>
           <app xml:id="App2822">
-            <lem wit="#Jer #K #B #A #D #O #V">
+            <lem wit="#Jer #K #B #A #D #O #V #X">
               <w>զմատենագրութիւնս</w>
             </lem>
-            <rdg wit="#X" type="spelling_variant">
-              <w>զմատենագրուիս</w>
-            </rdg>
             <rdg wit="#F" type="spelling_variant">
               <w>զմատնագրութիւնս</w>
             </rdg>
-            <note type="editorial">emend X</note>
           </app>
           <app xml:id="App2823">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -22607,7 +22465,7 @@
           </app>
           <app xml:id="App2824">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1551">նոցա<c>,</c></w>
+              <w xml:id="Word1551">նոցա<c type="punct">,</c></w>
               <witDetail target="#Word1551" wit="#A" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22670,7 +22528,7 @@
           </app>
           <app xml:id="App2830b">
             <lem wit="#A #X">
-              <w xml:id="Word1557">արասցեն<c>,</c></w>
+              <w xml:id="Word1557">արասցեն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#F #V #Jer #O #D #K #B" type="omission"/>
           </app>
@@ -22693,7 +22551,7 @@
           </app>
           <app xml:id="App2833">
             <lem wit="#Jer #F #B #A #D #O #V">
-              <w xml:id="Word1562">ընդդիմանամք<c>,</c></w>
+              <w xml:id="Word1562">ընդդիմանամք<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="spelling_variant">
               <w xml:id="Word1561">ընդիմանամք</w>
@@ -22733,7 +22591,6 @@
             <rdg wit="#F #B #A #O">
               <w>գիտնակաց</w>
             </rdg>
-            <note type="editorial">TODO decipher FBAO reading</note>
           </app>
           <app xml:id="App2839">
             <lem wit="#Jer #K #F #B #A #D #O #V">
@@ -22748,7 +22605,7 @@
           </app>
           <app xml:id="App2841">
             <lem wit="#Jer #F #B #A #D #V">
-              <w xml:id="Word1565">դիմագրութիւնս<c>.</c></w>
+              <w xml:id="Word1565">դիմագրութիւնս<c type="punct">.</c></w>
               <witDetail target="#Word1565" wit="#Jer" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#K">
@@ -22759,7 +22616,7 @@
               <w>դիմայ</w>
               <w>գրութիւնս</w>
             </rdg>
-            <note>TODO this should maybe be \arm{դիմագրաւութիւն}.</note>
+            <!-- TODO check middle dict for this vs. \arm{դիմագրաւութիւն}. -->
           </app>
           <app xml:id="App2843">
             <lem wit="#K #F #B #A #D #O #V">
@@ -22792,14 +22649,13 @@
           </app>
           <app xml:id="App2848">
             <lem wit="#Jer #F #B #A #D #O #V">
-              <w xml:id="Word1567">թռչունն<c>,</c></w>
+              <w xml:id="Word1567">թռչունն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word1566">թռչուն</w>
               <witDetail target="#Word1566" wit="#K" type="punctuation">,</witDetail>
             </rdg>
-            <note type="editorial">K seems disinclined to adopt articles throughout this
-            part.</note>
+            <!-- K seems disinclined to adopt articles throughout this part -->
           </app>
           <app xml:id="App2849">
             <lem wit="#Jer #K #F #B #A #D #O #V">
@@ -22857,7 +22713,7 @@
           </app>
           <app xml:id="App2857">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1570">տկարանայ<c>,</c></w>
+              <w xml:id="Word1570">տկարանայ<c type="punct">,</c></w>
               <witDetail target="#Word1570" wit="#B" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22878,7 +22734,7 @@
           </app>
           <app xml:id="App2861">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1571">ծիծառն<c>.</c></w>
+              <w xml:id="Word1571">ծիծառն<c type="punct">.</c></w>
               <witDetail target="#Word1571" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -22970,7 +22826,7 @@
           </app>
           <app xml:id="App2873">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1575">իւրոյ<c>,</c></w>
+              <w xml:id="Word1575">իւրոյ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2874">
@@ -23046,7 +22902,7 @@
           </app>
           <app xml:id="App2884">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1581">կառուցանէ<c>,</c></w>
+              <w xml:id="Word1581">կառուցանէ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2885">
@@ -23088,7 +22944,7 @@
           </app>
           <app xml:id="App2890">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1585">հնարէ<c>,</c></w>
+              <w xml:id="Word1585">հնարէ<c type="punct">,</c></w>
               <witDetail target="#Word1585" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -23170,7 +23026,7 @@
           </app>
           <app xml:id="App2901">
             <lem wit="#Jer #F #B #A #D #O #V">
-              <w xml:id="Word1589">ժառանգութիւնս<c>,</c></w>
+              <w xml:id="Word1589">ժառանգութիւնս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word1588">ժառանգումն</w>
@@ -23228,7 +23084,7 @@
           </app>
           <app xml:id="App2910">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1592">գործել<c>,</c></w>
+              <w xml:id="Word1592">գործել<c type="punct">,</c></w>
               <witDetail target="#Word1592" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -23261,7 +23117,7 @@
           </app>
           <app xml:id="App2915">
             <lem wit="#Jer #K #F #A #D #O #V">
-              <w xml:id="Word1594">նորա<c>,</c></w>
+              <w xml:id="Word1594">նորա<c type="punct">,</c></w>
             </lem>
             <rdg wit="#B" type="spelling_variant">
               <w xml:id="Word1595">նորայ</w>
@@ -23328,7 +23184,7 @@
           </app>
           <app xml:id="App2925">
             <lem wit="#F #B #A #D">
-              <w xml:id="Word1598">քաջաթռիչքն<c>.</c></w>
+              <w xml:id="Word1598">քաջաթռիչքն<c type="punct">.</c></w>
             </lem>
             <rdg wit="#O" type="spelling_variant">
               <w>քաջաթռչիչքն</w>
@@ -23375,7 +23231,7 @@
           </app>
           <app xml:id="App2931">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1602">թռչունն<c>՝</c></w>
+              <w xml:id="Word1602">թռչունն<c type="punct">՝</c></w>
               <witDetail target="#Word1602" wit="#K" type="punctuation">,</witDetail>
             </lem>
           </app>
@@ -23398,7 +23254,7 @@
           </app>
           <app xml:id="App2935">
             <lem wit="#K #F #B #A #D #O">
-              <w xml:id="Word1604">առնել<c>։</c></w>
+              <w xml:id="Word1604">առնել<c type="punct">։</c></w>
               <witDetail target="#Word1604" wit="#F #B #D" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#Jer #V">
@@ -23519,7 +23375,7 @@
           </app>
           <app xml:id="App2952">
             <lem wit="#Jer #K #F #B #A #D #O #V">
-              <w xml:id="Word1611">առնել<c>,</c></w>
+              <w xml:id="Word1611">առնել<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App2953">
@@ -23559,7 +23415,7 @@
           </app>
           <app xml:id="App2960">
             <lem wit="#Jer #K #B #D #O #V">
-              <w xml:id="Word1612">քննութեամբ<c>.</c></w>
+              <w xml:id="Word1612">քննութեամբ<c type="punct">.</c></w>
               <witDetail target="#Word1612" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#A" type="orth_variant">
@@ -23613,7 +23469,7 @@
           </app>
           <app xml:id="App2967">
             <lem wit="#Jer #F #A #D #O #X">
-              <w xml:id="Word1618">երկբայութեան<c>,</c></w>
+              <w xml:id="Word1618">երկբայութեան<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="spelling_variant">
               <w>երբայութեան</w>
@@ -23680,7 +23536,7 @@
           </app>
           <app xml:id="App2973">
             <lem wit="#F #B #A #D #O #X">
-              <w xml:id="Word1623">գծագրեցաւ<c>.</c></w>
+              <w xml:id="Word1623">գծագրեցաւ<c type="punct">.</c></w>
               <witDetail target="#Word1623" wit="#A" type="punctuation">՝</witDetail>
             </lem>
             <rdg wit="#Jer #V">
@@ -23785,7 +23641,7 @@
               <w>կահամուռն</w>
             </rdg>
             <note type="editorial">The reading in B is garbled, and could also be
-              \arm{կամ(պ)?ամուռն}. None of these possibilities seem to make sense.</note>
+              \arm{կամ(պ)?ամուռն}. None of these possibilities seem to make sense. TODO check MAD</note>
             <rdg wit="#O" type="spelling_variant">
               <w>միայհամուռն</w>
             </rdg>
@@ -23812,7 +23668,7 @@
           </app>
           <app xml:id="App2992">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1629">թագաւորաց<c>,</c></w>
+              <w xml:id="Word1629">թագաւորաց<c type="punct">,</c></w>
               <witDetail target="#Word1629" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -23832,7 +23688,7 @@
           </app>
           <app xml:id="App2995">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1631">իշխանաց<c>.</c></w>
+              <w xml:id="Word1631">իշխանաց<c type="punct">.</c></w>
               <witDetail target="#Word1631" wit="#A" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -23863,7 +23719,7 @@
             <lem wit="#V #O #Jer #D">
               <w>ի</w>
               <w>գիրս</w>
-              <w xml:id="Word1635">հաւաքել<c>,</c></w>
+              <w xml:id="Word1635">հաւաքել<c type="punct">,</c></w>
               <witDetail target="#Word1635" wit="#D" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#K" type="omission"/>
@@ -23954,7 +23810,7 @@
           </app>
           <app xml:id="App3009">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1639">ժամանակացն<c>։</c></w>
+              <w xml:id="Word1639">ժամանակացն<c type="punct">։</c></w>
               <witDetail target="#Word1639" wit="#F #A #D #O #V #X" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#K">
@@ -24003,7 +23859,7 @@
           </app>
           <app xml:id="App3016">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1643">առնել<c>,</c></w>
+              <w xml:id="Word1643">առնել<c type="punct">,</c></w>
               <witDetail target="#Word1643" wit="#A" type="punctuation">՝</witDetail>
             </lem>
           </app>
@@ -24024,7 +23880,7 @@
           </app>
           <app xml:id="App3020">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1644">արարաք<c>,</c></w>
+              <w xml:id="Word1644">արարաք<c type="punct">,</c></w>
               <witDetail target="#Word1644" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24061,7 +23917,7 @@
           </app>
           <app xml:id="App3022c">
             <lem wit="#F #V #A #O #X #Jer #D #B">
-              <w xml:id="Word1646">գրեցաւ<c>,</c></w>
+              <w xml:id="Word1646">գրեցաւ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="omission"/>
           </app>
@@ -24112,7 +23968,7 @@
           </app>
           <app xml:id="App3029">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1650">քննութեանս<c>,</c></w>
+              <w xml:id="Word1650">քննութեանս<c type="punct">,</c></w>
               <witDetail target="#Word1650" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24201,7 +24057,7 @@
           </app>
           <app xml:id="App3038b">
             <lem wit="#F #V #A #O #X #B #Jer">
-              <w xml:id="Word1654">գրոցն<c>,</c></w>
+              <w xml:id="Word1654">գրոցն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#D #K">
               <w xml:id="Word1655">գրոց</w>
@@ -24268,7 +24124,7 @@
           </app>
           <app xml:id="App3045">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1658">քննութեամբ<c>,</c></w>
+              <w xml:id="Word1658">քննութեամբ<c type="punct">,</c></w>
               
             </lem>
             <rdg wit="#K">
@@ -24335,7 +24191,7 @@
           </app>
           <app xml:id="App3049d">
             <lem wit="#V #A #O #X #Jer #D #F #B">
-              <w xml:id="Word1663">ինչ<c>։</c></w>
+              <w xml:id="Word1663">ինչ<c type="punct">։</c></w>
             </lem>
             <rdg wit="#K" type="omission"/>
           </app>
@@ -24364,7 +24220,7 @@
           </app>
           <app xml:id="App3053">
             <lem wit="#D #X">
-              <w>մատթէոս<c>՝</c></w>
+              <w>մատթէոս<c type="punct">՝</c></w>
             </lem>
             <rdg wit="#F #B #A #O" type="spelling_variant">
               <w xml:id="Word1669">մաթէոս</w>
@@ -24449,7 +24305,7 @@
           </app>
           <app xml:id="App3063">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1673">պողոտայն<c>,</c></w>
+              <w xml:id="Word1673">պողոտայն<c type="punct">,</c></w>
               <witDetail target="#Word1673" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24470,7 +24326,7 @@
               <w>աւրինակաւք</w>
             </rdg>
             <rdg wit="#K">
-              <w xml:id="Word1674">աւրինակ<c>,</c></w>
+              <w xml:id="Word1674">աւրինակ<c type="punct">,</c></w>
               <w>եթէ</w>
               <w>ոք</w>
             </rdg>
@@ -24532,7 +24388,7 @@
           </app>
           <app xml:id="App3077">
             <lem wit="#K #F #B #A #D #O #V">
-              <w xml:id="Word1677">ովկիանոսի<c>,</c></w>
+              <w xml:id="Word1677">ովկիանոսի<c type="punct">,</c></w>
               <witDetail target="#Word1677" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#X" type="spelling_variant">
@@ -24561,7 +24417,7 @@
           </app>
           <app xml:id="App3081">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1678">նեղութեամբ<c>,</c></w>
+              <w xml:id="Word1678">նեղութեամբ<c type="punct">,</c></w>
               
             </lem>
           </app>
@@ -24589,7 +24445,7 @@
             <rdg wit="#B" type="spelling_variant">
               <w>ալեկործութեն</w>
             </rdg>
-            <note type="emendation" resp="#tla">Corrected spelling to canonical form.</note>
+            <note type="emend_spelling" resp="#tla">Corrected spelling to canonical form.</note>
           </app>
           <app xml:id="App3085">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -24616,7 +24472,7 @@
           </app>
           <app xml:id="App3089">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1680">խաղաղութեամբ<c>.</c></w>
+              <w xml:id="Word1680">խաղաղութեամբ<c type="punct">.</c></w>
               <witDetail target="#Word1680" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24655,7 +24511,7 @@
           </app>
           <app xml:id="App3096">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1681">շահիցն<c>,</c></w>
+              <w xml:id="Word1681">շահիցն<c type="punct">,</c></w>
               <witDetail target="#Word1681" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24699,7 +24555,7 @@
           </app>
           <app xml:id="App3099c">
             <lem wit="#F #V #D #Jer #A #X #K">
-              <w xml:id="Word1685">մտաբերէ<c>,</c></w>
+              <w xml:id="Word1685">մտաբերէ<c type="punct">,</c></w>
               <witDetail target="#Word1685" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#O" type="spelling_variant">
@@ -24762,7 +24618,7 @@
           </app>
           <app xml:id="App3106">
             <lem wit="#Jer #K #F #B #A #O #V">
-              <w xml:id="Word1693">նաւակոծեցաւ<c>,</c></w>
+              <w xml:id="Word1693">նաւակոծեցաւ<c type="punct">,</c></w>
               <witDetail target="#Word1693" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#X" type="spelling_variant">
@@ -24799,7 +24655,7 @@
             <rdg wit="#F #B" type="spelling_variant">
               <w>փութա</w>
             </rdg>
-            <note type="emendation" resp="#tla">This is canonically spelled \arm{փութոյ}.</note>
+            <note type="emend_spelling" resp="#tla">This is canonically spelled \arm{փութոյ}.</note>
           </app>
           <app xml:id="App3109">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -24839,7 +24695,7 @@
           </app>
           <app xml:id="App3114">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1699">ծովագնացութիւնս<c>.</c></w>
+              <w xml:id="Word1699">ծովագնացութիւնս<c type="punct">.</c></w>
               <witDetail target="#Word1699" wit="#Jer" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#K">
@@ -24904,7 +24760,7 @@
           </app>
           <app xml:id="App3124">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1701">գրոյն<c>,</c></w>
+              <w xml:id="Word1701">գրոյն<c type="punct">,</c></w>
               <witDetail target="#Word1701" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -24964,7 +24820,7 @@
           </app>
           <app xml:id="App3131">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1704">էաք<c>,</c></w>
+              <w xml:id="Word1704">էաք<c type="punct">,</c></w>
               <witDetail target="#Word1704" wit="#K #A #V" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -25000,21 +24856,21 @@
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
               <w xml:id="Word1706">հինգհարիւր</w>
               <w>և</w>
-              <w>յիսուն<c>։</c></w>
+              <w>յիսուն<c type="punct">։</c></w>
               <witDetail target="#Word1706" wit="#F #A #D #O #X" type="punctuation">,</witDetail>
             </lem>
           </app>
           <app xml:id="App3137">
-            <lem wit="#K #F #B #A #D #O #V #X">
-              <w>և</w>
-            </lem>
-            <rdg wit="#Jer">
+            <lem wit="#Jer">
               <w>Եւ</w>
+            </lem>
+            <rdg wit="#K #F #B #A #D #O #V #X">
+              <w>և</w>
             </rdg>
           </app>
           <app xml:id="App3138">
             <lem wit="#Jer #K #F #B #A #D #O #X">
-              <w xml:id="Word1707">արդ<c>՝</c></w>
+              <w xml:id="Word1707">արդ<c type="punct">՝</c></w>
               <witDetail target="#Word1707" wit="#V" type="punctuation">՜՝</witDetail>
             </lem>
           </app>
@@ -25036,13 +24892,13 @@
             </rdg>
           </app>
           <app xml:id="App3141">
-            <lem wit="#X">
-              <w>այլ</w>
-              <w>և</w>
-            </lem>
-            <rdg wit="#O #F #D #V #Jer">
+            <lem wit="#O #F #D #V #Jer">
               <w>այլ</w>
               <w>ևս</w>
+            </lem>
+            <rdg wit="#X">
+              <w>այլ</w>
+              <w>և</w>
             </rdg>
             <rdg wit="#K">
               <w>ևս</w>
@@ -25052,7 +24908,6 @@
               <w>զայլ</w>
               <w>ևս</w>
             </rdg>
-            <note type="editorial">The majority \arm{այլ ևս} doesn't make sense in this context.</note>
           </app>
           <app xml:id="App3141a">
             <lem wit="#O #F #D #B #A #X">
@@ -25126,7 +24981,7 @@
           </app>
           <app xml:id="App3146">
             <lem wit="#Jer #K #D #O #V #X">
-              <w xml:id="Word1722">գրոցս<c>,</c></w>
+              <w xml:id="Word1722">գրոցս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#B #A">
               <w xml:id="Word1721">գրոցն</w>
@@ -25191,7 +25046,7 @@
           </app>
           <app xml:id="App3153">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1725">նեղութեամբ<c>,</c></w>
+              <w xml:id="Word1725">նեղութեամբ<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App3154">
@@ -25222,6 +25077,7 @@
             <rdg wit="#K">
               <w>հայրապետութեանն</w>
             </rdg>
+            <!-- TODO Personally I think this really wants to be the locative, but the good readings don't support it. -->
           </app>
           <app xml:id="App3158">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -25250,20 +25106,15 @@
             </lem>
           </app>
           <app xml:id="App3162">
-            <lem resp="#tla">
-              <wit>[unattested]</wit>
-              <w>թագաւորութիւնն</w>
+            <lem wit="#K #F #B #A #D #O">
+              <w>թագաւորութեանն</w>
             </lem>
             <rdg wit="#Jer">
               <w>թագաւորութեանս</w>
             </rdg>
-            <rdg wit="#K #F #B #A #D #O">
-              <w>թագաւորութեանն</w>
-            </rdg>
             <rdg wit="#V #X">
               <w>թագաւորութեան</w>
             </rdg>
-            <note type="emendation" resp="#tla">Case changed to accusative to parallel earlier \arm{հայրապետութիւն}.</note>
           </app>
           <app xml:id="App3163">
             <lem wit="#K #F #B #A #D #O #V #X">
@@ -25299,7 +25150,7 @@
           </app>
           <app xml:id="App3167">
             <lem wit="#Jer #K #F #B #A #O #V #X">
-              <w xml:id="Word1732">մտաւք<c>,</c></w>
+              <w xml:id="Word1732">մտաւք<c type="punct">,</c></w>
             </lem>
             <rdg wit="#D">
               <w xml:id="Word1733">կամաւք</w>
@@ -25349,14 +25200,13 @@
               <w>զկատարածն</w>
             </rdg>
             <rdg wit="#D #V #X">
-              <w xml:id="Word1735">զկտրծս</w>
+              <w xml:id="Word1735">զկտ՟ր՟ծս</w>
               <witDetail target="#Word1735" wit="#X" type="punctuation">,</witDetail>
             </rdg>
             <rdg wit="#K #F #O">
               <w xml:id="Word1736">զկատարածս</w>
               <witDetail target="#Word1736" wit="#K" type="punctuation">՝</witDetail>
             </rdg>
-            <note type="editorial">Reading DVX is ambiguous.</note>
           </app>
           <app xml:id="App3174">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
@@ -25382,7 +25232,7 @@
           </app>
           <app xml:id="App3178">
             <lem wit="#Jer #K #F #B #A #D #V #X">
-              <w xml:id="Word1739">այսորիկ<c>։</c></w>
+              <w xml:id="Word1739">այսորիկ<c type="punct">։</c></w>
               <witDetail target="#Word1739" wit="#F #B #A #D #V" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#O" type="spelling_variant">
@@ -25429,7 +25279,7 @@
           </app>
           <app xml:id="App3185">
             <lem wit="#Jer #K #F #B #A #D #V #X">
-              <w xml:id="Word1741">սնափառութեանց<c>`</c></w>
+              <w xml:id="Word1741">սնափառութեանց<c type="punct">`</c></w>
               <witDetail target="#Word1741" wit="#K #F #B #A #D" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#O" type="spelling_variant">
@@ -25440,7 +25290,7 @@
             <lem wit="#B">
               <w>որպէս</w>
               <w>կարծեալ</w>
-              <w>ոմանց<c>,</c></w>
+              <w>ոմանց<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K" type="omission"/>
             <rdg wit="#F #V #A #O #X #Jer #D">
@@ -25461,7 +25311,6 @@
             <rdg wit="#Jer #K #F #D #O #V #X">
               <w>ի</w>
             </rdg>
-            <note type="editorial">fix X</note>
           </app>
           <app xml:id="App3189">
             <lem wit="#Jer #F #B #A #D #O #V">
@@ -25520,7 +25369,7 @@
           </app>
           <app xml:id="App3196">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1743">ժամանակին<c>.</c></w>
+              <w xml:id="Word1743">ժամանակին<c type="punct">.</c></w>
               <witDetail target="#Word1743" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -25600,7 +25449,7 @@
             <lem wit="#F #K #V #A #O #X #Jer #D">
               <w>ի</w>
               <w>գիտութենէ</w>
-              <w xml:id="Word1747">հմտութեանց<c>,</c></w>
+              <w xml:id="Word1747">հմտութեանց<c type="punct">,</c></w>
               <witDetail target="#Word1747" wit="#K #A" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B" type="omission"/>
@@ -25669,7 +25518,7 @@
           </app>
           <app xml:id="App3216">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1750">աստուծոյ<c>՝</c></w>
+              <w xml:id="Word1750">աստուծոյ<c type="punct">՝</c></w>
               <witDetail target="#Word1750" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1750" wit="#F #B #D" type="punctuation">,</witDetail>
             </lem>
@@ -25742,7 +25591,7 @@
           </app>
           <app xml:id="App3224">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1753">սրբել<c>,</c></w>
+              <w xml:id="Word1753">սրբել<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word1754">սրբագրել</w>
@@ -25802,7 +25651,7 @@
           </app>
           <app xml:id="App3233">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1757">շնորհացն<c>՝</c></w>
+              <w xml:id="Word1757">շնորհացն<c type="punct">՝</c></w>
               <witDetail target="#Word1757" wit="#X" type="punctuation">,</witDetail>
             </lem>
           </app>
@@ -25821,7 +25670,7 @@
           </app>
           <app xml:id="App3236">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1758">նոցա<c>։</c></w>
+              <w xml:id="Word1758">նոցա<c type="punct">։</c></w>
               <witDetail target="#Word1758" wit="#Jer #K #F #D #V #X" type="punctuation">,</witDetail>
             </lem>
           </app>
@@ -25967,7 +25816,7 @@
           </app>
           <app xml:id="App3258">
             <lem wit="#Jer">
-              <w xml:id="Word1765">այսոցիկ<c>,</c></w>
+              <w xml:id="Word1765">այսոցիկ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#O" type="spelling_variant">
               <w>այսաւրիկ</w>
@@ -26049,7 +25898,7 @@
           </app>
           <app xml:id="App3269a">
             <lem wit="#F #K #V #X #D #A #O #Jer">
-              <w xml:id="Word1769">յիշատակ<c>,</c></w>
+              <w xml:id="Word1769">յիշատակ<c type="punct">,</c></w>
               <witDetail target="#Word1769" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B" type="omission"/>
@@ -26103,7 +25952,7 @@
           </app>
           <app xml:id="App3272">
             <lem wit="#K">
-              <w xml:id="Word1773">հոգաբարձութեամբ<c>,</c></w>
+              <w xml:id="Word1773">հոգաբարձութեամբ<c type="punct">.</c></w>
             </lem>
             <rdg wit="#B" type="spelling_variant">
               <w>հոգոգեբարձութեամբ</w>
@@ -26182,7 +26031,7 @@
           </app>
           <app xml:id="App3283">
             <lem wit="#F #B #A #D #O #X">
-              <w xml:id="Word1779">նեղութեանցն<c>,</c></w>
+              <w xml:id="Word1779">նեղութեանցն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer #K #V">
               <w xml:id="Word1780">նեղութեանց</w>
@@ -26251,7 +26100,7 @@
           </app>
           <app xml:id="App3285g">
             <lem wit="#O #B">
-              <w xml:id="Word1781">թուականացն<c>,</c></w>
+              <w xml:id="Word1781">թուականացն<c type="punct">,</c></w>
               <witDetail target="#Word1781" wit="#B" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#A" type="spelling_variant">
@@ -26346,7 +26195,7 @@
           </app>
           <app xml:id="App3295">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1791">ամացն<c>,</c></w>
+              <w xml:id="Word1791">ամացն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#K">
               <w xml:id="Word1792">ժամանակաց</w>
@@ -26376,7 +26225,7 @@
           </app>
           <app xml:id="App3300">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1794">ասէ<c>,</c></w>
+              <w xml:id="Word1794">ասէ<c type="punct">,</c></w>
               <witDetail target="#Word1794" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26404,7 +26253,6 @@
             </lem>
             <rdg wit="#K #A">
               <w xml:id="Word1801">ցհարս</w>
-              
             </rdg>
             <rdg wit="#Jer #D #F #V #O">
               <w>ընդ</w>
@@ -26419,7 +26267,7 @@
             <rdg wit="#B">
               <w>ցարսն</w>
             </rdg>
-            <note type="editorial">Emended to \arm{ցհարսն} for symmetry with later \arm{ծերսն}.</note>
+            <note type="emendation">Emended to \arm{ցհարսն} for symmetry with later \arm{ծերսն}.</note>
           </app>
           <app xml:id="App3303a">
             <lem wit="#K #A">
@@ -26445,7 +26293,7 @@
           </app>
           <app xml:id="App3303d">
             <lem wit="#Jer #D #F #V #K #A #B">
-              <w xml:id="Word1797">քեզ<c>,</c></w>
+              <w xml:id="Word1797">քեզ<c type="punct">,</c></w>
             </lem>
             <rdg wit="#X #O" type="omission"/>
           </app>
@@ -26463,7 +26311,7 @@
           </app>
           <app xml:id="App3304">
             <lem wit="#Jer #F #B #A #D #O #V #X">
-              <w xml:id="Word1806">ծերսն<c>՝</c></w>
+              <w xml:id="Word1806">ծերսն<c type="punct">՝</c></w>
               <witDetail target="#Word1806" wit="#X" type="punctuation">,</witDetail>
             </lem>
             <rdg wit="#K">
@@ -26491,7 +26339,7 @@
           </app>
           <app xml:id="App3308">
             <lem wit="#K #F #B #A #D #O #V #X #Jer">
-              <w xml:id="Word1809">քեզ<c>։</c></w>
+              <w xml:id="Word1809">քեզ<c type="punct">։</c></w>
               <witDetail target="#Word1809" wit="#F #B #D #V" type="punctuation">,</witDetail>
             </lem>
           </app>
@@ -26543,7 +26391,7 @@
           </app>
           <app xml:id="App3314">
             <lem wit="#Jer #K #F #B #D #O #V #X">
-              <w xml:id="Word1814">մեր<c>,</c></w>
+              <w xml:id="Word1814">մեր<c type="punct">,</c></w>
               <witDetail target="#Word1814" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#A">
@@ -26588,7 +26436,7 @@
           </app>
           <app xml:id="App3320">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1815">էաք<c>,</c></w>
+              <w xml:id="Word1815">էաք<c type="punct">,</c></w>
               <witDetail target="#Word1815" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26617,7 +26465,7 @@
           </app>
           <app xml:id="App3325">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1816">էաք<c>,</c></w>
+              <w xml:id="Word1816">էաք<c type="punct">,</c></w>
               <witDetail target="#Word1816" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26669,7 +26517,7 @@
           </app>
           <app xml:id="App3333">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1817">մտաց<c>,</c></w>
+              <w xml:id="Word1817">մտաց<c type="punct">,</c></w>
               <witDetail target="#Word1817" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26769,7 +26617,7 @@
           </app>
           <app xml:id="App3346">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1825">ասէր<c>,</c></w>
+              <w xml:id="Word1825">ասէր<c type="punct">,</c></w>
               <witDetail target="#Word1825" wit="#K #A #X" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26797,7 +26645,7 @@
           </app>
           <app xml:id="App3350">
             <lem wit="#K">
-              <w xml:id="Word1828">յասպարիզի<c>.</c></w>
+              <w xml:id="Word1828">յասպարիզի<c type="punct">.</c></w>
             </lem>
             <rdg wit="#F #B #A #D #O #V #X" type="orth_variant">
               <w xml:id="Word1829">յասպարիսի</w>
@@ -26863,7 +26711,7 @@
           </app>
           <app xml:id="App3359">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1830">քննել<c>,</c></w>
+              <w xml:id="Word1830">քննել<c type="punct">,</c></w>
               <witDetail target="#Word1830" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26923,7 +26771,7 @@
           </app>
           <app xml:id="App3367">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1832">աստի<c>,</c></w>
+              <w xml:id="Word1832">աստի<c type="punct">,</c></w>
               <witDetail target="#Word1832" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -26964,7 +26812,7 @@
           </app>
           <app xml:id="App3374">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1835">գնայր<c>,</c></w>
+              <w xml:id="Word1835">գնայր<c type="punct">,</c></w>
             </lem>
           </app>
           <app xml:id="App3376">
@@ -27038,7 +26886,7 @@
           </app>
           <app xml:id="App3383">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1840">ցուցանէին<c>,</c></w>
+              <w xml:id="Word1840">ցուցանէին<c type="punct">,</c></w>
               <witDetail target="#Word1840" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -27086,7 +26934,7 @@
           </app>
           <app xml:id="App3391">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1842">երկրի<c>,</c></w>
+              <w xml:id="Word1842">երկրի<c type="punct">,</c></w>
               <witDetail target="#Word1842" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1842" wit="#A" type="punctuation">՝</witDetail>
             </lem>
@@ -27147,7 +26995,7 @@
           </app>
           <app xml:id="App3399">
             <lem wit="#Jer #K #F #B #A #D #O #V #X">
-              <w xml:id="Word1845">բերէին<c>.</c></w>
+              <w xml:id="Word1845">բերէին<c type="punct">.</c></w>
               <witDetail target="#Word1845" wit="#K" type="punctuation">։</witDetail>
             </lem>
           </app>
@@ -27190,7 +27038,7 @@
           </app>
           <app xml:id="App3406">
             <lem wit="#B #A #O">
-              <w xml:id="Word1849">ժամանակքս<c>,</c></w>
+              <w xml:id="Word1849">ժամանակքս<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer #V">
               <w xml:id="Word1847">ժամանակ</w>
@@ -27239,7 +27087,7 @@
           </app>
           <app xml:id="App3411">
             <lem wit="#Jer #K #F #A #D #O #V #X">
-              <w xml:id="Word1852">նորա<c>,</c></w>
+              <w xml:id="Word1852">նորա<c type="punct">,</c></w>
               <witDetail target="#Word1852" wit="#K" type="punctuation">։</witDetail>
             </lem>
             <rdg wit="#B" type="spelling_variant">
@@ -27277,7 +27125,7 @@
           </app>
           <app xml:id="App3417">
             <lem wit="#F #O #K #V #D #A #Jer">
-              <w xml:id="Word1854">հանդերձեալքն<c>.</c></w>
+              <w xml:id="Word1854">հանդերձեալքն<c type="punct">,</c></w>
               <witDetail target="#Word1854" wit="#K" type="punctuation">։</witDetail>
               <witDetail target="#Word1854" wit="#A" type="punctuation">՝</witDetail>
             </lem>
@@ -27319,7 +27167,7 @@
           <app xml:id="App3417e">
             <lem wit="#B #V #D #A #Jer">
               <w>ծնունդք</w>
-              <w xml:id="Word1859a">նորա<c>,</c></w>
+              <w xml:id="Word1859a">նորա<c type="punct">.</c></w>
             </lem>
             <rdg wit="#F #O #X">
               <w>ծնունդ</w>
@@ -27353,7 +27201,7 @@
             <rdg wit="#V">
               <w>այժմ</w>
             </rdg>
-            <note type="editorial">This in particular makes it look like K was specifically following V.</note>
+            <!-- This in particular makes it look like K was specifically following V. -->
           </app>
           <app xml:id="App3423">
             <lem wit="#Jer #K #F #B #A #D #O #X">
@@ -27379,7 +27227,7 @@
           </app>
           <app xml:id="App3426">
             <lem wit="#F #B #A #D #O #X">
-              <w xml:id="Word1864">ուրախութեանցն<c>,</c></w>
+              <w xml:id="Word1864">ուրախութեանցն<c type="punct">,</c></w>
             </lem>
             <rdg wit="#Jer #K #V">
               <w xml:id="Word1865">ուրախութեանց</w>
@@ -27434,7 +27282,7 @@
           </app>
           <app xml:id="App3433">
             <lem wit="#K #F #B #A #D #O #V #X">
-              <w xml:id="Word1867">աստուծոյ<c>։</c></w>
+              <w xml:id="Word1867">աստուծոյ<c type="punct">։</c></w>
             </lem>
             <rdg wit="#Jer" type="orth_variant">
               <w xml:id="Word1868">Աստուծոյ</w>
