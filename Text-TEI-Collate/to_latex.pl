@@ -115,27 +115,25 @@ sub latex_conv {
 		my @wits = split( /\s+/, $rdg->getAttribute( 'wit' ) );
 		my $app = $rdg->parentNode;
 		my ( $prev_app ) = $xpc->findnodes( 'preceding-sibling::tei:app[position() = 1]', $app );
-		unless( $prev_app &&
-			$last_app eq $prev_app->getAttribute( 'xml:id' ) ) {
-		    # Mark that this is an omission, but it isn't a
-		    # continuing omission yet, so don't do anything.
-		    $last_app = $app->getAttribute( 'xml:id' );
-		    next;
-		}
 		my $this_app = $app->getAttribute( 'xml:id' );
-		foreach my $wit ( @wits ) {
-		    if( exists $hold{$wit} ) {
-			$hold{$wit}->{'end'} = $this_app;
-		    } else {
-			$hold{$wit} = { 'start' => $last_app,
-					'end' => $this_app };
+		if( $prev_app &&
+			$last_app eq $prev_app->getAttribute( 'xml:id' ) ) {
+		    foreach my $wit ( @wits ) {
+			if( exists $hold{$wit} ) {
+			    $hold{$wit}->{'end'} = $this_app;
+			} else {
+			    $hold{$wit} = { 'start' => $last_app,
+					    'end' => $this_app };
+			}
 		    }
-		}
+		} # else it is an omission, but not yet a continuing
+		  # omission, so don't add a hold entry yet.
+
 		# Now go through the hold hash and close out any apps
 		# that don't have an ending of 'now'.  And get rid of
 		# any apps that have the same start and end.
 		foreach my $wit ( keys %hold ) {
-		    unless( $hold{$wit}->{'end'} eq $last_app ) {
+		    unless( $hold{$wit}->{'end'} eq $this_app ) {
 			my $om = delete $hold{$wit};
 			# This line shouldn't be necessary anymore
 			next if( $om->{'start'} eq $om->{'end'} );
@@ -202,8 +200,10 @@ sub latex_conv {
 
 		# Look for omissions that begin here.
 		unless( $false_lemma ) {
-		    foreach my $o ( @{$omission_start{$app_id}} ) {
-			$currently_omitted{$o->{'wit'}} = $o->{'end'};
+		    if( exists $omission_start{$app_id} ) {
+			foreach my $o ( @{$omission_start{$app_id}} ) {
+			    $currently_omitted{$o->{'wit'}} = $o->{'end'};
+			}
 		    }
 		}
 
@@ -355,7 +355,7 @@ sub latex_for_lemma {
 		       $olem, $lemma{'omissions'}->{$olem} ) );
     }
     
-    if( $app_footnote || $ed_footnote ) {
+    if( $app_footnote || $ed_footnote || scalar( @omission_footnotes ) ) {
 	my $latex_fn = '';
 	if( $app_footnote ) {
 	    $latex_fn .= "\\Afootnote\{$app_footnote\}";
@@ -411,7 +411,11 @@ sub word_string {
 	warn "No reading passed to word_string!  You don't want that.";
 	return '';
     }
-    my @words = map { $_->textContent } $xpc->findnodes( './/tei:w', $rdg );
+    my @words = map {
+	exists( $Words::Armenian::PROPER_NAMES{ $_->textContent } ) ?
+	    $Words::Armenian::PROPER_NAMES{ $_->textContent } :
+	    $_->textContent
+    } $xpc->findnodes( './/tei:w', $rdg );
     return join( ' ', @words );
 }
 	
