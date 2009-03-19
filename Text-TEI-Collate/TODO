@@ -1,15 +1,21 @@
-write tests for gap detection and 2-word glommed matching
-figure out how to handle orthography variation
-figure out how to handle paragraph / div splitting
-make spelling corrections alter the number of decisions needed on the fly
-just generally pull XML into fewer data structures, maybe?
-figure out some way to cope with blank #text elements
-allow reading group assignments on the command line
-safeguards against selecting something twice
-ability to back up
-make "note" an allowed apparatus child
-have a filter for what sort of punctuation we care about.  Or just use it more effectively.
-write a rule for capital / lowercase orthography
-need a way to mark a witDetail as "use this", rather than consuming it.
-...Should definitely put it in a <c type="punct"/> container.
-handle catchwords appropriately (i.e. don't collate them.)
+For the core libraries:
+- write tests for gap detection and 2-word glommed matching
+- Decide if it is really useful to differentiate between
+  "orthographic" and "spelling" variation
+- Do a better job of comparing the words in a new text with the
+  "chained" alternative words that have already been collated.  This
+  would not be hard to do, it just hasn't been done.
+- Handle transposition properly
+- Pull some of the TEI XML generation into the core library
+
+
+For the editing scripts:
+- Allow reading group assignments on the command line
+- Safeguards against selecting something twice
+- Ability to back up and re-examine a choice
+- Have a filter for what sort of punctuation we care about.  Or just
+  use it more effectively.
+- Write a rule for capital / lowercase orthography
+- Need a way to mark a witDetail as "use this", rather than consuming it.
+- ...Should definitely put it in a <c type="punct"/> container.
+- Handle catchwords appropriately (i.e. don't collate them.)
