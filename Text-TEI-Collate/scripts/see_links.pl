@@ -24,7 +24,7 @@ my( @files ) = @ARGV;
 my $fuzziness = "50";  # this is n%
 
 my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
-				       'debug' => 2,
+				       'debug' => 0,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 				       # 'accents' => [ "\x{55b}" ],
 				       'canonizer' => \&Words::Armenian::canonize_word,
