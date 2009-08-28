@@ -147,18 +147,21 @@ sub _read_paragraphs {
 	# If there are any #text nodes that are direct children of
 	# this paragraph, the whole thing needs to be processed.
 	my $xpc = XML::LibXML::XPathContext->new( $pg );
-	$xpc->registerNs( 'tei', $pg->namespaceURI );
+	$xpc->registerNs( 'tei', $pg->namespaceURI ) if $pg->namespaceURI;
 	
 	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
 	    my @pg_words = _split_words( $self, $string );
-	    # Set the relevant sectioning markers on the first word.
-	    if( $divmarker ) {
-		$pg_words[0]->add_placeholder( $divmarker );
-		$divmarker = undef;
+	    # Set the relevant sectioning markers on the first word, if we
+	    # are using word objects.
+	    if( ref( $pg_words[0] ) eq 'Text::TEI::Collate::Word' ) {
+		if( $divmarker ) {
+		    $pg_words[0]->add_placeholder( $divmarker );
+		    $divmarker = undef;
+		}
+		$pg_words[0]->add_placeholder( '__PG__' );
 	    }
-	    $pg_words[0]->add_placeholder( '__PG__' );
 	    push( @words, @pg_words );
 	} else {  # if everything is wrapped in w / seg tags
 	    # Get the text of each node
@@ -178,6 +181,8 @@ sub _read_paragraphs {
 		    . $c->nodeName . "\n" if scalar @textwords > 1;
 		foreach( @textwords ) {
 		    my $w;
+		    # If this is being called from a Manuscript object, the words should
+		    # be Word objects.  Otherwise they shoudl be strings.
 		    if( $self ) {
 			$w = Text::TEI::Collate::Word->new( 'string' => $_,
 							    'ms_sigil' => $self->{'sigil'},
