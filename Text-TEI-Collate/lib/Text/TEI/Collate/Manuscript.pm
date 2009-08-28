@@ -1,10 +1,12 @@
 package Text::TEI::Collate::Manuscript;
 
 use strict;
-use vars qw( $VERSION );
+use vars qw( $VERSION @EXPORT_OK );
+use Exporter 'import';
 use Text::TEI::Collate::Word;
 
 $VERSION = "0.01";
+@EXPORT_OK = qw( tokenize_text );
 
 =head1 DESCRIPTION
 
@@ -94,28 +96,45 @@ sub _init_from_xml {
     my @textnodes = $xmlobj->getElementsByTagName( 'text' );
     my $teitext = $textnodes[0];
     if( $teitext ) {
-	# Strip out the words.
-	# TODO: this could use spec consultation.
-	my @divs = $teitext->getElementsByTagName( 'div' );
-	foreach( @divs ) {
-	    my $place_str;
-	    if( my $n = $_->getAttribute( 'n' ) ) {
-		$place_str = '__DIV_' . $n . '__';
-	    } else {
-		$place_str = '__DIV__';
-	    }
-	    push( @words, $self->_read_paragraphs( $_, $place_str ) );
-	}  # foreach <div/>
-	
-	# But maybe we don't have any divs.  Just paragraphs.
-	unless( @divs ) {
-	    push( @words, $self->_read_paragraphs( $teitext ) );
-	}
+	@words = tokenize_text( $self, $teitext );
     } else {
 	warn "No text in document '" . $self->{'identifier'} . "!";
     }
     
     $self->{'words'} = \@words;
+}
+
+=head2 tokenize_text( $self, $textnode )
+
+Takes an XML::LibXML::Element that is a TEI text element, and returns
+a list of words.  If $self is defined (and is a Manuscript object),
+the words will be Text::TEI::Collate::Word objects.  If $self is
+undef, they will be strings.  For the love of mercy, don't pass a
+defined $self that is not a Manuscript object.
+
+=cut
+
+sub tokenize_text {
+    my( $self, $teitext ) = @_;
+    # Strip out the words.
+    # TODO: this could use spec consultation.
+    my @words;
+    my @divs = $teitext->getElementsByTagName( 'div' );
+    foreach( @divs ) {
+	my $place_str;
+	if( my $n = $_->getAttribute( 'n' ) ) {
+	    $place_str = '__DIV_' . $n . '__';
+	} else {
+	    $place_str = '__DIV__';
+	}
+	push( @words, _read_paragraphs( $self, $_, $place_str ) );
+    }  # foreach <div/>
+    
+    # But maybe we don't have any divs.  Just paragraphs.
+    unless( @divs ) {
+	push( @words, _read_paragraphs( undef, $teitext ) );
+    }
+    return @words;
 }
 
 sub _read_paragraphs {
@@ -133,7 +152,7 @@ sub _read_paragraphs {
 	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
-	    my @pg_words = $self->_split_words( $string );
+	    my @pg_words = _split_words( $self, $string );
 	    # Set the relevant sectioning markers on the first word.
 	    if( $divmarker ) {
 		$pg_words[0]->add_placeholder( $divmarker );
@@ -158,18 +177,23 @@ sub _read_paragraphs {
 		print STDERR "DEBUG: space found in element node "
 		    . $c->nodeName . "\n" if scalar @textwords > 1;
 		foreach( @textwords ) {
-		    my $w = Text::TEI::Collate::Word->new( 'string' => $_,
-				   'ms_sigil' => $self->{'sigil'},
-				   'comparator' => $self->{'comparator'},
-				   'canonizer' => $self->{'canonizer'} );
-		    if( $first_word ) {
-			$first_word = 0;
-			# Set the relevant sectioning markers 
-			if( $divmarker ) {
-			    $w->add_placeholder( $divmarker );
-			    $divmarker = undef;
+		    my $w;
+		    if( $self ) {
+			$w = Text::TEI::Collate::Word->new( 'string' => $_,
+							    'ms_sigil' => $self->{'sigil'},
+							    'comparator' => $self->{'comparator'},
+							    'canonizer' => $self->{'canonizer'} );
+			if( $first_word ) {
+			    $first_word = 0;
+			    # Set the relevant sectioning markers 
+			    if( $divmarker ) {
+				$w->add_placeholder( $divmarker );
+				$divmarker = undef;
+			    }
+			    $w->add_placeholder( '__PG__' );
 			}
-			$w->add_placeholder( '__PG__' );
+		    } else {
+			$w = $_;
 		    }
 		    push( @words, $w );
 		}
@@ -239,14 +263,17 @@ sub _split_words {
     my @raw_words = split( /\s+/, $string );
     my @words;
     foreach my $w ( @raw_words ) {
-	my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
-						   'ms_sigil' => $self->{'sigil'},
-						   'comparator' => $self->{'comparator'},
-						   'canonizer' => $self->{'canonizer'} );
-	# Skip any words that have been canonized out of existence.
-	next if( length( $w_obj->word ) == 0 );
-	
-	push( @words, $w_obj );
+	if( $self ) {
+	    my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
+						       'ms_sigil' => $self->{'sigil'},
+						       'comparator' => $self->{'comparator'},
+						       'canonizer' => $self->{'canonizer'} );
+	    # Skip any words that have been canonized out of existence.
+	    next if( length( $w_obj->word ) == 0 );
+	    push( @words, $w_obj );
+	} else {
+	    push( @words, $w );
+	}
     }
     return @words;
 }
@@ -261,7 +288,7 @@ sub _init_from_string {
     }
 
     # Now look at the string.
-    my @words = $self->_split_words( $str );
+    my @words = _split_words( $self, $str );
     $self->{'words'} = \@words;
 
     return $self;
