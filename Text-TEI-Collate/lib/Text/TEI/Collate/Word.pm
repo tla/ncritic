@@ -3,7 +3,7 @@ package Text::TEI::Collate::Word;
 use strict;
 use vars qw( $VERSION );
 
-$VERSION = "0.01";
+$VERSION = "1.0";
 
 =head1 DESCRIPTION
 
@@ -39,10 +39,29 @@ sub new {
 	$self->{'invisible'} = 1;
     }
     $init_string = '' if( $self->{'empty'} );
-    $self->evaluate_word( $init_string );
+    if( $self->{'json'} ) {
+	$self->init_word( $self->{'json'} );
+    } else {
+	$self->evaluate_word( $init_string );
+    }
     return $self;
 }
 
+# Use the JSON data object to read the normalized, punctuated, etc. form of the word.
+sub init_word {
+    my $self = shift;
+    my $json = shift;
+    $self->word( delete $json->{'t'} );
+    my $norm = delete $json->{'n'};
+    $self->comparison_form( $norm ? $norm : $self->word );
+    my $canon = delete $json->{'c'};
+    $self->canonical_form( $canon ? $canon : $self->word );
+    foreach my $k ( keys %$json ) {
+	$self->{$k} = $json->{$k};
+    }
+}
+
+# Use the passed configuration options to calculate the various forms of the word.
 sub evaluate_word {
     my $self = shift;
     my $word = shift;
@@ -68,14 +87,24 @@ sub evaluate_word {
 
     # Need to ascertain a few characteristics.
     # Has it any punctuation to go with the word, that is not in our
-    # list of "not really punctuation"?
-    my( $punct, $accent ) = ( [], undef );	    
-    my @punct_instances = $word =~ /([[:punct:]])/g;
-    foreach my $p ( @punct_instances ) {
-	next if( grep /\Q$p\E/, @{$self->{'not_punct'}} );
-	push( @$punct, $p );
-	$word =~ s/\Q$p\E//g;
+    # list of "not really punctuation"?  If so, we need to strip it
+    # out, but save where we got it from.
+    my( $punct, $accent ) = ( [], undef );
+    my %ispunct;
+    my @haspunct = $word =~ /([[:punct:]])/g;
+    map { $ispunct{$_} = 1 } @haspunct;
+    map { $ispunct{$_} = 0 } @{$self->{'not_punct'}};
+    my $pos = 0;
+    my $wspunct = '';
+    foreach my $char ( split( //, $word ) ) {
+	if( $ispunct{$char} ) {
+	    push( @$punct, { 'char' => $char, 'pos' => $pos } );
+	} else {
+	    $wspunct .= $char;
+	}
+	$pos++;
     }
+    $word = $wspunct;
     $self->punctuation( $punct );
     # TODO: something sensible with accent marks
 
@@ -197,7 +226,7 @@ sub punctuation {
     if( $punct ) {
 	$self->{'punctuation'} = $punct;
     }
-    return @{$self->{'punctuation'}};
+    return $self->{'punctuation'};
 }
 
 =head2 canonizer

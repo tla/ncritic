@@ -5,10 +5,11 @@ use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
 use Storable qw( store_fd retrieve );
-use Text::WagnerFischer::Armenian qw( distance );
+# use Text::WagnerFischer::Armenian qw( distance );
+use Text::WagnerFischer;
 use Text::TEI::Collate;
-use Words::Armenian;
-use utf8;
+use Unicode::Normalize qw( NFKD );
+# use Words::Armenian;
 
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
@@ -16,7 +17,7 @@ eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
 # Default option values
 my( $col_width, $fuzziness ) = ( 25, 50 );
-my( $CSV, $storable, $outfile, $infile, $text, $debug, %argspec );
+my( $CSV, $storable, $outfile, $infile, $text, $cx, $json, $debug, %argspec );
 
 GetOptions( 'csv' => \$CSV,
 	    'width=i' => \$col_width,
@@ -24,6 +25,8 @@ GetOptions( 'csv' => \$CSV,
 	    'outfile=s' => \$outfile,
 	    'store=s' => \$infile,
 	    'text' => \$text,
+	    'cx' => \$cx,
+	    'json' => \$json,
 	    'debug:i' => \$debug,
 	    'argspec=s' => \%argspec,
 	    'fuzziness=i' => \$fuzziness,
@@ -56,12 +59,28 @@ unless( keys %argspec ) {
 
 ## Get busy. 
 my( @files ) = @ARGV;
+if( $cx ) {
+    # The 'files' are actually strings.
+    my $parser = XML::LibXML->new();
+    my $examples = $parser->parse_file( $files[0] )->documentElement;
+    @files = ();
+    foreach my $wit ( $examples->getElementsByTagName( 'witness' ) ) {
+	push( @files, $wit->textContent );
+    }
+} elsif( $json ) {
+    my @lines;
+    while( <> ) {
+	push( @lines, $_ );
+    }
+    @files = ( join ( '', @lines ) );
+}
+
 my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
 				       'debug' => $debug,
-				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-				       'canonizer' => \&Words::Armenian::canonize_word,
-				       'comparator' => \&Words::Armenian::comparator,
-				       'TEI' => !$text,
+				       'distance_sub' => \&Text::WagnerFischer::distance,
+				       'canonizer' => \&normalize_unicode,
+				       # 'comparator' => \&Words::Armenian::comparator,
+				       'TEI' => !$text && !$cx && !$json,
     );
 
 
@@ -112,10 +131,16 @@ sub open_file {
 
 sub print_fnames {
     print "\n\tLine $_[0]\n" if $_[0];
+    my @titles = @files;
+    if( $cx ) {
+	@titles = ( 0 .. $#files );
+    } elsif( $json ) {
+	@titles = map { $_->sigil } @results;
+    }
     if( $CSV ) {
-	print join( ',', @files ) . "\n";
+	print join( ',', @titles ) . "\n";
     } else {
-	print join( '| ', map { sprintf( "%-25s", $_ ) } @files ) . "\n";
+	print join( '| ', map { sprintf( "%-25s", $_ ) } @titles ) . "\n";
     }
 }
 
@@ -140,4 +165,15 @@ sub fuzzy_match {
     } else {
 	return( $dist < ( length( $ref_str ) * $fuzz / 100 ) );
     }
+}
+
+sub normalize_unicode {
+    my $word = shift;
+    my @normalized;
+    my @letters = split( '', lc( $word ) );
+    foreach my $l ( @letters ) {
+	my $d = chr( ord( NFKD( $l ) ) );
+	push( @normalized, $d );
+    }
+    return join( '', @normalized );
 }
