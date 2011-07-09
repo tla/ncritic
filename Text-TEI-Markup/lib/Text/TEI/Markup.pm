@@ -232,13 +232,15 @@ my %SIGILS = (
     'div' => "\x{a7}",
     'p' => "\x{b6}",
     'ex' => '\\',
-    'expan' => '^',
+    'supplied' => '^',
     'abbr' => [ '{', '}' ],
     'num' => '%',
     'pb' => [ '[', ']' ],
     'cb' => '|',
     'hi' => '*',
     # 'head' => "\x{86}",
+    'unclear' => '?',
+    'q' => "\x{86}",
     );
 
 sub to_xml {
@@ -298,13 +300,13 @@ sub to_xml {
 	if( /^(\w+):(.*)$/ ) {
 	    # Make the header template substitution.
 	    warn "Warning: header line $_ in body section" if $inbody;
-	    my( $key, $val ) = ( $1, $2 );
-	    if( $key eq 'MAIN' ) {
+	    my( $key, $val ) = ( lc( $1 ), $2 );
+	    if( $key eq 'main' ) {
 		warn "Illegal key $key; not substituting";
 	    } else {
 		$tmpl =~ s/__${key}__/$val/gi;
 	    }
-	    if( $key =~ /^transcriberid$/i ) {
+	    if( $key eq 'transcriberid' ) {
 		$opts{'resp'} = '#' . $val;
 	    }
 	}
@@ -328,8 +330,9 @@ sub to_xml {
 	my $doc;
 	my $ok = eval{ $doc = $parser->parse_string( $tmpl ); };
 	unless( $ok ) {
-	    warn "Parsing of new XML doc failed: $@";
-	    return undef;
+	   warn "Parsing of new XML doc failed: $@";
+	   $DB::single = 1;
+	   return undef;
 	}
 	if( $doc->encoding =~ /utf-8/i ) {
 	    $tmpl = decode_utf8( $doc->toString( $opts{'format'} ) );
@@ -390,10 +393,9 @@ sub _process_line {
 	    . ">$word</" . ( $op eq '+' ? 'add' : 'del' ) . '>';
 	substr( $line, $pos, pos( $line ) - $pos, $interp_str );
     }
-    
-    
+
     # All the tags that are not very special cases.
-    foreach my $tag ( qw( subst expan abbr hi ex num ) ) {
+    foreach my $tag ( qw( subst abbr hi ex num unclear q supplied ) ) {
 	my $tag_sig = $sigils->{$tag};
 	my( $tag_open, $tag_close );
 	if( ref( $tag_sig ) eq 'ARRAY' ) {
@@ -450,23 +452,34 @@ sub _process_line {
 }
 
 sub _open_tag {
-    my( $tag, $arg, $opts ) = @_;
+    my( $tag, $text, $opts ) = @_;
 
     my $opened_tag;
-    if( $tag eq 'ex' ) {
+    # Does the tag take a parenthesized argument?
+    my $arg = '';
+    if( $text =~ /^\(([^\)]+)\)(.*)$/ ) {
+	( $arg, $text ) = ( $1, $2 );
+    }
+    if( $tag =~ /^(ex|supplied)$/ ) {
 	# It takes a resp agent.
-	$opened_tag = '<ex resp="' . $opts->{'resp'} . "\">$arg";
+	$opened_tag = '<'. $tag .' resp="' . $opts->{'resp'} . "\">$text";
+    } elsif ( $tag eq 'q' ) {
+	# Special case - we mean a biblical quote.
+	$opened_tag = '<q type="biblical">' . $text;
     } elsif ( $tag eq 'num' ) {
 	# Derive the number's value if requested.
 	my $numconvert = $opts->{'number_conversion'};
 	if( defined $numconvert ) {
-	    my $nv = &$numconvert( $arg );
-	    $opened_tag = "<num value=\"$nv\">$arg" if defined $nv;
+	    my $nv = &$numconvert( $text );
+	    $opened_tag = "<num value=\"$nv\">$text" if defined $nv;
 	}
-    } 
+    } elsif ( $tag eq 'hi' ) {
+	warn "Empty argument passed to $tag tag" unless $arg;
+	$opened_tag = sprintf( '<%s rend="%s">%s', $tag, $arg, $text );
+    }
 
     # The default
-    $opened_tag = "<$tag>$arg" unless $opened_tag;
+    $opened_tag = "<$tag>$text" unless $opened_tag;
     return $opened_tag;
 }
 
@@ -635,34 +648,42 @@ __DATA__
   xmlns:svg="http://www.w3.org/2000/svg"
   xmlns:math="http://www.w3.org/1998/Math/MathML"
   xmlns="http://www.tei-c.org/ns/1.0">
-    <teiHeader>
-        <fileDesc>
-            <titleStmt>
-                <title>__TITLE__</title>
-                <author>__AUTHOR__</author>
-                <respStmt xml:id="__TRANSCRIBERID__">
-                    <resp>Transcription by</resp>
-                    <name>__TRANSCRIBER__</name>
-                </respStmt>
-            </titleStmt>
-            <publicationStmt>
-                <p>__PUBLICATIONSTMT__</p>
-            </publicationStmt>
-            <sourceDesc>
-                <msDesc>
-                    <msIdentifier>
-                        <settlement>__SETTLEMENT__</settlement>
-                        <repository>__REPOSITORY__</repository>
-                        <idno>__IDNO__</idno>
-                    </msIdentifier>
-                    <p>__PAGES__</p>
-                </msDesc>
-            </sourceDesc>
-        </fileDesc>
-    </teiHeader>
-    <text>
-        <body>
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>__TITLE__</title>
+        <author>__AUTHOR__</author>
+        <respStmt xml:id="__TRANSCRIBERID__">
+          <resp>Transcription by</resp>
+          <name>__TRANSCRIBER__</name>
+        </respStmt>
+      </titleStmt>
+      <publicationStmt>
+        <p>__PUBLICATIONSTMT__</p>
+      </publicationStmt>
+      <sourceDesc>
+        <msDesc>
+          <msIdentifier>
+            <settlement>__SETTLEMENT__</settlement>
+            <repository>__REPOSITORY__</repository>
+            <idno>__IDNO__</idno>
+          </msIdentifier>
+          <p>__PAGES__</p>
+        </msDesc>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <appInfo>
+        <application version="1.0" ident="Text::TEI::Collate">
+          <label>Sigil</label>
+          <ab>__SIGIL__</ab>
+        </application>
+      </appInfo>
+    </encodingDesc>
+  </teiHeader>
+  <text>
+    <body>
 __MAIN__
-        </body>
-    </text>
+    </body>
+  </text>
 </TEI>
