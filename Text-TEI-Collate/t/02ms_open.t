@@ -22,9 +22,12 @@ my %sigla = ();
 my @wordcount = ( 181, 183, 178, 182, 263 );
 my @ph_count = ( 2, 3, 2, 2, 2 );
 my %xml_wordcount;
+my @json;  # Will eventually contain one JSON 'witnesses' object for 
+           # each group of texts.
 opendir( PLAIN, $testdir_plain ) or die "Could not open plaintext file dir: $@";
 my $idx = 0;
 my @text;
+push( @json, { 'witnesses' => [] } );  # element 0
 while( my $fn = readdir( PLAIN ) ) {
     next if $fn =~ /^\./;
     my $fh = new IO::File;
@@ -41,6 +44,8 @@ while( my $fn = readdir( PLAIN ) ) {
     $sigla{$ms_obj->sigil()} = $fn;
     is( scalar @{$ms_obj->words}, $wordcount[$idx++], "file has correct number of words" );
     push( @text, $ms_obj->words ) if $idx == 4;
+    push( @{$json[0]->{'witnesses'}}, { 'id' => $ms_obj->sigil,
+					'tokens' => $ms_obj->tokenize_as_json } );
 }
 close PLAIN;
 
@@ -49,6 +54,7 @@ close PLAIN;
 $idx = 0;
 my @ids = ( 'Bzommar 449', 'Jerusalem 1051,1107', 'London OR 5260', 'Venice 887', 'Vienna 574' );
 opendir( XML, $testdir_xml ) or die "Could not open XML file dir: $@";
+push( @json, { 'witnesses' => [] } );  # element 1
 while ( my $fn = readdir( XML ) ) {
     next if $fn =~ /^\./;
     # Parse the file
@@ -69,6 +75,8 @@ while ( my $fn = readdir( XML ) ) {
     is( scalar @{$ms_obj->words}, $wordcount[$idx++], "Manuscript has correct number of words" );
     my @real_words = grep { !($_->placeholders) } @{$ms_obj->words};
     push( @text, \@real_words ) if $idx == 4;
+    push( @{$json[1]->{'witnesses'}}, { 'id' => $ms_obj->sigil,
+					'tokens' => $ms_obj->tokenize_as_json } );
 }
 close XML;
 
@@ -79,6 +87,7 @@ $wordcount[2] = 128;
 $wordcount[4] = 196;
 $ph_count[4] = 1;
 opendir( XMLFULL, $testdir_xmlfull ) or die "Could not open XML file dir: $@";
+push( @json, { 'witnesses' => [] } );  # element 2
 while ( my $fn = readdir( XMLFULL ) ) {
     next if $fn =~ /^\./;
     # Parse the file
@@ -100,12 +109,11 @@ while ( my $fn = readdir( XMLFULL ) ) {
     is( $words, $wordcount[$idx++], "Manuscript has $words words" );
     my @real_words = grep { !($_->placeholders) } @{$ms_obj->words};
     push( @text, \@real_words ) if $idx == 4;
+    push( @{$json[2]->{'witnesses'}}, { 'id' => $ms_obj->sigil,
+					'tokens' => $ms_obj->tokenize_as_json } );
 }
 close XMLFULL;
 
-# foreach my $i ( 0 .. $#{$text[0]} ) {
-#     my $w1 = $i < scalar @{$text[0]} ? $text[0]->[$i]->original_form : '';
-#     my $w2 = $i < scalar @{$text[1]} ? $text[1]->[$i]->original_form : '';
-#     my $w3 = $i < scalar @{$text[2]} ? $text[2]->[$i]->original_form : '';
-#     printf( "%-20s%-20s%-20s\n", $w1, $w2, $w3 );
-# }
+# Now test the JSON tokenization objects we created from each version
+# of the file.
+
