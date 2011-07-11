@@ -4,7 +4,7 @@ use strict;
 use vars qw( $VERSION );
 use Algorithm::Diff;
 # use Contextual::Return ## TODO: examine
-use JSON;
+use JSON qw( decode_json );
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
 use XML::LibXML;
@@ -332,7 +332,7 @@ sub generate_base {
 	                             # word, but just in case there is a
 	                             # gap, it should be the right object.
 	foreach my $col ( 0 .. $width - 1 ) {
-	    if( $texts[$col]->[$idx]->comparison_form() ne '' ) {
+	    if( $texts[$col]->[$idx]->comparison_form ne '' ) {
 		$word = $texts[$col]->[$idx];
 		$word->is_base( 1 );
 		last;
@@ -971,6 +971,171 @@ sub _return_alpha_string {
 	$idx = int( $idx / 26 );
     }
     return scalar( reverse @chars );
+}
+
+=head2 to_tei
+
+=head2 to_json
+
+=head2 to_graphml
+
+=head2 to_svg
+
+=cut
+
+sub to_json {
+	my( $self, @mss ) = @_;
+	my $result = { 'alignment' => [] };
+	$DB::single = 1;
+	foreach my $ms ( @mss ) {
+		push( @{$result->{'alignment'}},
+			  { 'witness' => $ms->sigil,
+				'tokens' => $ms->tokenize_as_json()->{'tokens'}, } );
+	}
+	return $result;
+}
+
+## Block for to_tei logic
+{
+	##  Counter variables
+	my $app_id_ctr = 0;  # for xml:id of <app/> tags
+	my $word_id_ctr = 0; # for xml:id of <w/> tags that have witDetails
+	
+	## Constants
+	my $ns_uri = 'http://www.tei-c.org/ns/1.0';
+	# Local globals
+	my ( $doc, $body );
+
+	sub to_tei {
+		my( $self, @mss ) = @_;
+		( $doc, $body ) = _make_tei_doc( @mss );
+
+		##  Generate a base by flattening all the results                               
+		my $initial_base = $self->generate_base( map { $_->words } @mss );
+		foreach my $idx ( 0 .. $#{$initial_base} ) {
+			my %seen;
+			map { $seen{$_->sigil} = 0 } @mss;
+			my $word_obj = $initial_base->[$idx];
+			my $apparatus = _make_tei_app( $word_obj, %seen );
+		}
+
+		return $doc;
+	}
+
+	sub _make_tei_doc {
+		my @mss = @_;
+		my $doc = XML::LibXML->createDocument( '1.0', 'UTF-8' );
+		my $root = $doc->createElementNS( $ns_uri, 'TEI' );
+
+		# Make the header
+		my $teiheader = $root->addNewChild( $ns_uri, 'teiHeader' );
+		my $filedesc = $teiheader->addNewChild( $ns_uri, 'fileDesc' );
+		$filedesc->addNewChild( $ns_uri, 'titleStmt' )->
+			addNewChild( $ns_uri, 'title' )->
+			appendText( 'this is a title' );
+		$filedesc->addNewChild( $ns_uri, 'publicationStmt' )->
+			addNewChild( $ns_uri, 'p' )->
+			appendText( 'this is a publication statement' );
+		my $witnesslist = $filedesc->addNewChild( $ns_uri, 'sourceDesc')->
+			addNewChild( $ns_uri, 'listWit' );
+		foreach my $m ( @mss ) {
+			my $wit = $witnesslist->addNewChild( $ns_uri, 'witness' );
+			$wit->setAttribute( 'xml:id', $m->sigil );
+			$wit->appendText( $m->identifier );
+		}
+
+		# Make the body element
+		my $body_p = $root->addNewChild( $ns_uri, 'text' )->
+			addNewChild( $ns_uri, 'body' )->
+			addNewChild( $ns_uri, 'div' )->
+			addNewChild( $ns_uri, 'p' );  # TODO maybe this should be lg?
+
+		# Set the root...
+		$doc->setDocumentElement( $root );
+		# ...and return the doc and the body
+		return( $doc, $body_p );
+	}
+
+	sub _make_tei_app {
+		my( $word_obj, %seen ) = @_;
+		my $return_el;
+		# Word object has links (matches) and variants (positional 
+		# non-matches). If an ms has no word here, we will not have seen its 
+		# sigil when we go through the variants.
+		my @matches = $word_obj->links;
+		my @variants = $word_obj->variants;
+		map { $seen{$_->ms_sigil} = 1 } ( $word_obj, @matches, @variants );
+		# Now see if we have any actual variation; are there non-matches?
+		my $variation = @variants ? 1 : 0;
+		# Also if any of the values of %seen are zero, we have variation.
+		foreach my $val ( values %seen ) {
+			unless( $val ) {
+				$variation = 1;
+				last;
+			}
+		}
+		# Also if the matches aren't identical, we have variation.
+		if( !@variants ) {
+			foreach my $w ( @matches ) {
+				if( $w->canonical_form ne $word_obj->canonical_form ) {
+					$variation = 1;
+					last;
+				}
+			}
+		} 
+		
+		# If we do have variation, we create an <app/> element to describe 
+		# it.  If we don't, we create a <w/> element to hold the common word.
+		if( $variation ) {
+			my $app_el = $body->addNewChild( $ns_uri, 'app');
+			$app_el->setAttribute( 'xml:id', 'app'.$app_id_ctr++ );
+			my %forms;
+			# TODO figure out how to handle placeholders.
+			# For each of $word_obj, @matches, @variants, we need a rdg tag
+			# with the witness sigils converted to their XML IDs.
+			foreach my $rdg ( $word_obj, @matches, @variants ) {
+				push( @{$forms{$rdg->canonical_form}}, $rdg->ms_sigil );
+			}
+			foreach my $form ( keys %forms ) {
+				my $rdg_el = $app_el->addNewChild( $ns_uri, 'rdg' );
+				my $wit_str = join( ' ', map { '#'.$_ } @{$forms{$form}});
+				$rdg_el->setAttribute( 'wit', $wit_str );
+				_wrap_punct( $rdg_el, $form );
+			}
+			$return_el = $app_el;
+		} else {
+			# Just give back a word object.
+			my $w_el = $body->addNewChild( $ns_uri, 'w');
+			$w_el->setAttribute( 'xml:id', 'w'.$word_id_ctr++ );
+			$return_el = _wrap_punct( $w_el, $word_obj->canonical_form );
+		}
+	}
+	
+	sub _wrap_punct {
+		my( $w_el, $word_obj ) = @_;
+		my $str = $word_obj->canonical_form;
+		my @punct = $word_obj->punctuation;
+		my $last_pos = -1;
+		foreach my $p ( @punct ) {
+			my @letters = split( '', $str );
+			if( $p->{char} eq $letters[$p->{pos}] ) {
+				my $wordpart = @letters[$last_pos+1..$p->{pos}];
+				$w_el->appendText( $wordpart );
+				my $char = $w_el->addNewchild( $ns_uri, 'c');
+				$char->setAttribute( "type", "punct" );
+				$char->appendText( $p->{char} );
+				$last_pos = $p->{pos};
+			}
+		}
+		# Now append what is left of the word after the last punctuation.
+		if( $last_pos < length( $str ) - 1 ) {
+			my @letters = split( '', $str );
+			my $wordpart = @letters[$last_pos+1..-1];
+			$w_el->appendText( $wordpart );
+		}
+		return $w_el;
+	}
+
 }
 
 ## Print a debugging message.
