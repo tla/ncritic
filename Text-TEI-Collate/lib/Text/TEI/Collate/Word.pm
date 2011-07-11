@@ -1,7 +1,123 @@
 package Text::TEI::Collate::Word;
 
 use strict;
+use Moose;
+use Unicode::Normalize;
 use vars qw( $VERSION );
+
+has 'word' => (
+	is => 'ro',
+	isa => 'Str',
+	required => 1,
+	writer => '_set_word',
+	);
+	
+has 'comparator' => (
+	is => 'ro',
+	isa => 'Maybe[CodeRef]',
+	default => sub { \&unicode_normalize },
+	);
+	
+has 'canonizer' => (
+	is => 'ro',
+	isa => 'Maybe[CodeRef]',
+	);
+	
+has 'comparison_form' => (
+	is => 'ro',
+	isa => 'Str',
+	writer => '_set_comparison_form',
+	);
+	
+has 'canonical_form' => (
+	is => 'ro',
+	isa => 'Str',
+	writer => '_set_canonical_form',
+	);
+	
+has 'original_form' => (
+	is => 'ro',
+	isa => 'Str',
+	writer => '_set_original_form',
+	);
+
+has 'punctuation' => (
+	traits => ['Array'],
+	isa => 'ArrayRef[HashRef[Str]]',
+	default => sub { [] },
+	handles => {
+		punctuation => 'elements',
+		add_punctuation => 'push',
+		},
+	);
+	
+has 'placeholders' => (
+	traits => ['Array'],
+	isa => 'ArrayRef[Str]',
+	default => sub { [] },
+	handles => {
+		'placeholders' => 'elements',
+		'add_placeholder' => 'push',
+		},
+	);
+	
+has 'links' => (
+	traits => ['Array'],
+	isa => 'ArrayRef[Text::TEI::Collate::Word]',
+	default => sub { [] },
+	handles => {
+		'links' => 'elements',
+		'add_link' => 'push',
+		},
+	);
+	
+has 'variants' => (
+	traits => ['Array'],
+	isa => 'ArrayRef[Text::TEI::Collate::Word]',
+	default => sub { [] },
+	handles => {
+		'variants' => 'elements',
+		'add_variant' => 'push',
+		},
+	);
+
+has 'ms_sigil' => (
+	is => 'ro',
+	isa => 'Str',
+	required => 1,
+	);
+
+has 'special' => (
+	is => 'ro',
+	isa => 'Str',
+	);
+	
+has 'invisible' => (
+	is => 'ro',
+	isa => 'Bool',
+	writer => '_set_invisible',
+	);
+
+has 'is_empty' => (
+	is => 'ro',
+	isa => 'Bool',
+	);
+	
+has 'is_glommed' => (
+	is => 'rw',
+	isa => 'Bool',
+	);
+
+has 'is_base' => (
+	is => 'rw',
+	isa => 'Bool',
+	);
+	
+has '_mutable' => (
+	is => 'ro',
+	isa => 'ArrayRef[Str]',
+	default => sub { [ 'glommed' ] },
+	);
 
 $VERSION = "1.0";
 
@@ -15,106 +131,178 @@ their own logic.
 
 =head2 new
 
-Creates a new word object.  Should not be called directly.
+Creates a new word object.  This should probably only be called from
+Text::TEI::Collate::Manuscript.  Constructor arguments (apart from the 
+attributes) are:
+
+=over
+
+=item *
+
+string - the initial word string that should be parsed into its forms
+
+=item *
+
+json - a hash, presumably read from JSON, that has all the attributes
+
+=item *
+
+empty - a flag to say that this should be an empty word.
+
+=back
+
+=begin testing
+
+use Test::More::UTF8;
+use Text::TEI::Collate::Word;
+use Encode qw( encode_utf8 );
+
+# Initialize a word from a string, check its values
+
+my $word = Text::TEI::Collate::Word->new( string => 'ἔστιν;', ms_sigil => 'A' );
+is( $word->word, "ἔστιν", "Got correct word from string");
+is( $word->comparison_form, "εστιν", "Got correct normalization from string");
+is_deeply( [ $word->punctuation], [ { 'char' => ';', 'pos' => 5 } ], "Got correct punctuation from string");
+is( $word->canonical_form, $word->word, "Canonical form is same as passed form");
+ok( !$word->invisible, "Word is not invisible");
+ok( !$word->is_empty, "Word is not empty");
+
+# Initialize a word from a JSON string, check its values
+use JSON qw( decode_json );
+my $jstring = encode_utf8( '{"c":"Արդ","n":"արդ","punctuation":[{"char":"։","pos":3}],"t":"Առդ"}' );
+$word = Text::TEI::Collate::Word->new( json => decode_json($jstring), ms_sigil => 'B' );
+is( $word->word, 'Առդ', "Got correct JSON word before modification" );
+is( $word->canonical_form, 'Արդ', "Got correct canonized form" );
+is( $word->comparison_form, 'արդ', "Got correct normalized form" );
+is( $word->original_form, 'Առդ։', "Restored punctuation correctly for original form");
+
+# Initialize an empty word, check its values
+$word = Text::TEI::Collate::Word->new( empty => 1 );
+is( $word->word, '', "Got empty word");
+ok( $word->is_empty, "Word is marked empty" );
+
+# Initialize a special, check its values and its 'printable'
+
+# Initialize a word with a canonizer, check its values
+$word = Text::TEI::Collate::Word->new( string => 'Ἔστιν;', ms_sigil => 'D', canonizer => sub{ lc( $_[0])});
+is( $word->word, 'Ἔστιν', "Got correct word before canonization" );
+is( $word->canonical_form, 'ἔστιν', "Got correct canonized word");
+
+=end testing
 
 =cut
 
-sub new {
-    my $proto = shift;
-    my %opts = @_;
-    my $class = ref( $proto ) || $proto;
-    my $init_string;
-    if( exists $opts{'string'} ) {
-	$init_string = delete $opts{'string'};
-    }
-    my $self = { 'not_punct' => [],
-		 'accents' => [],
-		 'canonizer' => undef,
-		 'comparator' => undef,
-		 %opts,
-    };
-    
-    bless $self, $class;
-    if( $self->{'special'} ) {
-	$self->{'invisible'} = 1;
-    }
-    $init_string = '' if( $self->{'empty'} );
-    if( $self->{'json'} ) {
-	$self->init_word( $self->{'json'} );
-    } else {
-	$self->evaluate_word( $init_string );
-    }
-    return $self;
-}
-
-# Use the JSON data object to read the normalized, punctuated, etc. form of the word.
-sub init_word {
-    my $self = shift;
-    my $json = shift;
-    $self->word( delete $json->{'t'} );
-    my $norm = delete $json->{'n'};
-    $self->comparison_form( $norm ? $norm : $self->word );
-    my $canon = delete $json->{'c'};
-    $self->canonical_form( $canon ? $canon : $self->word );
-    foreach my $k ( keys %$json ) {
-	$self->{$k} = $json->{$k};
-    }
-}
-
-# Use the passed configuration options to calculate the various forms of the word.
-sub evaluate_word {
-    my $self = shift;
-    my $word = shift;
-
-    unless( defined $word ) {
-	$word = '';
-	return;
-    }
-
-    # Preserve the original word, weird orthography and all.
-    if( $self->original_form ) {
-	warn "Called evaluate_word on an object that already has a word";
-	return undef;
-    } else {
-	$self->original_form( $word );
-    }
-
-    # Canonicalize the word.  Should not yet get rid of any attributes.
-    if( defined $self->canonizer ) {
-	$word = &{$self->canonizer}( $word );
-    }
-    $self->canonical_form( $word );
-
-    # Need to ascertain a few characteristics.
-    # Has it any punctuation to go with the word, that is not in our
-    # list of "not really punctuation"?  If so, we need to strip it
-    # out, but save where we got it from.
-    my( $punct, $accent ) = ( [], undef );
-    my %ispunct;
-    my @haspunct = $word =~ /([[:punct:]])/g;
-    map { $ispunct{$_} = 1 } @haspunct;
-    map { $ispunct{$_} = 0 } @{$self->{'not_punct'}};
-    my $pos = 0;
-    my $wspunct = '';
-    foreach my $char ( split( //, $word ) ) {
-	if( $ispunct{$char} ) {
-	    push( @$punct, { 'char' => $char, 'pos' => $pos } );
-	} else {
-	    $wspunct .= $char;
+around BUILDARGS => sub {
+	my $orig = shift;
+	my $class = shift;
+	my %args = @_;
+	my %newargs;
+	## We might get some legacy options:
+	## - string (original word)
+	## - empty
+	## - json
+	foreach my $key ( keys %args ) {
+		$DB::single = 1;
+		if( $key eq 'string' ) {
+			$newargs{'word'} = $args{'string'};
+		} elsif( $key eq 'json' ) {
+			%newargs = ( %newargs, _init_from_json( $args{'json'} ) );
+		} elsif( $key eq 'empty' ) {
+			$newargs{'is_empty'} = 1;
+			$newargs{'word'} = '';
+			$newargs{'comparison_form'} = '';
+			$newargs{'ms_sigil'} = '';
+		} elsif( $key eq 'special' ) {
+			$newargs{'special'} = $args{'special'};
+			$newargs{'word'} = '';
+			$newargs{'invisible'} = 1;
+		} else {
+			$newargs{$key} = $args{$key};
+		}
 	}
-	$pos++;
-    }
-    $word = $wspunct;
-    $self->punctuation( $punct );
-    # TODO: something sensible with accent marks
+	return $class->$orig( %newargs );
+};
 
-    if( defined $self->comparator ) {
-	$self->comparison_form( &{$self->comparator}( $word ) );
-    } else {
-	$self->comparison_form( $word );
-    }
+sub _init_from_json {
+	my $hash = shift;
+	my %newhash;
+	foreach my $key ( keys %$hash ) {
+		if( $key eq 't' ) {
+			$newhash{word} = $hash->{$key};
+			$newhash{original_form} = _restore_punct( $hash )
+				unless defined $hash->{original_form}
+		} elsif( $key eq 'c' ) {
+			$newhash{canonical_form} = $hash->{$key};
+		} elsif( $key eq 'n' ) {
+			$newhash{comparison_form} = $hash->{$key};
+		} else {
+			$newhash{$key} = $hash->{$key};
+		}
+	}
+	$newhash{canonical_form} ||= $hash->{'t'};
+	$newhash{comparison_form} ||= $hash->{'t'};
+	return %newhash;
+}
 
-    $self->word( $word );
+sub _restore_punct {
+	my $hash = shift;
+	my $word = $hash->{t};
+	my @punct = @{$hash->{punctuation}}
+		if defined $hash->{punctuation};
+	foreach my $p ( @punct ) {
+		substr( $word, $p->{pos}, 0, $p->{char} );
+	}
+	return $word;
+}
+
+sub BUILD {
+	my $self = shift;
+	$self->_evaluate_word unless $self->original_form;
+	return $self;
+}
+
+# Use the passed configuration options to calculate the various forms and
+# attributes of the word.
+sub _evaluate_word {
+	my $self = shift;
+	$DB::single = 1;
+	my $word = $self->word;
+	return if $word eq '';  # Don't bother for empty words
+
+	# Save the original string we were called with.
+	$self->_set_original_form( $word );
+
+    # Has it any punctuation to go with the word?  If so, we need to strip it
+    # out, but save where we got it from.
+	my $pos = 0;
+	my $wspunct = '';  # word sans punctuation
+	foreach my $char ( split( //, $word ) ) {
+		if( $char =~ /^[[:punct:]]$/ ) {
+			$self->add_punctuation( { 'char' => $char, 'pos' => $pos } );
+		} else {
+ 			$wspunct .= $char;
+		}
+		$pos++;
+	}
+	$word = $wspunct;
+
+	# Save the word sans punctuation.
+    $self->_set_word( $word );
+
+	# Canonicalize the word, if we have been handed a canonizer.
+	if( defined $self->canonizer ) {
+		$self->_set_canonical_form( &{$self->canonizer}( $word ) );
+	} else {
+		$self->_set_canonical_form( $word );
+	}
+
+	# What is the string we will actually collate against?
+	if( defined $self->comparator ) {
+		$self->_set_comparison_form( &{$self->comparator}( $word ) );
+	} else {
+		$self->_set_comparison_form( $word );
+	}
+
 }
 
 # Accessors.
@@ -123,19 +311,7 @@ sub evaluate_word {
 
 =head2 word
 
-If called with an argument, sets the stripped form of the word that
-should be used for comparison.  Returns the word's stripped form.
-
-=cut
-
-sub word {
-    my $self = shift;
-    my $form = shift;
-    if( defined $form ) {
-	$self->{'word'} = $form;
-    } 	
-    return $self->{'invisible'} ? '' : $self->{'word'}
-}
+The word according to canonical orthography, without any punctuation.
 
 =head2 printable
 
@@ -153,138 +329,79 @@ sub printable {
 If called with an argument, sets the form of the word, punctuation and
 all, that was originally passed.  Returns the word's original form.
 
-=cut
-
-sub original_form {
-    my $self = shift;
-    my $form = shift;
-    if( defined $form ) {
-	$self->{'original_form'} = $form;
-    }
-    return $self->{'original_form'};
-}
-
-=head2 accented_form
-
-If called with an argument, sets the accented form of the word (minus
-punctuation).  Returns the word's accented form.
-
-=cut
-
-sub accented_form {
-    my $self = shift;
-    my $form = shift;
-    if( defined $form ) {
-	$self->{'accented_form'} = $form;
-    }
-    return $self->{'accented_form'};
-}
-
 =head2 canonical_form
 
-If called with an argument, sets the canonical form of the word (minus
+If called with an argument, sets the canonical form of the word (including
 punctuation).  Returns the word's canonical form.
-
-=cut
-
-sub canonical_form {
-    my $self = shift;
-    my $form = shift;
-    if( defined $form ) {
-	$self->{'canonical_form'} = $form;
-    }
-    return $self->{'canonical_form'};
-}
 
 =head2 comparison_form
 
-If called with an argument, sets the comparison form of the word
-(using a set standard for orthographic equivalence.)  Returns the
+If called with an argument, sets the normalized comparison form of the word
+(the string that is actually used for collation matching.)  Returns the
 word's comparison form.
-
-=cut
-
-sub comparison_form {
-    my $self = shift;
-    my $form = shift;
-    if( defined $form ) {
-	$self->{'comparison_form'} = $form;
-    }
-    return $self->{'comparison_form'};
-}
 
 =head2 punctuation
 
 If called with an argument, sets the punctuation marks that were
 passed with the word.  Returns the word's puncutation.
 
-=cut
-
-sub punctuation {
-    my $self = shift;
-    my $punct = shift;
-    if( $punct ) {
-	$self->{'punctuation'} = $punct;
-    }
-    return $self->{'punctuation'};
-}
-
 =head2 canonizer
 
 If called with an argument, sets the canonizer subroutine that the
 word object should use.  Returns the subroutine.
-
-=cut
-
-sub canonizer {
-    my $self = shift;
-    my $punct = shift;
-    if( $punct ) {
-	$self->{'canonizer'} = $punct;
-    }
-    return $self->{'canonizer'};
-}
 
 =head2 comparator
 
 If called with an argument, sets the comparator subroutine that the
 word object should use.  Returns the subroutine.
 
-=cut
-
-sub comparator {
-    my $self = shift;
-    my $punct = shift;
-    if( $punct ) {
-	$self->{'comparator'} = $punct;
-    }
-    return $self->{'comparator'};
-}
-
 =head2 special
 
 Returns a word's special value.  Used for meta-words like
 BEGIN and END.
-
-=cut
-
-sub special {
-    my $self = shift;
-    return unless exists( $self->{'special'} );
-    return $self->{'special'};
-}
 
 =head2 is_empty
 
 Returns whether this is an empty word.  Useful to distinguish from a
 special word.
 
-=cut
+=head2 is_glommed
 
-sub is_empty {
-    my $self = shift;
-    return $self->{'empty'};
-}
+Returns true if the word has been matched together with its
+following word.  If passed with an argument, sets this value.
+
+=head2 is_base
+
+Returns true if the word has been matched together with its
+following word.  If passed with an argument, sets this value.
+
+=head2 placeholders
+
+Returns the sectional markers, if any, that go before the word.
+
+=head2 add_placeholder
+
+Adds a sectional marker that should precede the word in question.
+
+=head2 ms_sigil
+
+Returns the sigil of the manuscript wherein this word appears.
+
+=head2 links
+
+Returns the list of links, or an empty list.
+
+=head2 add_link
+
+Adds to the list of 'like' words in this word's column.
+
+=head2 variants
+
+Returns the list of variants, or an empty list.
+
+=head2 add_variant
+
+Adds to the list of 'different' words in this word's column.
 
 =head2 state
 
@@ -295,161 +412,46 @@ to contain data structure refs.
 
 =cut
 
-my @mutable_keys = qw( glommed );
+
 sub state {
-    my $self = shift;
-    my $opts = {};
-    foreach my $key( @mutable_keys ) {
-	warn( "Not making full copy of ref stored in $key" ) 
-	    if ref( $self->{$key} );
-	$opts->{$key} = $self->{$key};
-    }
-    return $opts;
+	my $self = shift;
+	my $opts = {};
+	foreach my $key( @{$self->_mutable} ) {
+		warn( "Not making full copy of ref stored in $key" ) 
+			if ref( $self->{$key} );
+		$opts->{$key} = $self->{$key};
+	}
+	return $opts;
 }
 
 sub restore_state {
-    my $self = shift;
-    my $opts = shift;
-    return unless ref( $opts ) eq 'HASH';
-    foreach my $key( @mutable_keys ) {
-	$self->{$key} = $opts->{$key};
-    }
+	my $self = shift;
+	my $opts = shift;
+	return unless ref( $opts ) eq 'HASH';
+	foreach my $key( @{$self->_mutable} ) {
+		$self->{$key} = $opts->{$key};
+	}
 }
 
-=head2 is_glommed
+=head2 unicode_normalize
 
-Returns true if the word has been matched together with its
-following word.  If passed with an argument, sets this value.
+A default normalization function for the words we are handed.
 
 =cut
 
-sub is_glommed {
-    my $self = shift;
-    my $val = shift;
-    if( defined( $val ) ) {
-	$self->{'glommed'} = $val;
-    }
-    return $self->{'glommed'};
+sub unicode_normalize {
+	my $word = shift;
+	my @normalized;
+	my @letters = split( '', lc( $word ) );
+	foreach my $l ( @letters ) {
+		my $d = chr( ord( NFKD( $l ) ) );
+		push( @normalized, $d );
+	}
+	return join( '', @normalized );
 }
 
-=head2 is_base
-
-Returns true if the word has been matched together with its
-following word.  If passed with an argument, sets this value.
-
-=cut
-
-sub is_base {
-    my $self = shift;
-    my $val = shift;
-    if( defined( $val ) ) {
-	$self->{'base'} = $val;
-    }
-    return $self->{'base'};
-}
-
-=head2 placeholders
-
-Returns the sectional markers, if any, that go before the word.
-
-=cut
-
-sub placeholders {
-    my $self = shift;
-    return exists $self->{'placeholders'} ? @{$self->{'placeholders'}} : ();
-}
-
-=head2 add_placeholder
-
-Adds a sectional marker that should precede the word in question.
-
-=cut
-
-sub add_placeholder {
-    my $self = shift;
-    my $new_ph = shift;
-    unless( $self->{'placeholders'} ) {
-	$self->{'placeholders'} = [];
-    }
-    push( @{$self->{'placeholders'}}, $new_ph );
-}
-    
-
-=head2 ms_sigil
-
-Returns the sigil of the manuscript wherein this word appears.
-
-=cut
-
-sub ms_sigil {
-    my $self = shift;
-    return exists $self->{'ms_sigil'} ? $self->{'ms_sigil'} : '';
-}
-
-### Links
-
-=head2 links
-
-Returns the list of links, or an empty list.
-
-=cut
-
-sub links {
-    my $self = shift;
-    return exists $self->{'links'} ? @{$self->{'links'}} : ();
-}
-
-=head2 add_link
-
-Adds to the list of 'like' words in this word's column.
-
-=cut
-
-sub add_link {
-    my $self = shift;
-    my $new_obj = shift;
-    unless( ref( $new_obj ) eq 'Text::TEI::Collate::Word' ) {
-	warn "Cannot add a link to a non-word";
-	return;
-    }
-    my $links = exists $self->{'links'} ? $self->{'links'} : [];
-    push( @$links, $new_obj );
-    $self->{'links'} = $links;
-}
-
-=head2 variants
-
-Returns the list of variants, or an empty list.
-
-=cut
-
-sub variants {
-    my $self = shift;
-    return exists $self->{'variants'} ? @{$self->{'variants'}} : ();
-}
-
-=head2 add_variant
-
-Adds to the list of 'different' words in this word's column.
-
-=cut
-
-sub add_variant {
-    my $self = shift;
-    my $new_obj = shift;
-    unless( ref( $new_obj ) eq 'Text::TEI::Collate::Word' ) {
-	warn "Cannot add a non-word as a variant";
-	return;
-    }
-    my $variants = exists $self->{'variants'} ? $self->{'variants'} : [];
-    push( @$variants, $new_obj );
-    $self->{'variants'} = $variants;
-}
-
-=head1 BUGS / TODO
-
-Many things.  I shall enumerate them later.
-
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR
 
