@@ -34,7 +34,6 @@ sub new {
 		 %opts,
     };
     bless $self, $class;
-
     my $type = delete $self->{'type'};
     die "Cannot initialize manuscript without XML, JSON, or string text"     
 	unless( $type =~ /^(xmldesc|plaintext|json)$/ );
@@ -43,6 +42,7 @@ sub new {
 	unless defined $source;
     
     if( $type eq 'xmldesc' ) {
+	$DB::single = 1;
         $self->_init_from_xml( $source );
 	unless( exists $self->{'sigil'} ) {
 	    # Should not actually get here
@@ -107,38 +107,12 @@ sub _init_from_xml {
     $self->{'words'} = \@words;
 }
 
-=head2 tokenize ( $self, $textnode, $strings_only )
-
-Takes an XML::LibXML::Element that is a TEI text element, and returns
-a list of words.  This function can be used in a standalone fashion by
-passing an undefined $self.  Returns a list of
-Text::TEI::Collate::Word objects unless $strings_only is specified, in
-which case it returns a list of words as strings.
-
-=cut
-
-sub tokenize {
-    my( $self, $text, $strings_only ) = @_;
-
-    my @words = _tokenize_text( $self, $text );
-    if( $strings_only ) {
-	return map { $_->word } @words;
-    } else {
-	return @words;
-    }
-}
-
 sub _tokenize_text {
     my( $self, $teitext ) = @_;
     # Strip out the words.
     # TODO: this could use spec consultation.
     my @words;
-    my $xpc;
-    if( $self && defined $self->{'xpc'} ) {
-	$xpc = $self->{'xpc'};
-    } else {
-	$xpc = XML::LibXML::XPathContext->new( $teitext );
-    }
+    my $xpc = $self->{'xpc'};
     my @divs = $xpc->findnodes( '//*[starts-with(name(.), "div")]', $teitext );
     foreach( @divs ) {
 	my $place_str;
@@ -147,12 +121,12 @@ sub _tokenize_text {
 	} else {
 	    $place_str = '__DIV__';
 	}
-	push( @words, _read_paragraphs_or_lines( $self, $_, $place_str ) );
+	push( @words, $self->_read_paragraphs_or_lines( $_, $place_str ) );
     }  # foreach <div/>
     
     # But maybe we don't have any divs.  Just paragraphs.
     unless( @divs ) {
-	push( @words, _read_paragraphs_or_lines( undef, $teitext ) );
+	push( @words, $self->_read_paragraphs_or_lines( $teitext ) );
     }
     return @words;
 }
@@ -161,13 +135,8 @@ sub _read_paragraphs_or_lines {
     my( $self, $element, $divmarker ) = @_;
 
     my @words;
-    my $xpc;
-    if( $self && defined $self->{'xpc'} ) {
-	$xpc = $self->{'xpc'};
-    } else {
-	$xpc = XML::LibXML::XPathContext->new( $element );
-    }
-    my @pgraphs = $xpc->findnodes( './/p | .//lg', $element );
+    my $xpc = $self->{'xpc'};
+    my @pgraphs = $xpc->findnodes( './/tei:p | .//tei:lg', $element );
     return () unless @pgraphs;
     foreach my $pg( @pgraphs ) {
 	# If this paragraph is the descendant of a note element,
@@ -179,7 +148,7 @@ sub _read_paragraphs_or_lines {
 	if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
 	    # We have to split the words by whitespace.
 	    my $string = _get_text_from_node( $pg );
-	    my @pg_words = _split_words( $self, $string );
+	    my @pg_words = $self->_split_words( $string );
 	    # Set the relevant sectioning markers on the first word, if we
 	    # are using word objects.
 	    if( ref( $pg_words[0] ) eq 'Text::TEI::Collate::Word' ) {
@@ -210,17 +179,10 @@ sub _read_paragraphs_or_lines {
 		print STDERR "DEBUG: space found in element node "
 		    . $c->nodeName . "\n" if scalar @textwords > 1;
 		foreach( @textwords ) {
-		    my( $ms_sigil, $comparator, $canonizer ) 
-			= ( undef, sub { lc( $_[0] ) }, undef );
-		    if( $self ) {
-			$ms_sigil = $self->{'sigil'};
-			$comparator = $self->{'comparator'};
-			$canonizer = $self->{'canonizer'};
-		    }
 		    my $w = Text::TEI::Collate::Word->new( 'string' => $_,
-				   'ms_sigil' => $ms_sigil,
-				   'comparator' => $comparator,
-				   'canonizer' => $canonizer );
+							   'ms_sigil' => $self->sigil,
+							   'comparator' => $self->comparator,
+							   'canonizer' => $self->canonizer );
 		    if( $first_word ) {
 			$first_word = 0;
 			# Set the relevant sectioning markers 
@@ -298,18 +260,11 @@ sub _split_words {
     my @raw_words = split( /\s+/, $string );
     my @words;
     foreach my $w ( @raw_words ) {
-	my( $ms_sigil, $comparator, $canonizer ) 
-	    = ( undef, sub { lc( $_[0] ) }, undef );
-	if( $self ) {
-	    $ms_sigil = $self->{'sigil'};
-	    $comparator = $self->{'comparator'};
-	    $canonizer = $self->{'canonizer'};
-	}
 	my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
-						   'ms_sigil' => $ms_sigil,
-						   'comparator' => $comparator,
-						   'canonizer' => $canonizer );
-	    # Skip any words that have been canonized out of existence.
+						   'ms_sigil' => $self->sigil,
+						   'comparator' => $self->comparator,
+						   'canonizer' => $self->canonizer );
+	# Skip any words that have been canonized out of existence.
 	next if( length( $w_obj->word ) == 0 );
 	push( @words, $w_obj );
     }
@@ -333,6 +288,27 @@ sub _init_from_json {
 	}
 	$self->{'words'} = \@words;
     }
+}
+
+sub tokenize_as_json {
+	my $self = shift;
+	my @wordlist;
+	foreach ( @{$self->{words}} ) {
+		if( $_->is_empty ) {
+			push( @wordlist, undef );
+		} else {
+			my $word = { 't' => $_->word || '' };
+			$word->{'n'} = $_->comparison_form;
+			$word->{'c'} = $_->canonical_form;
+			$word->{'punctuation'} = [ $_->punctuation ]
+				if scalar( $_->punctuation );
+			$word->{'placeholders'} = [ $_->placeholders ] 
+				if scalar( $_->placeholders );
+			push( @wordlist, $word );
+		}
+    }
+    return { 'id' => $self->sigil,
+			 'tokens' => \@wordlist};
 }
 
 sub _init_from_string {
@@ -389,6 +365,16 @@ sub words {
     my $self = shift;
     return ( exists $self->{'words'} 
 	     && ref( $self->{'words'} ) eq 'ARRAY' ) ? $self->{'words'} : undef;
+}
+
+sub comparator {
+    my $self = shift;
+    return ( exists $self->{'comparator'} ) ? $self->{'comparator'} : undef;
+}
+
+sub canonizer {
+    my $self = shift;
+    return ( exists $self->{'canonizer'} ) ? $self->{'canonizer'} : undef;
 }
 
 sub replace_words {
