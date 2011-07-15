@@ -221,6 +221,7 @@ around BUILDARGS => sub {
 	unless( $newargs{'word'} ) {
 		$newargs{'comparison_form'} = '';
 		$newargs{'canonical_form'} = '';
+		$newargs{'original_form'} = '';
 	}
 	return $class->$orig( %newargs );
 };

@@ -1316,14 +1316,15 @@ is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
 	sub to_tei {
 		my( $self, @mss ) = @_;
 		( $doc, $body ) = _make_tei_doc( @mss );
-
+		# How many rows do we have?
+		my $textlen = scalar @{$mss[0]->words};
 		##  Generate a base by flattening all the results                               
 		my $initial_base = $self->generate_base( map { $_->words } @mss );
-		foreach my $idx ( 0 .. $#{$initial_base} ) {
+		foreach my $idx ( 0 .. $textlen-1 ) {
 			my %seen;
 			map { $seen{$_->sigil} = 0 } @mss;
-			my $word_obj = $initial_base->[$idx];
-			_make_tei_app( $word_obj, %seen );
+			my @colwords = map { $_->words->[$idx] } @mss;
+			_make_tei_app( \@colwords, %seen );
 		}
 
 		return $doc;
@@ -1370,34 +1371,16 @@ is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
 	}
 
 	sub _make_tei_app {
-		my( $word_obj, %seen ) = @_;
-		my $return_el;
-		# Word object has links (matches) and variants (positional 
-		# non-matches). If an ms has no word here, we will not have seen its 
-		# sigil when we go through the variants.
-		my @matches = $word_obj->links;
-		my @variants = $word_obj->variants;
-		map { $seen{$_->ms_sigil} = 1 } ( $word_obj, @matches, @variants );
-		# Now see if we have any actual variation; are there non-matches?
-		my $variation = @variants ? 1 : 0;
-		# Also if any of the values of %seen are zero, we have variation.
-		foreach my $val ( values %seen ) {
-			unless( $val ) {
+		my( $colwords, %seen ) = @_;
+		# Pick the first word arbitrarily as the reference word object.
+		my $word_obj = $colwords->[0];
+		my $variation = 0;
+		foreach my $w ( @$colwords ) {
+			$seen{$w->ms_sigil} = 1 if $w->ms_sigil;
+			if( $w->original_form ne $word_obj->original_form ) {
 				$variation = 1;
-				last;
 			}
 		}
-		# Also if the matches aren't identical, including punctuation, we 
-		# have variation.
-		if( !@variants ) {
-			foreach my $w ( @matches ) {
-				if( $w->word ne $word_obj->word ) {
-					$variation = 1;
-					last;
-				}
-			}
-		} 
-		
 		# If we do have variation, we create an <app/> element to describe 
 		# it.  If we don't, we create a <w/> element to hold the common word.
 		if( $variation ) {
@@ -1408,9 +1391,9 @@ is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
 			# TODO figure out how to handle placeholders.
 			# For each of $word_obj, @matches, @variants, we need a rdg tag
 			# with the witness sigils converted to their XML IDs.
-			foreach my $rdg ( $word_obj, @matches, @variants ) {
+			foreach my $rdg ( @$colwords ) {
 				my $rdgkey = $rdg->original_form;
-				$rdgkey ||= '';
+				next unless $rdgkey;
 				push( @{$form_witnesses{$rdgkey}}, $rdg->ms_sigil );
 				$forms{$rdgkey} = $rdg;  # Save a representative reading.
 			}
@@ -1422,11 +1405,13 @@ is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
 				$w_el->setAttribute( 'xml:id', 'w'.$word_id_ctr++ );
 				_wrap_punct( $w_el, $forms{$form} );
 			}
-			$return_el = $app_el;
+			my @empty = grep { $seen{$_} == 0 } keys( %seen );
+			if( @empty ) {
+				my $rdg_el = $app_el->addNewChild( $ns_uri, 'rdg' );
+				my $wit_str = join( ' ', map { '#'.$_ } @empty );
+				$rdg_el->setAttribute( 'wit', $wit_str );
+			}
 		} else {
-			# Is it a begin/end special?
-			next if $word_obj->special;
-			# Just give back a word object.
 			my $w_el = $body->addNewChild( $ns_uri, 'w');
 			$w_el->setAttribute( 'xml:id', 'w'.$word_id_ctr++ );
 			_wrap_punct( $w_el, $word_obj );
@@ -1439,7 +1424,6 @@ is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
 		my @punct = $word_obj->punctuation;
 		my $last_pos = -1;
 		foreach my $p ( @punct ) {
-			$DB::single = 1;
 			my @letters = split( '', $str );
 			if( $p->{char} eq $letters[$p->{pos}] ) {
 				my @wordpart = @letters[$last_pos+1..$p->{pos}-1];
