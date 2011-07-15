@@ -15,7 +15,7 @@
         <p>Unpublished manuscript</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="BL5260">
           <msIdentifier>
             <settlement>London</settlement>
             <repository>British Library</repository>

@@ -24,7 +24,6 @@ my $expected_word_length = 288;
 
 my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50,
        'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-       'canonizer' => \&Words::Armenian::canonize_word,
     );
 opendir( PLAIN, "$testdir_plain" ) or die "Could not find plaintext test files: $@";
 my @plain_fn;
@@ -32,7 +31,13 @@ while( my $fn = readdir PLAIN ) {
     next unless $fn =~ /\.txt$/;
     push( @plain_fn, "$testdir_plain/$fn" );
 }
-my @plain_mss = $aligner_plain->align( @plain_fn );
+my @plain_mss;
+foreach ( sort @plain_fn ) {
+    push( @plain_mss, $aligner_plain->read_source( $_,
+       'canonizer' => \&Words::Armenian::canonize_word,
+	  ) );
+}
+$aligner_plain->align( @plain_mss );
 is( scalar @plain_mss, 5, "Returned five objects" );
 foreach( @plain_mss ) {
     is( ref $_, 'Text::TEI::Collate::Manuscript', "Object of correct type" );
@@ -44,7 +49,6 @@ foreach( @plain_mss ) {
 my $aligner_xml = Text::TEI::Collate->new( 'fuzziness' => 50,
 	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 	'canonizer' => \&Words::Armenian::canonize_word,
-	'TEI' => 1,
     );
 opendir( XML, "$testdir_xml" ) or die "Could not find XML test files: $@";
 my @xml_fn;
@@ -52,7 +56,13 @@ while( my $fn = readdir XML ) {
     next unless $fn =~ /\.xml$/;
     push( @xml_fn, "$testdir_xml/$fn" );
 }
-my @xml_mss = $aligner_xml->align( @xml_fn );
+my @xml_mss;
+foreach ( sort @xml_fn ) {
+    push( @xml_mss, $aligner_plain->read_source( $_,
+       'canonizer' => \&Words::Armenian::canonize_word,
+	  ) );
+}
+$aligner_xml->align( @xml_mss );
 is( scalar @xml_mss, 5, "Returned five objects" );
 foreach( @xml_mss ) {
     is( ref $_, 'Text::TEI::Collate::Manuscript', "Object of correct type" );
@@ -76,7 +86,13 @@ while( my $fn = readdir XMLFULL ) {
     next unless $fn =~ /\.xml$/;
     push( @xmlfull_fn, "$testdir_xmlfull/$fn" );
 }
-my @xmlfull_mss = $aligner_xmlfull->align( @xmlfull_fn );
+my @xmlfull_mss;
+foreach ( sort @xmlfull_fn ) {
+    push( @xmlfull_mss, $aligner_xmlfull->read_source( $_,
+       'canonizer' => \&Words::Armenian::canonize_word,
+	  ) );
+}
+$aligner_xml->align( @xmlfull_mss );
 is( scalar @xmlfull_mss, 5, "Returned five objects" );
 foreach( @xmlfull_mss ) {
     is( ref $_, 'Text::TEI::Collate::Manuscript', "Object of correct type" );

@@ -211,6 +211,7 @@ around BUILDARGS => sub {
 			$newargs{'is_empty'} = 1;
 			$newargs{'word'} = '';
 			$newargs{'comparison_form'} = '';
+			$newargs{'canonical_form'} = '';
 			$newargs{'ms_sigil'} = '';
 		} elsif( $key eq 'special' ) {
 			$newargs{'special'} = $args{'special'};

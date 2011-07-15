@@ -1,6 +1,7 @@
-#!/usr/bin/perl -w -CDS
+#!/usr/bin/perl;
 
 use strict;
+use warnings;
 use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
@@ -30,27 +31,29 @@ my( @files ) = @ARGV;
 # how fuzzy a match we can tolerate
 my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
 				       'debug' => $debug,
-				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-				       'canonizer' => \&Words::Armenian::canonize_word,
-				       'comparator' => \&Words::Armenian::comparator,
-				       'TEI' => 1,
     );
-my @results;
+my @mss;
 if( scalar ( @files ) == 1 ) {
     no warnings 'once'; 
     $Storable::Eval = 1;
     my $savedref = retrieve( $files[0] );
-    @results = @$savedref;
+    @mss = @$savedref;
 } else {
-    @results = $aligner->align( @files );
+    foreach ( @files ) {
+	push( @mss, $aligner->read_source( $_,
+		'canonizer' => \&Words::Armenian::canonize_word,
+		'comparator' => \&Words::Armenian::comparator,
+	      ) );
+    }
+    $aligner->align( @mss );
 }
 
 my $ns_uri = 'http://www.tei-c.org/ns/1.0';
-my ( $doc, $body ) = make_tei_doc( @results );
+my ( $doc, $body ) = make_tei_doc( @mss );
 
 ### Initialization 
-##  Generate a base by flattening all the results
-my $initial_base = $aligner->generate_base( map { $_->words } @results );
+##  Generate a base by flattening all the mss
+my $initial_base = $aligner->generate_base( map { $_->words } @mss );
 
 ##  Counter variables
 my $app_id_ctr = 0;  # for xml:id of <app/> tags
@@ -64,7 +67,7 @@ my @app_waiting = ();       # List of deferred entries
 
 foreach my $idx ( 0 .. $#{$initial_base} ) {
     # Mark which texts are on duty
-    foreach my $w ( map { $_->words->[$idx] } @results ) {
+    foreach my $w ( map { $_->words->[$idx] } @mss ) {
 	_mark_start_end( $w, $body, 'end' );
     }
 
@@ -106,7 +109,7 @@ foreach my $idx ( 0 .. $#{$initial_base} ) {
     }
 
     # Mark which texts will now turn up
-    foreach my $w ( map { $_->words->[$idx] } @results ) {
+    foreach my $w ( map { $_->words->[$idx] } @mss ) {
 	_mark_start_end( $w, $body, 'start' );
     }
 }

@@ -35,8 +35,11 @@ while( my $fn = readdir( PLAIN ) ) {
     ok( defined $fh, "opened file $fn" );
     my $lines = join( '', <$fh> );
     $fh->close;
-    my $ms_obj = Text::TEI::Collate::Manuscript->new( 'identifier' => $fn,
-						      'source' => $lines );
+    my $ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'identifier' => $fn,
+	'source' => $lines,
+	'sourcetype' => 'plaintext',
+	);
     is( ref $ms_obj, 'Text::TEI::Collate::Manuscript', "created manuscript object" );
     is( $ms_obj->identifier(), $fn, "has the right identifier" );
     ok( $ms_obj->sigil(), "sigil was auto-assigned as " . $ms_obj->sigil() );
@@ -62,8 +65,10 @@ while ( my $fn = readdir( XML ) ) {
     my $doc;
     eval { $doc = $xmlparser->parse_file( "$testdir_xml/$fn" )->documentElement(); };
     ok( defined $doc, "parsed the XML file $fn" );
-    my $ms_obj = Text::TEI::Collate::Manuscript->new( 'source' => $doc,
-	                                              'type' => 'xmldesc' );
+    my $ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'source' => $doc,
+	'sourcetype' => 'xmldesc' 
+	);
     is( $ms_obj->identifier, $ids[$idx], "Manuscript has correct ID" );
     ok( $ms_obj->sigil(), "sigil was auto-assigned as " . $ms_obj->sigil() );
     ok( !defined( $sigla{$ms_obj->sigil()} ), "sigil not already in use" );
@@ -95,8 +100,10 @@ while ( my $fn = readdir( XMLFULL ) ) {
     my $doc;
     eval { $doc = $xmlparser->parse_file( "$testdir_xmlfull/$fn" )->documentElement(); };
     ok( defined $doc, "parsed the XML file $fn" );
-    my $ms_obj = Text::TEI::Collate::Manuscript->new( 'type' => 'xmldesc',
-						      'source' => $doc );
+    my $ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'sourcetype' => 'xmldesc',
+	'source' => $doc,
+	);
     is( $ms_obj->identifier, $ids[$idx], "Manuscript has correct ID" );
     ok( $ms_obj->sigil(), "sigil was auto-assigned as " . $ms_obj->sigil() );
     ok( !defined( $sigla{$ms_obj->sigil()} ), "sigil not already in use" );

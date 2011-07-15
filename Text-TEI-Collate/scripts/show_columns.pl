@@ -5,11 +5,8 @@ use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
 use Storable qw( store_fd retrieve );
-# use Text::WagnerFischer::Armenian qw( distance );
 use Text::WagnerFischer;
 use Text::TEI::Collate;
-use Unicode::Normalize qw( NFKD );
-# use Words::Armenian;
 
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
@@ -59,15 +56,7 @@ unless( keys %argspec ) {
 
 ## Get busy. 
 my( @files ) = @ARGV;
-if( $cx ) {
-    # The 'files' are actually strings.
-    my $parser = XML::LibXML->new();
-    my $examples = $parser->parse_file( $files[0] )->documentElement;
-    @files = ();
-    foreach my $wit ( $examples->getElementsByTagName( 'witness' ) ) {
-	push( @files, $wit->textContent );
-    }
-} elsif( $json ) {
+if( $json ) {  # The 'file' is the JSON string.
     my @lines;
     while( <> ) {
 	push( @lines, $_ );
@@ -78,41 +67,44 @@ if( $cx ) {
 my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
 				       'debug' => $debug,
 				       'distance_sub' => \&Text::WagnerFischer::distance,
-				       'canonizer' => \&normalize_unicode,
-				       # 'comparator' => \&Words::Armenian::comparator,
-				       'TEI' => !$text && !$cx && !$json,
     );
 
 
-my @results;
+my @mss;
 if( $infile ) {
     no warnings 'once'; 
     $Storable::Eval = 1;
     my $savedref = retrieve( $infile );
-    @results = @$savedref;
-    @files = map { $_->sigil } @results;
+    @mss = @$savedref;
+    @files = map { $_->sigil } @mss;
 } else {
-    @results = $aligner->align( @files );
+    foreach ( @files ) {
+	push( @mss, $aligner->read_source( $_ ) );
+    }
+    $aligner->align( @mss );
+    if( $cx || $json ) {
+	# We didn't have filenames to display; use sigla instead.
+	@files = map { $_->sigil } @mss;
+    }
 }
-
 
 if( $storable ) {
     # Store the array.
     no warnings 'once';
     $Storable::Deparse = 1;
-    store_fd( \@results, \*OUT );
+    store_fd( \@mss, \*OUT );
     exit;
 } 
 
 # Print the array.
 print_fnames() if $CSV;
-foreach my $i ( 0 .. $#{$results[0]->words } ) {
+foreach my $i ( 0 .. $#{$mss[0]->words } ) {
     my $output_str;
     if( $CSV ) {
-	$output_str = join( ',', map { '"' . $_->words->[$i]->printable . '"' } @results ) . "\n";
+	$output_str = join( ',', map { '"' . $_->words->[$i]->printable . '"' } @mss ) . "\n";
     } else {
 	my $format = '%-' . $col_width . "s";
-	$output_str = sprintf( "%-4d:", $i ) . join( '| ', map { sprintf( $format, $_->words->[$i]->printable ) } @results ) . "\n";
+	$output_str = sprintf( "%-4d:", $i ) . join( '| ', map { sprintf( $format, $_->words->[$i]->printable ) } @mss ) . "\n";
     }
     # print_fnames( $i ) unless ( $CSV || $i % 100 );
     print $output_str;
@@ -135,7 +127,7 @@ sub print_fnames {
     if( $cx ) {
 	@titles = ( 0 .. $#files );
     } elsif( $json ) {
-	@titles = map { $_->sigil } @results;
+	@titles = map { $_->sigil } @mss;
     }
     if( $CSV ) {
 	print join( ',', @titles ) . "\n";

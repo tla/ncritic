@@ -60,12 +60,6 @@ options are listed.
 
 =item B<fuzziness> - The maximum allowable word distance for an approximate match, expressed as a percentage of Levenshtein distance / word length.
 
-=item B<punct_as_word> - Treat punctuation as separate words.  Not yet implemented
-
-=item B<not_punct> - Takes an array ref full of characters that should not be treated as punctuation.
-
-=item B<accents> - Takes an array ref full of characters that should be treated as accent marks. (TODO: discuss diff between punctuation & accents)
-
 =item B<canonizer> - Takes a subroutine ref.  The sub should take a string and return a string.  If defined, it will be called to produce a canonical form of the string in question.  Useful for getting rid of ligatures, un-composing characters, correcting common spelling mistakes, etc.
 
 =back
@@ -83,9 +77,6 @@ sub new {
 	distance_sub => undef,
 	fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
 	binmode => 'utf8',
-	punct_as_word => 0,
-	not_punct => [],
-	accents => [],
 	# TODO make this all come from one language module.
 	canonizer => undef,
 	comparator => undef,
@@ -111,30 +102,224 @@ sub new {
     return $self;
 
 }
-    
+
+=head2 read_source
+
+Pass in a word source (a plaintext file, a TEI XML file, or a JSON structure) 
+and a set of options, and get back one or more manuscript objects that can be 
+collated.  Options include:
+
+=over
+
+=item *
+
+canonizer - reference to a subroutine that returns the canonized (e.g. spell-
+corrected) form of the original word.
+
+=item *
+
+comparator - reference to a subroutine that returns the normalized comparison
+string (e.g. all lowercase, no accents) for a word.
+
+=item *
+
+encoding - The encoding of the word source if we are reading from a file.  
+Defaults to utf-8.
+
+=item *
+
+sigil - The sigil that should be assigned to this manuscript in the collation 
+output.  Should be a valid XML attribute value.  This can also be read from a
+TEI XML source.
+
+=item *
+
+identifier - A string to identify this manuscript (e.g. library, MS number).
+Can also be read from a TEI <msdesc/> element.
+
+=back
+
+=begin testing
+
+use lib 't/lib';
+use Text::TEI::Collate;
+use XML::LibXML;
+use Words::Armenian;
+
+my $aligner = Text::TEI::Collate->new();
+
+# Test a manuscript with a plaintext source, filename
+
+my @mss = $aligner->read_source( 't/data/plaintext/test1.txt',
+ 	'sigil' => 'MsA',
+	'identifier' => 'plaintext 1',
+	'canonizer' => \&Words::Armenian::canonize_word,
+	);
+is( scalar @mss, 1, "Got a single object for a plaintext file");
+my $ms = pop @mss;
+	
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'MsA', "Got correct sigil MsA");
+is( scalar( @{$ms->words}), 181, "Got correct number of words in MsA");
+
+# Test a manuscript with a plaintext source, string
+open( T2, "t/data/plaintext/test2.txt" ) or die "Could not open test file";
+my @lines = <T2>;
+close T2;
+@mss = $aligner->read_source( join( '', @lines ),
+	'sigil' => 'MsB',
+	'identifier' => 'plaintext 2',
+	'canonizer' => \&Words::Armenian::canonize_word,
+	);
+is( scalar @mss, 1, "Got a single object for a plaintext string");
+$ms = pop @mss;
+
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'MsB', "Got correct sigil MsB");
+is( scalar( @{$ms->words}), 183, "Got correct number of words in MsB");
+is( $ms->identifier, 'plaintext 2', "Got correct identifier for MsB");
+
+# Test two manuscripts with a JSON source
+open( JS, "t/data/json/testwit.json" ) or die "Could not read test JSON";
+@lines = <JS>;
+close JS;
+@mss = $aligner->read_source( join( '', @lines ),
+	'canonizer' => \&Words::Armenian::canonize_word,
+	);
+is( scalar @mss, 2, "Got two objects from the JSON string" );
+is( ref( $mss[0] ), 'Text::TEI::Collate::Manuscript', "Got manuscript object 1");
+is( ref( $mss[1] ), 'Text::TEI::Collate::Manuscript', "Got manuscript object 2");
+is( $mss[0]->sigil, 'MsAJ', "Got correct sigil for ms 1");
+is( $mss[1]->sigil, 'MsBJ', "Got correct sigil for ms 2");
+is( scalar( @{$mss[0]->words}), 182, "Got correct number of words in ms 1");
+is( scalar( @{$mss[1]->words}), 263, "Got correct number of words in ms 2");
+is( $mss[0]->identifier, 'JSON 1', "Got correct identifier for ms 1");
+is( $mss[1]->identifier, 'JSON 2', "Got correct identifier for ms 2");
+
+# Test a manuscript with an XML source
+@mss = $aligner->read_source( 't/data/xml_plain/test3.xml',
+	'canonizer' => \&Words::Armenian::canonize_word,
+	);
+is( scalar @mss, 1, "Got a single object from XML file" );
+$ms = pop @mss;
+
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'BL5260', "Got correct sigil BL5260");
+is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
+is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
+
+my $parser = XML::LibXML->new();
+my $doc = $parser->parse_file( 't/data/xml_plain/test3.xml' );
+@mss = $aligner->read_source( $doc,
+	'canonizer' => \&Words::Armenian::canonize_word,
+	);
+is( scalar @mss, 1, "Got a single object from XML object" );
+$ms = pop @mss;
+
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'BL5260', "Got correct sigil BL5260");
+is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
+is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
+
+=end testing
+
+=cut 
+
+sub read_source {
+	my( $self, $wordsource, %options ) = @_;
+	my @docroots;
+	my $format;
+	
+	if( !ref( $wordsource ) ) {  # Assume it's a filename.
+		my $parser = XML::LibXML->new();
+		my $doc;
+		eval { $doc = $parser->parse_file( $wordsource ); };
+		if( $doc ) {
+			( $format, @docroots) = _get_xml_roots( $doc );
+			return unless @docroots;
+		} else {
+			# It's not an XML document filename.  Determine plaintext
+			# filename, plaintext string, or JSON string.
+			my $encoding = delete $options{'binmode'};
+			$encoding ||= 'utf8';
+			my $binmode = "<:" . $encoding;
+			my $rc = open( INFILE, $binmode, $wordsource );
+			$format = 'plaintext';
+			if( $rc ) {
+				my @lines = <INFILE>;
+				close INFILE;
+				@docroots = ( join( '', @lines ) );
+			} else {
+				my $json;
+				eval { $json = decode_json( $wordsource ) };
+				if( $json ) {
+					$format = 'json';
+					push( @docroots, @{$json->{'witnesses'}} );
+				} else {
+					# Assume plain old string input.
+					@docroots = ( $wordsource );
+				}
+			}
+		}
+	} elsif ( ref( $wordsource ) eq 'XML::LibXML::Document' ) { # A LibXML object
+		( $format, @docroots ) = _get_xml_roots( $wordsource );
+	} else {   
+		warn "Unrecognized object $wordsource; reading no words";
+		return ();
+	}
+
+	# We have the representations of the manuscript(s).  Initialize our object(s).
+	my @ms_objects;
+	foreach my $doc ( @docroots ) {
+		push( @ms_objects, Text::TEI::Collate::Manuscript->new( 
+			'sourcetype' => $format,
+			'source' => $doc,
+			%options,
+			) );
+	}
+	return @ms_objects;
+}
+
+sub _get_xml_roots {
+	my( $xmldoc ) = @_;
+	my( @docroots, $format );
+	if( $xmldoc->documentElement->nodeName =~ /^tei/i ) {
+		# It is TEI format.
+		@docroots = ( $xmldoc->documentElement );
+		$format = 'xmldesc';
+	} elsif( $xmldoc->documentElement->nodeName =~ /^examples/i ) {
+		# It is CollateX simple input format.  Read the text
+		# strings and then treat it as plaintext.
+		my @collationtexts = $xmldoc->documentElement->getChildrenByTagName( 'example' );
+		if( @collationtexts ) {
+			# Use the first text example in the file; we do not handle multiple
+			# collation runs on different texts.
+			my @witnesses = $collationtexts[0]->getChildrenByTagName( 'witness' );
+			@docroots = map { $_->textContent } @witnesses;
+			$format = 'plaintext';
+		} else {
+			warn "Found no example elements in CollateX XML";
+			return ();
+		}
+	} else {
+		# Uh-oh, it is not a TEI or CollateX sort of document.
+		warn "Cannot parse XML document type " 
+			. $xmldoc->documentElement->nodeName . "; reading no words";
+		return ();
+	}
+	return( $format, @docroots );
+}
+
 =head2 align
 
-This is the meat of the program.  Takes a list of strings, or a list
-of IO::File objects.  (The latter is useful if the text you are
-collating is particularly long.)  Returns a list of collated texts.
-Currently each "text" is simply a list of words, padded for collation
-with empty strings; soon it will be a list of word objects which I
-have yet to describe.
+The meat of the program.  Takes a list of Text::TEI::Collate::Manuscript 
+objects (created by new_manuscript above.)  Returns the same objects with 
+their wordlists collated. 
 
 =cut
 
-# align - Main function.
-# Takes a list of strings, or a list of filehandles.  Returns a list
-# of aligned word arrays.
-
 sub align {
-    my( $self, @texts ) = @_;
-
-    my @manuscripts;
-    foreach ( @texts ) {
-	# Break down each text into word-object arrays.
-	push( @manuscripts, $self->read_manuscript_source( $_ ) );
-    }
+    my( $self, @manuscripts ) = @_;
 
     # This will hold many arrays, one for each collated text.  Each member
     # array will be a list of word objects.  We will eventually return it.

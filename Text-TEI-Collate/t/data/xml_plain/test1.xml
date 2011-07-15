@@ -15,7 +15,7 @@
         <p>Unpublished manuscript</p>
       </publicationStmt>
       <sourceDesc>
-        <msDesc>
+        <msDesc xml:id="Bz449">
           <msIdentifier>
             <settlement>Bzommar</settlement>
             <repository>Bibliothek des Klosters</repository>

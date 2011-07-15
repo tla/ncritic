@@ -26,13 +26,15 @@ my $fuzziness = "50";  # this is n%
 my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
 				       'debug' => 0,
 				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-				       # 'accents' => [ "\x{55b}" ],
-				       'canonizer' => \&Words::Armenian::canonize_word,
-				       'TEI' => ( $type eq 'xml' ),
     );
 
-
-my @results = $aligner->align( @files );
+my @manuscripts;
+foreach ( @files ) {
+    push( @manuscripts, $aligner->read_source( $_,
+		canonizer => \&Words::Armenian::canonize_word,
+	  ) );
+}
+my @results = $aligner->align( @manuscripts );
 
 # Get the new base.  This should have all the links.
 my $initial_base = $aligner->generate_base( map { $_->words } @results );
