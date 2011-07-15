@@ -4,6 +4,7 @@ use vars qw( $VERSION %assigned_sigla );
 use Moose;
 use Moose::Util::TypeConstraints;
 use Text::TEI::Collate::Word;
+use XML::LibXML;
 use XML::Easy::Syntax qw( $xml10_name_rx );
 
 $VERSION = "1.0";
@@ -67,6 +68,13 @@ has 'source' => (  # Can be XML obj, JSON data struct, or string.
 	required => 1,
 );
 
+has 'msdesc' => (  # if we started with a TEI doc
+	is => 'ro',
+	isa => 'XML::LibXML::Element',
+	predicate => 'has_msdesc',
+	writer => '_save_msdesc',
+	);
+
 has 'words' => (
 	is => 'ro',
 	isa => 'ArrayRef[Text::TEI::Collate::Word]',
@@ -114,6 +122,7 @@ sub _init_from_xmldesc {
 	$self->_set_xpc( $xpc );
 	if( my $desc = $xpc->find( '//tei:msDesc' ) ) {
 		my $descnode = $desc->get_node(1);
+		$self->_save_msdesc( $descnode );
 		my( $setNode, $reposNode, $idNode ) =
 			( $xpc->find( '//tei:settlement' )->get_node(1),
 			  $xpc->find( '//tei:repository' )->get_node(1),

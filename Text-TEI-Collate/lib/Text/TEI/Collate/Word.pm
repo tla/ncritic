@@ -202,7 +202,6 @@ around BUILDARGS => sub {
 	## - empty
 	## - json
 	foreach my $key ( keys %args ) {
-		$DB::single = 1;
 		if( $key eq 'string' ) {
 			$newargs{'word'} = $args{'string'};
 		} elsif( $key eq 'json' ) {
@@ -210,8 +209,6 @@ around BUILDARGS => sub {
 		} elsif( $key eq 'empty' ) {
 			$newargs{'is_empty'} = 1;
 			$newargs{'word'} = '';
-			$newargs{'comparison_form'} = '';
-			$newargs{'canonical_form'} = '';
 			$newargs{'ms_sigil'} = '';
 		} elsif( $key eq 'special' ) {
 			$newargs{'special'} = $args{'special'};
@@ -220,6 +217,10 @@ around BUILDARGS => sub {
 		} else {
 			$newargs{$key} = $args{$key};
 		}
+	}
+	unless( $newargs{'word'} ) {
+		$newargs{'comparison_form'} = '';
+		$newargs{'canonical_form'} = '';
 	}
 	return $class->$orig( %newargs );
 };
@@ -266,7 +267,6 @@ sub BUILD {
 # attributes of the word.
 sub _evaluate_word {
 	my $self = shift;
-	$DB::single = 1;
 	my $word = $self->word;
 	return if $word eq '';  # Don't bother for empty words
 

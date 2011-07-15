@@ -64,43 +64,49 @@ options are listed.
 
 =back
 
+=begin testing
+
+use Text::TEI::Collate;
+
+my $aligner = Text::TEI::Collate->new();
+
+is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
+
+=end testing
+
 =cut
 
 # Set the options.  Main option is a pointer to the fuzzy matching algorithm
 # that the user wishes to use.
 sub new {
-    my $proto = shift;
-    my $class = ref( $proto ) || $proto;
-    my %opts = @_;
-    my $self = {
-	debug => 0,
-	distance_sub => undef,
-	fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
-	binmode => 'utf8',
-	# TODO make this all come from one language module.
-	canonizer => undef,
-	comparator => undef,
-	%opts,
-    };
-    
-    unless( defined $self->{distance_sub} ) {
-	# Use the default.
-	my $rc = eval { require Text::WagnerFischer };
-	if( $rc ) {
-	    $self->{distance_sub} = \&Text::WagnerFischer::distance;
-	} else {
-	    warn "No edit distance subroutine passed; default Text::WagnerFischer::distance unavailable.  Cannot initialize collator.";
-	    return undef;
+	my $proto = shift;
+	my $class = ref( $proto ) || $proto;
+	my %opts = @_;
+ 	my $self = {
+		debug => 0,
+		distance_sub => undef,
+		fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
+		binmode => 'utf8',
+		%opts,
+	};
+	
+	unless( defined $self->{distance_sub} ) {
+		# Use the default.
+		my $rc = eval { require Text::WagnerFischer };
+		if( $rc ) {
+ 			$self->{distance_sub} = \&Text::WagnerFischer::distance;
+		} else {
+			warn "No edit distance subroutine passed; default Text::WagnerFischer::distance unavailable.  Cannot initialize collator.";
+			return undef;
+		}
 	}
-    }
-        
-    if( my $b = $self->{'binmode'} ) {
-	binmode STDERR, ":$b";
-    }
     
-    bless $self, $class;
-    return $self;
-
+	if( my $b = $self->{'binmode'} ) {
+		binmode STDERR, ":$b";
+	}
+	
+ 	bless $self, $class;
+	return $self;
 }
 
 =head2 read_source
@@ -142,7 +148,6 @@ Can also be read from a TEI <msdesc/> element.
 =begin testing
 
 use lib 't/lib';
-use Text::TEI::Collate;
 use XML::LibXML;
 use Words::Armenian;
 
@@ -151,7 +156,6 @@ my $aligner = Text::TEI::Collate->new();
 # Test a manuscript with a plaintext source, filename
 
 my @mss = $aligner->read_source( 't/data/plaintext/test1.txt',
- 	'sigil' => 'MsA',
 	'identifier' => 'plaintext 1',
 	'canonizer' => \&Words::Armenian::canonize_word,
 	);
@@ -159,15 +163,14 @@ is( scalar @mss, 1, "Got a single object for a plaintext file");
 my $ms = pop @mss;
 	
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'MsA', "Got correct sigil MsA");
-is( scalar( @{$ms->words}), 181, "Got correct number of words in MsA");
+is( $ms->sigil, 'A', "Got correct sigil A");
+is( scalar( @{$ms->words}), 181, "Got correct number of words in A");
 
 # Test a manuscript with a plaintext source, string
 open( T2, "t/data/plaintext/test2.txt" ) or die "Could not open test file";
 my @lines = <T2>;
 close T2;
 @mss = $aligner->read_source( join( '', @lines ),
-	'sigil' => 'MsB',
 	'identifier' => 'plaintext 2',
 	'canonizer' => \&Words::Armenian::canonize_word,
 	);
@@ -175,9 +178,9 @@ is( scalar @mss, 1, "Got a single object for a plaintext string");
 $ms = pop @mss;
 
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'MsB', "Got correct sigil MsB");
-is( scalar( @{$ms->words}), 183, "Got correct number of words in MsB");
-is( $ms->identifier, 'plaintext 2', "Got correct identifier for MsB");
+is( $ms->sigil, 'B', "Got correct sigil B");
+is( scalar( @{$ms->words}), 183, "Got correct number of words in B");
+is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
 
 # Test two manuscripts with a JSON source
 open( JS, "t/data/json/testwit.json" ) or die "Could not read test JSON";
@@ -221,13 +224,50 @@ is( $ms->sigil, 'BL5260', "Got correct sigil BL5260");
 is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
+## The mss we will test the rest of the tests with.
+@mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+is( scalar @mss, 28, "Got correct number of mss from CX file" );
+my %wordcount = (
+	'base' => 57,
+	'P60' => 20,
+	'P66' => 55,
+	'w1' => 58,
+	'w11' => 57,
+	'w13' => 58,
+	'w17' => 58,
+	'w19' => 57,
+	'w2' => 58,
+	'w21' => 58,
+	'w211' => 54,
+	'w22' => 57,
+	'w28' => 57,
+	'w290' => 46,
+	'w3' => 56,
+	'w30' => 59,
+	'w32' => 58,
+	'w33' => 57,
+	'w34' => 58,
+	'w36' => 58,
+	'w37' => 56,
+	'w38' => 57,
+	'w39' => 58,
+	'w41' => 58,
+	'w44' => 56,
+	'w45' => 58,
+	'w54' => 57,
+	'w7' => 57,
+);
+foreach( @mss ) {
+	is( scalar @{$_->words}, $wordcount{$_->sigil}, "Got correct number of words for " . $_->sigil );
+}
+
 =end testing
 
 =cut 
 
 sub read_source {
 	my( $self, $wordsource, %options ) = @_;
-	my @docroots;
+	my @docroots;  # Holds an array of { sigil, source }
 	my $format;
 	
 	if( !ref( $wordsource ) ) {  # Assume it's a filename.
@@ -246,18 +286,20 @@ sub read_source {
 			my $rc = open( INFILE, $binmode, $wordsource );
 			$format = 'plaintext';
 			if( $rc ) {
+				# It is a filename, thus plaintext.
 				my @lines = <INFILE>;
 				close INFILE;
-				@docroots = ( join( '', @lines ) );
+				@docroots = ( { source => join( '', @lines ) } );
 			} else {
 				my $json;
 				eval { $json = decode_json( $wordsource ) };
 				if( $json ) {
+					# It is a JSON string.
 					$format = 'json';
-					push( @docroots, @{$json->{'witnesses'}} );
+					push( @docroots, map { { source => $_ } } @{$json->{'witnesses'}} );
 				} else {
 					# Assume plain old string input.
-					@docroots = ( $wordsource );
+					@docroots = ( { source => $wordsource } );
 				}
 			}
 		}
@@ -273,8 +315,8 @@ sub read_source {
 	foreach my $doc ( @docroots ) {
 		push( @ms_objects, Text::TEI::Collate::Manuscript->new( 
 			'sourcetype' => $format,
-			'source' => $doc,
 			%options,
+			%$doc,
 			) );
 	}
 	return @ms_objects;
@@ -285,7 +327,7 @@ sub _get_xml_roots {
 	my( @docroots, $format );
 	if( $xmldoc->documentElement->nodeName =~ /^tei/i ) {
 		# It is TEI format.
-		@docroots = ( $xmldoc->documentElement );
+		@docroots = ( { source => $xmldoc->documentElement } );
 		$format = 'xmldesc';
 	} elsif( $xmldoc->documentElement->nodeName =~ /^examples/i ) {
 		# It is CollateX simple input format.  Read the text
@@ -295,7 +337,8 @@ sub _get_xml_roots {
 			# Use the first text example in the file; we do not handle multiple
 			# collation runs on different texts.
 			my @witnesses = $collationtexts[0]->getChildrenByTagName( 'witness' );
-			@docroots = map { $_->textContent } @witnesses;
+			@docroots = map { { sigil => $_->getAttribute( 'id' ),
+								source => $_->textContent } } @witnesses;
 			$format = 'plaintext';
 		} else {
 			warn "Found no example elements in CollateX XML";
@@ -307,7 +350,7 @@ sub _get_xml_roots {
 			. $xmldoc->documentElement->nodeName . "; reading no words";
 		return ();
 	}
-	return( $format, @docroots );
+	return( $format, @docroots );  # TODO Stop the autosigil of CX files
 }
 
 =head2 align
@@ -315,6 +358,20 @@ sub _get_xml_roots {
 The meat of the program.  Takes a list of Text::TEI::Collate::Manuscript 
 objects (created by new_manuscript above.)  Returns the same objects with 
 their wordlists collated. 
+
+=begin nontest
+
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $cols = 106;
+foreach( @mss ) {
+	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
+}
+
+#TODO test the actual collation validity sometime
+
+=end nontest
 
 =cut
 
@@ -1158,9 +1215,26 @@ sub _return_alpha_string {
     return scalar( reverse @chars );
 }
 
-=head2 to_tei
-
 =head2 to_json
+
+Takes a list of aligned manuscripts and returns a data structure suitable for 
+JSON encoding; documented at L<http://gregor.middell.net/collatex/api/collate>
+
+=begin nontest
+
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $jsondata = $aligner->to_json( @mss );
+ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
+my @wits = @{$jsondata->{alignment}};
+is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
+my $columns = 106;
+foreach ( @wits ) {
+	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
+}
+
+=end nontest
 
 =head2 to_graphml
 
@@ -1171,7 +1245,6 @@ sub _return_alpha_string {
 sub to_json {
 	my( $self, @mss ) = @_;
 	my $result = { 'alignment' => [] };
-	$DB::single = 1;
 	foreach my $ms ( @mss ) {
 		push( @{$result->{'alignment'}},
 			  { 'witness' => $ms->sigil,
@@ -1179,6 +1252,55 @@ sub to_json {
 	}
 	return $result;
 }
+
+=head2 to_tei
+
+Takes a list of aligned Manuscript objects and returns a fairly simple TEI 
+XML document in parallel segmentation format, with the words lexically marked 
+as such.  At the moment returns a single paragraph, with the original div and
+paragraph breaks for each witness marked as a <witDetail/> in the apparatus.
+
+=begin testing
+
+use lib 't/lib';
+use Text::TEI::Collate;
+use Words::Armenian;
+use XML::LibXML::XPathContext;
+# Get an alignment to test with
+my $testdir = "t/data/xml_plain";
+opendir( XF, $testdir ) or die "Could not open $testdir";
+my @files = readdir XF;
+my @mss;
+my $aligner = Text::TEI::Collate->new();
+foreach ( sort @files ) {
+	next if /^\./;
+	push( @mss, $aligner->read_source( "$testdir/$_",
+		'canonizer' => \&Words::Armenian::canonize_word
+		) );
+}
+$aligner->align( @mss );
+
+my $doc = $aligner->to_tei( @mss );
+open( RESULT, ">to_tei_result.xml");
+print RESULT $doc->toString(1);
+close RESULT;
+is( ref( $doc ), 'XML::LibXML::Document', "Made TEI document header" );
+my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
+$xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
+
+# Test the creation of a document header from TEI files
+my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
+is( scalar @witdesc, 5, "Found five msdesc nodes");
+
+# Test the creation of apparatus entries
+my @apps = $xpc->findnodes( '//tei:app' );
+is( scalar @apps, 174, "Got the correct number of app entries");
+my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
+is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
+
+=end testing
+
+=cut
 
 ## Block for to_tei logic
 {
@@ -1201,12 +1323,12 @@ sub to_json {
 			my %seen;
 			map { $seen{$_->sigil} = 0 } @mss;
 			my $word_obj = $initial_base->[$idx];
-			my $apparatus = _make_tei_app( $word_obj, %seen );
+			_make_tei_app( $word_obj, %seen );
 		}
 
 		return $doc;
 	}
-
+	
 	sub _make_tei_doc {
 		my @mss = @_;
 		my $doc = XML::LibXML->createDocument( '1.0', 'UTF-8' );
@@ -1226,7 +1348,13 @@ sub to_json {
 		foreach my $m ( @mss ) {
 			my $wit = $witnesslist->addNewChild( $ns_uri, 'witness' );
 			$wit->setAttribute( 'xml:id', $m->sigil );
-			$wit->appendText( $m->identifier );
+			if( $m->has_msdesc ) {
+				my $local_msdesc = $m->msdesc->cloneNode( 1 );
+				$local_msdesc->removeAttribute( 'xml:id' );
+				$wit->appendChild( $local_msdesc );
+			} else {
+				$wit->appendText( $m->identifier );
+			}
 		}
 
 		# Make the body element
@@ -1259,10 +1387,11 @@ sub to_json {
 				last;
 			}
 		}
-		# Also if the matches aren't identical, we have variation.
+		# Also if the matches aren't identical, including punctuation, we 
+		# have variation.
 		if( !@variants ) {
 			foreach my $w ( @matches ) {
-				if( $w->canonical_form ne $word_obj->canonical_form ) {
+				if( $w->word ne $word_obj->word ) {
 					$variation = 1;
 					last;
 				}
@@ -1275,48 +1404,60 @@ sub to_json {
 			my $app_el = $body->addNewChild( $ns_uri, 'app');
 			$app_el->setAttribute( 'xml:id', 'app'.$app_id_ctr++ );
 			my %forms;
+			my %form_witnesses;
 			# TODO figure out how to handle placeholders.
 			# For each of $word_obj, @matches, @variants, we need a rdg tag
 			# with the witness sigils converted to their XML IDs.
 			foreach my $rdg ( $word_obj, @matches, @variants ) {
-				push( @{$forms{$rdg->canonical_form}}, $rdg->ms_sigil );
+				my $rdgkey = $rdg->original_form;
+				$rdgkey ||= '';
+				push( @{$form_witnesses{$rdgkey}}, $rdg->ms_sigil );
+				$forms{$rdgkey} = $rdg;  # Save a representative reading.
 			}
 			foreach my $form ( keys %forms ) {
 				my $rdg_el = $app_el->addNewChild( $ns_uri, 'rdg' );
-				my $wit_str = join( ' ', map { '#'.$_ } @{$forms{$form}});
+				my $wit_str = join( ' ', map { '#'.$_ } @{$form_witnesses{$form}});
 				$rdg_el->setAttribute( 'wit', $wit_str );
-				_wrap_punct( $rdg_el, $form );
+				my $w_el = $rdg_el->addNewChild( $ns_uri, 'w' );
+				$w_el->setAttribute( 'xml:id', 'w'.$word_id_ctr++ );
+				_wrap_punct( $w_el, $forms{$form} );
 			}
 			$return_el = $app_el;
 		} else {
+			# Is it a begin/end special?
+			next if $word_obj->special;
 			# Just give back a word object.
 			my $w_el = $body->addNewChild( $ns_uri, 'w');
 			$w_el->setAttribute( 'xml:id', 'w'.$word_id_ctr++ );
-			$return_el = _wrap_punct( $w_el, $word_obj->canonical_form );
+			_wrap_punct( $w_el, $word_obj );
 		}
 	}
 	
 	sub _wrap_punct {
 		my( $w_el, $word_obj ) = @_;
-		my $str = $word_obj->canonical_form;
+		my $str = $word_obj->original_form;
 		my @punct = $word_obj->punctuation;
 		my $last_pos = -1;
 		foreach my $p ( @punct ) {
+			$DB::single = 1;
 			my @letters = split( '', $str );
 			if( $p->{char} eq $letters[$p->{pos}] ) {
-				my $wordpart = @letters[$last_pos+1..$p->{pos}];
-				$w_el->appendText( $wordpart );
-				my $char = $w_el->addNewchild( $ns_uri, 'c');
+				my @wordpart = @letters[$last_pos+1..$p->{pos}-1];
+				$w_el->appendText( join( '', @wordpart ) );
+				my $char = $w_el->addNewChild( $ns_uri, 'c');
 				$char->setAttribute( "type", "punct" );
 				$char->appendText( $p->{char} );
 				$last_pos = $p->{pos};
+			} else {
+				warn "Punctuation mismatch: " . join( '/', $p->{char}, 
+					$p->{pos} ) . " on " . $str;
 			}
 		}
 		# Now append what is left of the word after the last punctuation.
 		if( $last_pos < length( $str ) - 1 ) {
 			my @letters = split( '', $str );
-			my $wordpart = @letters[$last_pos+1..-1];
-			$w_el->appendText( $wordpart );
+			my @wordpart = @letters[$last_pos+1..$#letters];
+			$w_el->appendText( join( '', @wordpart ) );
 		}
 		return $w_el;
 	}
