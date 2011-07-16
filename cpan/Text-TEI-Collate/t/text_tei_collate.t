@@ -249,8 +249,8 @@ $aligner->align( @mss );
 my $graph = $aligner->to_graph( @mss );
 
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 300, "Got the right number of nodes" );
-is( scalar( $graph->edges ), 987, "Got the right number of edges" );
+is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 992, "Got the right number of edges" );
 }
 
 

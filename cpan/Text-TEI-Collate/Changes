@@ -1,2 +1,13 @@
-This is really only here for kwalitee.  How can there be changes on
-version 1?
+Revision history for Text::TEI::Collate
+
+1.1	 Sat 16 Jul 2011
+
+And here I thought I would never return to this software.
+
+* Changed API to separate manuscript / word source parsing from word
+  alignment.  See Text::TEI::Collate docs for new usage.
+* Converted ::Manuscript and ::Word modules to use Moose.
+* Added output methods for alignment display as JSON, TEI XML,
+  GraphML, and SVG.
+* Added default word comparator / normalizer from Unicode::Normalize.
+* Added some more tests.

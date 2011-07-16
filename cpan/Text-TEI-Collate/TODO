@@ -6,8 +6,6 @@ For the core libraries:
   "chained" alternative words that have already been collated.  This
   would not be hard to do, it just hasn't been done.
 - Handle transposition properly
-- Pull some of the TEI XML generation into the core library
-
 
 For the editing scripts:
 - Allow reading group assignments on the command line
@@ -16,6 +14,3 @@ For the editing scripts:
 - Have a filter for what sort of punctuation we care about.  Or just
   use it more effectively.
 - Write a rule for capital / lowercase orthography
-- Need a way to mark a witDetail as "use this", rather than consuming it.
-- ...Should definitely put it in a <c type="punct"/> container.
-- Handle catchwords appropriately (i.e. don't collate them.)

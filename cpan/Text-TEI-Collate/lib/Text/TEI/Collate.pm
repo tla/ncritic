@@ -1647,9 +1647,9 @@ sub to_graph {
 		my $unique_words;
 		my @location_words = map { $_->words->[$idx] } @manuscripts;
 		foreach my $w ( @location_words ) {
-			if( $w->special eq 'BEGIN' ) {
+			if( $w->special && $w->special eq 'BEGIN' ) {
 				$paths->{$w->ms_sigil} = [ $start_node ];
-			} elsif( $w->special eq 'END' ) {
+			} elsif( $w->special && $w->special eq 'END' ) {
 				push( @{$paths->{$w->ms_sigil}}, $end_node );
 			} elsif( !$w->is_empty && !$w->special ) {
 				push( @{$unique_words->{$w->canonical_form}}, $w->ms_sigil )
