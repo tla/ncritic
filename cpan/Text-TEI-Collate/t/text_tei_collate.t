@@ -193,9 +193,6 @@ foreach ( sort @files ) {
 $aligner->align( @mss );
 
 my $doc = $aligner->to_tei( @mss );
-open( RESULT, ">to_tei_result.xml");
-print RESULT $doc->toString(1);
-close RESULT;
 is( ref( $doc ), 'XML::LibXML::Document', "Made TEI document header" );
 my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
 $xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
