@@ -138,8 +138,41 @@ foreach( @mss ) {
 
 # =begin testing
 {
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $cols = 106;
+foreach( @mss ) {
+	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
+}
+
+#TODO test the actual collation validity sometime
+}
+
+
+
+# =begin testing
+{
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $jsondata = $aligner->to_json( @mss );
+ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
+my @wits = @{$jsondata->{alignment}};
+is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
+my $columns = 106;
+foreach ( @wits ) {
+	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
+}
+}
+
+
+
+# =begin testing
+{
 use lib 't/lib';
 use Text::TEI::Collate;
+use Text::WagnerFischer::Armenian;
 use Words::Armenian;
 use XML::LibXML::XPathContext;
 # Get an alignment to test with
@@ -147,7 +180,10 @@ my $testdir = "t/data/xml_plain";
 opendir( XF, $testdir ) or die "Could not open $testdir";
 my @files = readdir XF;
 my @mss;
-my $aligner = Text::TEI::Collate->new();
+my $aligner = Text::TEI::Collate->new(
+	'fuzziness' => '50',
+	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	);
 foreach ( sort @files ) {
 	next if /^\./;
 	push( @mss, $aligner->read_source( "$testdir/$_",
@@ -170,9 +206,51 @@ is( scalar @witdesc, 5, "Found five msdesc nodes");
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 174, "Got the correct number of app entries");
+is( scalar @apps, 106, "Got the correct number of app entries");
 my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 106, "Got the correct number of matching words");
+is( scalar @words_not_in_app, 182, "Got the correct number of matching words");
+my @details = $xpc->findnodes( '//tei:witDetail' );
+my @detailwits;
+foreach ( @details ) {
+	my $witstr = $_->getAttribute( 'wit' );
+	push( @detailwits, split( /\s+/, $witstr ));
+}
+is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
+
+# TODO test the reconstruction of witnesses from the parallel-seg.
+}
+
+
+
+# =begin testing
+{
+use lib 't/lib';
+use Text::TEI::Collate;
+use Text::WagnerFischer::Armenian;
+use Words::Armenian;
+use XML::LibXML::XPathContext;
+# Get an alignment to test with
+my $testdir = "t/data/xml_plain";
+opendir( XF, $testdir ) or die "Could not open $testdir";
+my @files = readdir XF;
+my @mss;
+my $aligner = Text::TEI::Collate->new(
+	'fuzziness' => '50',
+	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	);
+foreach ( sort @files ) {
+	next if /^\./;
+	push( @mss, $aligner->read_source( "$testdir/$_",
+		'canonizer' => \&Words::Armenian::canonize_word
+		) );
+}
+$aligner->align( @mss );
+
+my $graph = $aligner->to_graph( @mss );
+
+is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
+is( scalar( $graph->nodes ), 300, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 987, "Got the right number of edges" );
 }
 
 
