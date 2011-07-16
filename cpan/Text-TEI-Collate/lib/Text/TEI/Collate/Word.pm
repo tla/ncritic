@@ -21,6 +21,7 @@ has 'comparator' => (
 has 'canonizer' => (
 	is => 'ro',
 	isa => 'Maybe[CodeRef]',
+	default => sub { sub{ lc( $_[0] ) } },
 	);
 	
 has 'comparison_form' => (
@@ -328,54 +329,54 @@ sub printable {
 
 =head2 original_form
 
-If called with an argument, sets the form of the word, punctuation and
-all, that was originally passed.  Returns the word's original form.
+If called with an argument, sets the form of the word, punctuation and all,
+that was originally passed. Returns the word's original form.
 
 =head2 canonical_form
 
 If called with an argument, sets the canonical form of the word (including
-punctuation).  Returns the word's canonical form.
+punctuation). Returns the word's canonical form.
 
 =head2 comparison_form
 
 If called with an argument, sets the normalized comparison form of the word
-(the string that is actually used for collation matching.)  Returns the
-word's comparison form.
+(the string that is actually used for collation matching.) Returns the word's
+comparison form.
 
 =head2 punctuation
 
-If called with an argument, sets the punctuation marks that were
-passed with the word.  Returns the word's puncutation.
+If called with an argument, sets the punctuation marks that were passed with
+the word. Returns the word's puncutation.
 
 =head2 canonizer
 
-If called with an argument, sets the canonizer subroutine that the
-word object should use.  Returns the subroutine.
+If called with an argument, sets the canonizer subroutine that the word object
+should use. Returns the subroutine. Defaults to lc().
 
 =head2 comparator
 
-If called with an argument, sets the comparator subroutine that the
-word object should use.  Returns the subroutine.
+If called with an argument, sets the comparator subroutine that the word
+object should use. Returns the subroutine. Defaults to unicode_normalize in
+this package.
 
 =head2 special
 
-Returns a word's special value.  Used for meta-words like
-BEGIN and END.
+Returns a word's special value. Used for meta-words like BEGIN and END.
 
 =head2 is_empty
 
-Returns whether this is an empty word.  Useful to distinguish from a
-special word.
+Returns whether this is an empty word. Useful to distinguish from a special
+word.
 
 =head2 is_glommed
 
-Returns true if the word has been matched together with its
-following word.  If passed with an argument, sets this value.
+Returns true if the word has been matched together with its following word. If
+passed with an argument, sets this value.
 
 =head2 is_base
 
-Returns true if the word has been matched together with its
-following word.  If passed with an argument, sets this value.
+Returns true if the word has been matched together with its following word. If
+passed with an argument, sets this value.
 
 =head2 placeholders
 
@@ -407,13 +408,12 @@ Adds to the list of 'different' words in this word's column.
 
 =head2 state
 
-Returns a hash of all the values that might be changed by a 
-re-comparison.  Useful to 'back up' a word before attempting a
-rematch.  Currently does not expect any of the 'mutable' keys
-to contain data structure refs.
+Returns a hash of all the values that might be changed by a re-comparison.
+Useful to 'back up' a word before attempting a rematch. Currently does not
+expect any of the 'mutable' keys to contain data structure refs. Meant for
+internal use by the collator.
 
 =cut
-
 
 sub state {
 	my $self = shift;
@@ -437,7 +437,8 @@ sub restore_state {
 
 =head2 unicode_normalize
 
-A default normalization function for the words we are handed.
+A default normalization function for the words we are handed. Strips all
+accents from the word.
 
 =cut
 
