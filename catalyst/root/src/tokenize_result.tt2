@@ -1,0 +1,16 @@
+[% META title = 'Interactive Tokenizer Result' -%]
+   <table>
+     <tr>
+     [% i = 0 -%]
+     [% FOREACH word = word_tokens -%]
+       [% IF i == 10 -%]
+     </tr>
+     <tr>
+           [% i = 0 -%]
+       [% END -%]
+        <td>[% word.t %]<br/>[% word.c %]<br/>[% word.n %]</td>
+	 [% i = i+1 -%]
+       [% END -%]
+     </tr>
+   </table>
+
