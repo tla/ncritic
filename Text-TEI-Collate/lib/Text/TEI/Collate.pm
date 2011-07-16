@@ -1566,11 +1566,25 @@ of the variant graph, as described for the to_graphml method.
 sub to_svg {
 	my( $self, @mss ) = @_;
 	my $graph = $self->to_graph( @mss );
+	$graph->set_attribute( 'node', 'shape', 'ellipse' );
+	_combine_edges( $graph );
 	my $dot = $graph->as_graphviz();
 	my @cmd = qw/dot -Tsvg/;
     my( $svg, $err );
     run( \@cmd, \$dot, ">", binary(), \$svg );
     return $svg;    
+}
+
+sub _combine_edges {
+	my $graph = shift;
+	foreach my $n ( $graph->nodes ) {
+		foreach my $s ( $n->successors ) {
+			my @edges = $n->edges_to( $s );
+			my $new_edge = join( ', ', map { $_->name } @edges );
+			map { $graph->del_edge( $_ ) } @edges;
+			$graph->add_edge( $n, $s, $new_edge );
+		}
+	}
 }
 
 =head2 to_graph
