@@ -28,7 +28,9 @@ opendir( PLAIN, $testdir_plain ) or die "Could not open plaintext file dir: $@";
 my $idx = 0;
 my @text;  # Save the plaintext forms and compare them.
 push( @json, { 'witnesses' => [] } );  # element 0
-while( my $fn = readdir( PLAIN ) ) {
+my @files = readdir PLAIN;
+close PLAIN;
+foreach my $fn ( sort @files ) {
 	next if $fn =~ /^\./;
 	my $fh = new IO::File;
 	$fh->open( "$testdir_plain/$fn", "<:utf8" );
@@ -57,7 +59,6 @@ while( my $fn = readdir( PLAIN ) ) {
 	push( @{$json[0]->{'witnesses'}}, $ms_obj->tokenize_as_json );
 	$idx++;
 }
-close PLAIN;
 
 # Now try to fill them in from the XML.
 %sigla = ();
@@ -65,7 +66,8 @@ $idx = 0;
 my @ids = ( 'Bzommar 449', 'Jerusalem 1051,1107', 'London OR 5260', 'Venice 887', 'Vienna 574' );
 opendir( XML, $testdir_xml ) or die "Could not open XML file dir: $@";
 push( @json, { 'witnesses' => [] } );  # element 1
-while ( my $fn = readdir( XML ) ) {
+@files = readdir XML;
+foreach my $fn ( sort @files ) {
 	next if $fn =~ /^\./;
     # Parse the file
     my $xmlparser = XML::LibXML->new();
@@ -89,7 +91,6 @@ while ( my $fn = readdir( XML ) ) {
     push( @{$json[1]->{'witnesses'}}, $ms_obj->tokenize_as_json );
 	$idx++;
 }
-close XML;
 
 %sigla = ();
 $idx = 0;
@@ -101,7 +102,9 @@ $wordcount[4] = 196;
 $ph_count[4] = 1;
 opendir( XMLFULL, $testdir_xmlfull ) or die "Could not open XML file dir: $@";
 push( @json, { 'witnesses' => [] } );  # element 2
-while ( my $fn = readdir( XMLFULL ) ) {
+@files = readdir XMLFULL;
+close XMLFULL;
+foreach my $fn ( sort @files ) {
     next if $fn =~ /^\./;
     # Parse the file
     my $xmlparser = XML::LibXML->new();
@@ -124,11 +127,9 @@ while ( my $fn = readdir( XMLFULL ) ) {
     is( $words, $wordcount[$idx++], "Manuscript has $words words" );
     push( @{$json[2]->{'witnesses'}}, $ms_obj->tokenize_as_json );
 }
-close XMLFULL;
 
 # Now test the JSON tokenization objects we created from each version
 # of the file.  They should all be identical.
-$DB::single = 1;
 foreach my $idx ( 0 .. $#wordcount ) {
 	# Test the wordcounts.
 	is( scalar @{$json[0]->{witnesses}->[$idx]->{tokens}}, $orig_wordcount[$idx], "Got correct number of words from JSON" );
@@ -138,6 +139,6 @@ foreach my $idx ( 0 .. $#wordcount ) {
 	# Test the content tokens for plaintext.
 	my $t = $text[$idx];
 	$t =~ s/[[:punct:]]//g;
-	is( join( ' ', map { $_->{t} } @{$json[0]->{witnesses}->[$idx]->{tokens}} ), $t, "Got correct words in JSON tokens" );
+	is( join( ' ', map { $_->{t} } @{$json[0]->{witnesses}->[$idx]->{tokens}} ), $t, "Got correct words in plaintext JSON tokens" );
 }
 
