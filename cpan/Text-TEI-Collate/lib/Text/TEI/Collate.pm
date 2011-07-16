@@ -274,7 +274,7 @@ sub read_source {
 	if( !ref( $wordsource ) ) {  # Assume it's a filename.
 		my $parser = XML::LibXML->new();
 		my $doc;
-		eval { $doc = $parser->parse_file( $wordsource ); };
+		eval { local $SIG{__WARN__} = sub { 1 }; $doc = $parser->parse_file( $wordsource ); };
 		if( $doc ) {
 			( $format, @docroots) = _get_xml_roots( $doc );
 			return unless @docroots;
@@ -588,98 +588,6 @@ sub generate_base {
     }
     
     return \@new_base;
-}
-
-# Take a word source (a filename, a string, or an
-# XML::LibXML::Document object), detect its type, and convert it into
-# a manuscript object with a list of word objects.  The following
-# sources are supported:
-# - filename (for plaintext or TEI)
-# - JSON string
-# - plaintext file
-# - XML::LibXML::Document that is TEI
-
-sub read_manuscript_source {
-    my $self = shift;
-    my $wordsource = shift;
-
-    my @docroots;
-    my $format;
-    
-    if( !ref( $wordsource ) ) {  # Assume it's a filename.
-	my $parser = XML::LibXML->new();
-	my $doc;
-	eval { $doc = $parser->parse_file( $wordsource ); };
-	if( $doc && $doc->documentElement->nodeName =~ /^tei/i ) {
-	    # It is TEI format.
-	    @docroots = ( $doc->documentElement );
-	    $format = 'xmldesc';
-	} elsif( $doc && $doc->documentElement->nodeName =~ /^examples/i ) {
-	    # It is CollateX simple input format.  Read the text
-	    # strings and then treat it as plaintext.
-	    my @collationtexts = $doc->documentElement->getChildrenByTagName( 'example' );
-	    if( @collationtexts ) {
-		# Use the first text example in the file; we do not handle multiple
-		# collation runs on different texts.
-		my @witnesses = $collationtexts[0]->getChildrenByTagName( 'witness' );
-		@docroots = map { $_->textContent } @witnesses;
-		$format = 'plaintext';
-	    } else {
-		warn "Found no example elements in CollateX XML";
-		return ();
-	    }
-	} elsif( $doc ) {
-	    # Uh-oh, it is not a TEI sort of document.
-	    warn "Cannot parse XML document type " 
-		. $doc->documentElement->nodeName . "; reading no words";
-	    return ();
-	} else {
-	    # It's not an XML document filename.  Determine plaintext
-	    # filename, plaintext string, or JSON string.
-	    my $binmode = "<:" . $self->{'binmode'};
-	    my $rc = open( INFILE, $binmode, $wordsource );
-	    $format = 'plaintext';
-	    if( $rc ) {
-		my @lines = <INFILE>;
-		close INFILE;
-		@docroots = ( join( '', @lines ) );
-	    } else {
-		my $json;
-		eval { $json = decode_json( $wordsource ) };
-		if( $json ) {
-		    $format = 'json';
-		    push( @docroots, @{$json->{'witnesses'}} );
-		} else {
-		    # Assume plain old string input.
-		    $self->debug( 'Assuming string input', 2 );
-		    @docroots = ( $wordsource );
-		}
-	    }
-	}
-    } elsif ( ref( $wordsource ) eq 'XML::LibXML::Document' ) { # A LibXML object
-	@docroots = ( $wordsource->getDocumentRoot );
-	$format = 'xmldesc';
-	if( $docroots[0]->nodeName eq 'TEI' ) {
-	    # If we have been passed a TEI XML object, it's fair to assume 
-	    # the user wants TEI parsing.
-	    $self->{'TEI'} = 1;
-	}
-    } else {   
-	warn "Unrecognized object $wordsource; reading no words";
-	return ();
-    }
-
-    # We have the representations of the manuscript(s).  Initialize our object(s).
-    my @ms_objects;
-    foreach my $doc ( @docroots ) {
-	push( @ms_objects, Text::TEI::Collate::Manuscript->new( 
-		  'type' => $format,
-		  'source' => $doc,
-		  'canonizer' => $self->{'canonizer'},
-		  'comparator' => $self->{'comparator'},
-	      ) );
-    }
-    return @ms_objects;
 }
 
 # link_words: Another example of my startling inefficiency.  Build
