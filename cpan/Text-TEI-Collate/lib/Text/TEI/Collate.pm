@@ -3,14 +3,18 @@ package Text::TEI::Collate;
 use strict;
 use vars qw( $VERSION );
 use Algorithm::Diff;
-# use Contextual::Return ## TODO: examine
+use File::Temp;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
 use XML::LibXML;
 
-$VERSION = "1.1";
+$VERSION = "1.2";
+
+=head1 NAME
+
+Text::TEI::Collate - a collation program for variant manuscript texts
 
 =head1 SYNOPSIS
 
@@ -1470,14 +1474,19 @@ of the variant graph, as described for the to_graphml method.
 
 sub to_svg {
 	my( $self, @mss ) = @_;
-	my $graph = $self->to_graph( @mss );
-	$graph->set_attribute( 'node', 'shape', 'ellipse' );
-	_combine_edges( $graph );
-	my $dot = $graph->as_graphviz();
-	my @cmd = qw/dot -Tsvg/;
-    my( $svg, $err );
-    run( \@cmd, \$dot, ">", binary(), \$svg );
-    return $svg;    
+        my $graph = $self->to_graph( @mss );
+        $graph->set_attribute( 'node', 'shape', 'ellipse' );
+        _combine_edges( $graph );
+	my $dot = File::Temp->new();
+	binmode( $dot, ':utf8' );
+        print $dot $graph->as_graphviz();
+	close $dot;
+        my @cmd = qw/dot -Tsvg/;
+	push( @cmd, $dot->filename );
+	my( $svg, $err );
+	run( \@cmd, ">", binary(), \$svg, '2>', \$err );
+	warn $err if $err;
+	return $svg;    
 }
 
 sub _combine_edges {
@@ -1485,7 +1494,7 @@ sub _combine_edges {
 	foreach my $n ( $graph->nodes ) {
 		foreach my $s ( $n->successors ) {
 			my @edges = $n->edges_to( $s );
-			my $new_edge = join( ', ', map { $_->name } @edges );
+			my $new_edge = join( ', ', sort( map { $_->name } @edges ) );
 			map { $graph->del_edge( $_ ) } @edges;
 			$graph->add_edge( $n, $s, $new_edge );
 		}
@@ -1504,6 +1513,11 @@ use Text::TEI::Collate;
 use Text::WagnerFischer::Armenian;
 use Words::Armenian;
 use XML::LibXML::XPathContext;
+
+SKIP: { 
+eval{ use Graph::Easy; };
+skip "Graph::Easy not installed; skipping graph tests", 3 if $@;
+
 # Get an alignment to test with
 my $testdir = "t/data/xml_plain";
 opendir( XF, $testdir ) or die "Could not open $testdir";
@@ -1526,6 +1540,7 @@ my $graph = $aligner->to_graph( @mss );
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
 is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
 is( scalar( $graph->edges ), 992, "Got the right number of edges" );
+}    
 
 =end testing
 
@@ -1546,7 +1561,6 @@ sub to_graph {
 	$end_node->set_attribute( 'label', '#END#');
 	my $textlen = $#{$manuscripts[0]->words};
 	my $paths = {};  # A list of nodes per manuscript sigil.
-	$DB::single = 1;
 	my $node_counter = 2;  # We've used n0 and n1 already
 	foreach my $idx ( 0..$textlen ) {
 		my $unique_words;

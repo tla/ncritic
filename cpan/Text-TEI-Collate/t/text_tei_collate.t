@@ -226,6 +226,11 @@ use Text::TEI::Collate;
 use Text::WagnerFischer::Armenian;
 use Words::Armenian;
 use XML::LibXML::XPathContext;
+
+SKIP: { 
+eval{ use Graph::Easy; };
+skip "Graph::Easy not installed; skipping graph tests", 3 if $@;
+
 # Get an alignment to test with
 my $testdir = "t/data/xml_plain";
 opendir( XF, $testdir ) or die "Could not open $testdir";
@@ -248,6 +253,7 @@ my $graph = $aligner->to_graph( @mss );
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
 is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
 is( scalar( $graph->edges ), 992, "Got the right number of edges" );
+}    
 }
 
 

@@ -1,5 +1,10 @@
 Revision history for Text::TEI::Collate
 
+1.2	 Mon 18 Jul 2011
+
+* Fixed testing dependency on Graph::Easy
+* Fixed SVG generation where dot string too long for perl / dot to handle
+
 1.1	 Sat 16 Jul 2011
 
 And here I thought I would never return to this software.
