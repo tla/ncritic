@@ -219,7 +219,7 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 
 
 
-# =begin testing SKIP
+# =begin testing
 {
 use lib 't/lib';
 use Text::TEI::Collate;
@@ -227,6 +227,7 @@ use Text::WagnerFischer::Armenian;
 use Words::Armenian;
 use XML::LibXML::XPathContext;
 
+SKIP: { 
 eval{ use Graph::Easy; };
 skip "Graph::Easy not installed; skipping graph tests", 3 if $@;
 
@@ -252,7 +253,7 @@ my $graph = $aligner->to_graph( @mss );
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
 is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
 is( scalar( $graph->edges ), 992, "Got the right number of edges" );
-    
+}    
 }
 
 
