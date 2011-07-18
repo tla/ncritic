@@ -10,7 +10,7 @@ use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
 use XML::LibXML;
 
-$VERSION = "1.1";
+$VERSION = "1.2";
 
 =head1 NAME
 
