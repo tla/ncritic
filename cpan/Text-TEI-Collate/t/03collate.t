@@ -22,6 +22,7 @@ my $testdir_xmlfull = "$dirname/data/xml_word";
 # Set the expected values.
 my $expected_word_length = 281;
 
+# Test the plaintext files
 my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50,
        'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
     );
@@ -47,9 +48,9 @@ foreach( @plain_mss ) {
     is( scalar @{$_->words}, $expected_word_length, "Words array for plaintext is correct length" );
 }
 
+# Test the freeform XML files
 my $aligner_xml = Text::TEI::Collate->new( 'fuzziness' => 50,
 	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-	'canonizer' => \&Words::Armenian::canonize_word,
     );
 opendir( XML, "$testdir_xml" ) or die "Could not find XML test files: $@";
 my @xml_fn;
@@ -61,6 +62,7 @@ my @xml_mss;
 foreach ( sort @xml_fn ) {
     push( @xml_mss, $aligner_plain->read_source( $_,
        'canonizer' => \&Words::Armenian::canonize_word,
+	   'comparator' => \&Words::Armenian::comparator,
 	  ) );
 }
 $aligner_xml->align( @xml_mss );
@@ -73,13 +75,10 @@ foreach( @xml_mss ) {
 }
 # TODO Check for the right number and sort of divisional markers.
 
-
-# Word-wrapped XML files.  These have varied a little from the others.
+# Test the word-wrapped XML files.  These have varied a little from the others.
 $expected_word_length = 282;
 my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50,
 	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-	'canonizer' => \&Words::Armenian::canonize_word,
-	'TEI' => 1,
     );
 opendir( XMLFULL, "$testdir_xmlfull" ) or die "Could not find xmlfulltext test files: $@";
 my @xmlfull_fn;
@@ -91,6 +90,7 @@ my @xmlfull_mss;
 foreach ( sort @xmlfull_fn ) {
     push( @xmlfull_mss, $aligner_xmlfull->read_source( $_,
        'canonizer' => \&Words::Armenian::canonize_word,
+	   'comparator' => \&Words::Armenian::comparator,
 	  ) );
 }
 $aligner_xml->align( @xmlfull_mss );
@@ -103,11 +103,5 @@ foreach( @xmlfull_mss ) {
 }
 # TODO Check for the right number and sort of divisional markers.
 
-# my @results = ( $plain_mss[0]->words, $xmlfull_mss[0]->words );
-# # Print the array.
-# foreach my $i ( 0 .. 280 ) {
-#     my $output_str = join( '| ', map { sprintf( "%-25s", $_->[$i]->printable ) } @results ) . "\n";
-#     print $output_str;
-# }
 
 
