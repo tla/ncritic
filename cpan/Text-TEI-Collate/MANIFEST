@@ -11,6 +11,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inline2test.conf
 lib/Text/TEI/Collate.pm
+lib/Text/TEI/Collate/Diff.pm
 lib/Text/TEI/Collate/Manuscript.pm
 lib/Text/TEI/Collate/Word.pm
 Makefile.PL
@@ -26,6 +27,9 @@ t/01dependencies.t
 t/02ms_open.t
 t/03collate.t
 t/99-pod.t
+t/data/cx/beckett.xml
+t/data/cx/darwin.xml
+t/data/cx/examples.xml
 t/data/cx/john18-2.xml
 t/data/json/testwit.json
 t/data/plaintext/test1.txt
@@ -50,5 +54,6 @@ t/data/xml_word/test4.xml
 t/data/xml_word/test5.xml
 t/lib/Words/Armenian.pm
 t/text_tei_collate.t
+t/text_tei_collate_diff.t
 t/text_tei_collate_word.t
 TODO
