@@ -138,122 +138,46 @@ foreach( @mss ) {
 
 # =begin testing
 {
-my $aligner = Text::TEI::Collate->new();
-my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
-$aligner->align( @mss );
-my $cols = 106;
-foreach( @mss ) {
-	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
-}
-
-#TODO test the actual collation validity sometime
-}
-
-
-
-# =begin testing
-{
-my $aligner = Text::TEI::Collate->new();
-my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
-$aligner->align( @mss );
-my $jsondata = $aligner->to_json( @mss );
-ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
-my @wits = @{$jsondata->{alignment}};
-is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 106;
-foreach ( @wits ) {
-	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
-}
-}
-
-
-
-# =begin testing
-{
-use lib 't/lib';
+use Test::More::UTF8;
 use Text::TEI::Collate;
-use Text::WagnerFischer::Armenian;
-use Words::Armenian;
-use XML::LibXML::XPathContext;
-# Get an alignment to test with
-my $testdir = "t/data/xml_plain";
-opendir( XF, $testdir ) or die "Could not open $testdir";
-my @files = readdir XF;
-my @mss;
-my $aligner = Text::TEI::Collate->new(
-	'fuzziness' => '50',
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-	);
-foreach ( sort @files ) {
-	next if /^\./;
-	push( @mss, $aligner->read_source( "$testdir/$_",
-		'canonizer' => \&Words::Armenian::canonize_word
-		) );
-}
-$aligner->align( @mss );
+use Text::TEI::Collate::Word;
 
-my $doc = $aligner->to_tei( @mss );
-is( ref( $doc ), 'XML::LibXML::Document', "Made TEI document header" );
-my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
-$xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
+my $base_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'հարիւրից' );
+my $variant_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'զ100ից' );
+my $match_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'զհարիւրից' );
+my $new_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => '100ից' );
+my $different_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'անգամ' );
 
-# Test the creation of a document header from TEI files
-my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
-is( scalar @witdesc, 5, "Found five msdesc nodes");
 
-# Test the creation of apparatus entries
-my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 106, "Got the correct number of app entries");
-my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 182, "Got the correct number of matching words");
-my @details = $xpc->findnodes( '//tei:witDetail' );
-my @detailwits;
-foreach ( @details ) {
-	my $witstr = $_->getAttribute( 'wit' );
-	push( @detailwits, split( /\s+/, $witstr ));
-}
-is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
+my $aligner = Text::TEI::Collate->new();
+$base_word->add_variant( $variant_word );
+is( $aligner->word_match( $base_word, $match_word), $base_word, "Matched base word" );
+is( $aligner->word_match( $base_word, $new_word), $variant_word, "Matched variant word" );
+is( $aligner->word_match( $base_word, $different_word), undef, "Did not match irrelevant words" );
 
-# TODO test the reconstruction of witnesses from the parallel-seg.
+my( $ms1 ) = $aligner->read_source( 'Jn bedwange harde swaer Doe riepen si op gode met sinne' );
+my( $ms2 ) = $aligner->read_source( 'Jn bedvanghe harde suaer. Doe riepsi vp gode met sinne.' );
+$aligner->make_fuzzy_matches( $ms1->words, $ms2->words );
+is( scalar keys %{$aligner->{fuzzy_matches}}, 15, "Got correct number of vocabulary words" );
+my %unique;
+map { $unique{$_} = 1 } values %{$aligner->{fuzzy_matches}};
+is( scalar keys %unique, 11, "Got correct number of fuzzy matching words" );
 }
 
 
 
 # =begin testing
 {
-use lib 't/lib';
+use Test::More::UTF8;
 use Text::TEI::Collate;
-use Text::WagnerFischer::Armenian;
-use Words::Armenian;
-use XML::LibXML::XPathContext;
 
-SKIP: { 
-eval{ use Graph::Easy; };
-skip "Graph::Easy not installed; skipping graph tests", 3 if $@;
-
-# Get an alignment to test with
-my $testdir = "t/data/xml_plain";
-opendir( XF, $testdir ) or die "Could not open $testdir";
-my @files = readdir XF;
-my @mss;
-my $aligner = Text::TEI::Collate->new(
-	'fuzziness' => '50',
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-	);
-foreach ( sort @files ) {
-	next if /^\./;
-	push( @mss, $aligner->read_source( "$testdir/$_",
-		'canonizer' => \&Words::Armenian::canonize_word
-		) );
-}
-$aligner->align( @mss );
-
-my $graph = $aligner->to_graph( @mss );
-
-is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
-is( scalar( $graph->edges ), 992, "Got the right number of edges" );
-}    
+my $aligner = Text::TEI::Collate->new();
+ok( $aligner->_is_near_word_match( 'Արդ', 'Արդ' ), "matched exact string" );
+ok( $aligner->_is_near_word_match( 'հաւասն', 'զհաւասն' ), "matched near-exact string" );
+ok( !$aligner->_is_near_word_match( 'հարիւրից', 'զ100ից' ), "did not match differing string" );
+ok( !$aligner->_is_near_word_match( 'ժամանակական', 'զշարագրական' ), "did not match differing string 2" );
+ok( $aligner->_is_near_word_match( 'ընթերցողք', 'ընթերցողսն' ), "matched near-exact string 2" );
+ok( $aligner->_is_near_word_match( 'պատմագրացն', 'պատգամագրացն' ), "matched pretty close string" );
 }
 
 

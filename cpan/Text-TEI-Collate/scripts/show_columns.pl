@@ -5,8 +5,9 @@ use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
 use Storable qw( store_fd retrieve );
-use Text::WagnerFischer;
+use Text::WagnerFischer::Armenian;
 use Text::TEI::Collate;
+use Words::Armenian;
 
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
@@ -66,7 +67,7 @@ if( $json ) {  # The 'file' is the JSON string.
 
 my $aligner = Text::TEI::Collate->new( 'fuzziness_sub' => \&fuzzy_match,
 				       'debug' => $debug,
-				       'distance_sub' => \&Text::WagnerFischer::distance,
+				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
     );
 
 
@@ -79,7 +80,9 @@ if( $infile ) {
     @files = map { $_->sigil } @mss;
 } else {
     foreach ( @files ) {
-	push( @mss, $aligner->read_source( $_ ) );
+	push( @mss, $aligner->read_source( $_,
+	      canonizer => \&Words::Armenian::canonize_word,
+	      comparator => \&Words::Armenian::comparator ) );
     }
     $aligner->align( @mss );
     if( $cx || $json ) {

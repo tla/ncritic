@@ -20,7 +20,7 @@ my $testdir_xml = "$dirname/data/xml_plain";
 my $testdir_xmlfull = "$dirname/data/xml_word";
 
 # Set the expected values.
-my $expected_word_length = 288;
+my $expected_word_length = 281;
 
 my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50,
        'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
@@ -34,7 +34,8 @@ while( my $fn = readdir PLAIN ) {
 my @plain_mss;
 foreach ( sort @plain_fn ) {
     push( @plain_mss, $aligner_plain->read_source( $_,
-       'canonizer' => \&Words::Armenian::canonize_word,
+		   'canonizer' => \&Words::Armenian::canonize_word,
+		   'comparator' => \&Words::Armenian::comparator,
 	  ) );
 }
 $aligner_plain->align( @plain_mss );
@@ -74,7 +75,7 @@ foreach( @xml_mss ) {
 
 
 # Word-wrapped XML files.  These have varied a little from the others.
-$expected_word_length = 287;
+$expected_word_length = 282;
 my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50,
 	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
 	'canonizer' => \&Words::Armenian::canonize_word,

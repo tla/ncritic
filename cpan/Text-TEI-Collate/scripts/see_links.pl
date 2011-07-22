@@ -32,6 +32,7 @@ my @manuscripts;
 foreach ( @files ) {
     push( @manuscripts, $aligner->read_source( $_,
 		canonizer => \&Words::Armenian::canonize_word,
+		comparator => \&Words::Armenian::comparator,
 	  ) );
 }
 my @results = $aligner->align( @manuscripts );
