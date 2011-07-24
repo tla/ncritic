@@ -1,5 +1,12 @@
 Revision history for Text::TEI::Collate
 
+2.0	 Mon 25 Jul 2011
+
+* Rewrote core diff algorithm - collation is now a lot slower but
+  rather more accurate, or at least it should be.
+* Fixed use of default canonizer / comparator for manuscript words
+* Fixed testing dependency on Graph::Easy, for real this time
+
 1.2	 Mon 18 Jul 2011
 
 * Fixed testing dependency on Graph::Easy

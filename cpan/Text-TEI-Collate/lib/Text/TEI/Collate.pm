@@ -4,7 +4,6 @@ use strict;
 use vars qw( $VERSION );
 # use Algorithm::Diff;
 use File::Temp;
-use Graph::Easy;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Text::TEI::Collate::Diff;
@@ -12,7 +11,7 @@ use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
 use XML::LibXML;
 
-$VERSION = "1.2";
+$VERSION = "2.0";
 
 eval { no warnings; binmode $DB::OUT, ":utf8" };
 
@@ -374,7 +373,7 @@ sub _get_xml_roots {
 			. $xmldoc->documentElement->nodeName . "; reading no words";
 		return ();
 	}
-	return( $format, @docroots );  # TODO Stop the autosigil of CX files
+	return( $format, @docroots );  
 }
 
 =head2 align
@@ -383,19 +382,19 @@ The meat of the program.  Takes a list of Text::TEI::Collate::Manuscript
 objects (created by new_manuscript above.)  Returns the same objects with 
 their wordlists collated. 
 
-=begin notesting
+=begin testing
 
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 106;
+my $cols = 74;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
 
 #TODO test the actual collation validity sometime
 
-=end notesting
+=end testing
 
 =cut
 
@@ -434,27 +433,27 @@ sub align {
 
 	# $base_text now holds all the words, linked in one way or another.
 	# Make a result array from this.
-	
-  	my @result_array = ( [] ) x scalar @manuscripts;
+
+  	my @result_array = map { [] } @manuscripts;
 	my %ridx;
 	foreach( 0 .. $#manuscripts ) {
-	    $ridx{ $manuscripts[$_]->sigil } = $_;
+  		$ridx{ $manuscripts[$_]->sigil } = $_;
 	}
 	foreach my $word ( @$base_text ) {
-	    my %unseen;
-	    map { $unseen{$_->sigil} = 1 } @manuscripts;
-	    my @row_words;
-	    push( @row_words, $word, $word->links );
-	    foreach ( $word->variants ) {
-		push( @row_words, $_, $_->links );
-	    }
-	    foreach my $r ( @row_words ) {
-		push( @{$result_array[$ridx{$r->ms_sigil}]}, $r );
-		delete $unseen{$r->ms_sigil};
-	    }
-	    foreach my $s ( keys %unseen ) {
-		push( @{$result_array[$ridx{$s}]}, $self->empty_word );
-	    }
+ 		my %unseen;
+ 		map { $unseen{$_->sigil} = 1 } @manuscripts;
+ 		my @row_words;
+ 		push( @row_words, $word, $word->links );
+ 		foreach ( $word->variants ) {
+			push( @row_words, $_, $_->links );
+		}
+ 		foreach my $r ( @row_words ) {
+			push( @{$result_array[$ridx{$r->ms_sigil}]}, $r );
+			delete $unseen{$r->ms_sigil};
+ 		}
+ 		foreach my $s ( keys %unseen ) {
+			push( @{$result_array[$ridx{$s}]}, $self->empty_word );
+ 		}
 	}
 
 	# Take the contents of @result_array and put them back into the
@@ -490,13 +489,13 @@ sub empty_word {
 # it if necessary.  That array should *not* be written to here below.
 sub build_array {
  	my $self = shift;
- 	my( $base_text, $text, $variant_run ) = @_;
+ 	my( $base_text, $text ) = @_;
  	my( @base_result, @new_result );   # All the good things we'll return.
 	# Generate our fuzzy-match lookup table.
-	$self->make_fuzzy_matches( $base_text, $text ) unless $variant_run;
+	$self->make_fuzzy_matches( $base_text, $text );
 	# Do the diff.
  	my $diff = Text::TEI::Collate::Diff->new( $base_text, $text, $self );
-	while( $diff->Next ) {
+	while( my $diffpos = $diff->Next ) {
 		if( $diff->Same ) {
   			$self->_handle_diff_same( $diff, $base_text, $text, \@base_result, \@new_result );
 		} elsif( !scalar( $diff->Range( 1 ) ) ) {  # Addition
@@ -509,57 +508,53 @@ sub build_array {
  				. join( '.', map { $_->comparison_form } $diff->Items( 2 ) ), 1 );
 	    
 			# Grab the word sets from each text.
- 			my @base_wlist = @{$base_text}[$diff->Range( 1 )];
- 			my @new_wlist = @{$text}[$diff->Range( 2 )];
-
+			my @base_wlist = @{$base_text}[$diff->Range( 1 )];
+			my @new_wlist = @{$text}[$diff->Range( 2 )];
 			# Does the base have variants against which we can collate the new words?
-			# If so, try it.
-		        if( $variant_run ) {
-			    # We're in the middle of trying; if we don't match, we don't match.
-			    $self->_balance_arrays( \@base_wlist, \@new_wlist );
-			    push( @base_result, @base_wlist );
-			    push( @new_result, @new_wlist );
-			} else {
-			    # Try running against the variants, and collate according to the result.
-			    my @var_wlist;
-			    my %base_idx;
-			    map { push( @var_wlist, $_->variants ) } @base_wlist;
-			    if( scalar @var_wlist ) {
+			# If so, try running against the variants, and collate according to the result.
+			my @var_wlist;
+ 			my %base_idx;
+ 			map { push( @var_wlist, $_->variants ) } @base_wlist;
+			my $matched_variants;
+			my( $b, $n );
+ 			if( scalar @var_wlist ) {
 				# Keep track of which base index each variant is at
 				foreach my $i ( 0 .. $#base_wlist ) {
-				    @base_idx{$base_wlist[$i]->variants} = $i;
+					foreach my $v ( $base_wlist[$i]->variants ) {
+						$base_idx{$v} = $i;
+					}
 				}
 				# Get the last variant(s) of the previous hunk
-				# TODO also get the first variant(s) of the next hunk.
-				unshift( @var_wlist, $base_result[-1]->variants );
-				@base_idx{$base_result[-1]->variants} = -1;
-				
+				if( @base_result ) {
+					unshift( @var_wlist, $base_result[-1]->variants );
+					foreach my $v ( $base_result[-1]->variants ) {
+						$base_idx{$v} = -1;
+					}
+				}
+				# Get the first variant(s) of the next hunk
+				if( $diff->Next && $diff->Items(1) ) {
+					my @next = $diff->Items(1);
+					push( @var_wlist, $next[0]->variants );
+					foreach my $v ( $next[0]->variants ) {
+						$base_idx{$v} = scalar @base_wlist;
+					}
+				}
+				# Put the diff back where it was.
+				$diff->Reset( $diffpos );
+			
 				# Collate against the variants
-				my( $var1, $var2 ) = $self->build_array( \@var_wlist, \@new_wlist, 1 );
-
-				# Yes these are scalars named identically to arrays above.  It is
-				# because they are really doing the same thing but I need scalars
-				# for return values from add_variant_matches, and it's hard enough
-				# inventing names for genuinely new things.
-				my ( $base_wlist, $new_wlist ) = $self->_add_variant_matches( $var1, $var2, \@base_wlist, \%base_idx );
-				push( @base_result, @$base_wlist );
-				push( @new_result, @$new_wlist );
-			    } else {
-				# We have no variants, just balance the arrays.
-				$self->_balance_arrays( \@base_wlist, \@new_wlist );
-				push( @base_result, @base_wlist );
-				push( @new_result, @new_wlist );
-			    }
+				my @match_sets = $self->_match_variants( \@var_wlist, \@new_wlist, \%base_idx );
+				if( @match_sets ) {
+					$matched_variants = 1;
+					( $b, $n ) = $self->_add_variant_matches( \@match_sets, \@base_wlist, \@new_wlist, \%base_idx );
+				}
 			}
-			# Set variant links.
-			unless( $variant_run ) {
-			    foreach my $i ( $#base_wlist ) {
-				next if $base_wlist[$i] eq $self->empty_word;
-				next if $new_wlist[$i] eq $self->empty_word;
-				$base_wlist[$i]->add_variant( $new_wlist[$i] );
-			    }
+			unless( $matched_variants ) {
+				( $b, $n ) = ( \@base_wlist, \@new_wlist );
+				$self->_balance_arrays( $b, $n );
 			}
-
+			push( @base_result, @$b );
+			push( @new_result, @$n );
 		}	
 	}
 
@@ -567,11 +562,19 @@ sub build_array {
 }
 
 sub _balance_arrays {
-    my( $self, $base, $new ) = @_;
-    my $difflen = @$base - @$new;
-    my $shorter = $difflen > 0 ? $new : $base;
-    push( @$shorter, ( $self->empty_word ) x abs( $difflen ) ) if $difflen;
-    return( $base, $new );
+ 	my( $self, $base, $new, $nolink ) = @_;
+ 	my $difflen = @$base - @$new;
+ 	my $shorter = $difflen > 0 ? $new : $base;
+	push( @$shorter, ( $self->empty_word ) x abs( $difflen ) ) if $difflen;
+	# Set variant links.
+	unless( $nolink ) {
+		foreach my $i ( 0 .. $#{$base} ) {
+			next if $base->[$i] eq $self->empty_word;
+			next if $new->[$i] eq $self->empty_word;
+			$base->[$i]->add_variant( $new->[$i] );
+		}
+	}
+	return( $base, $new );
 }
 
 =begin testing
@@ -587,103 +590,129 @@ my @test = (
 my $aligner = Text::TEI::Collate->new();
 my @mss = map { $aligner->read_source( $_ ) } @test;
 $aligner->align( @mss );
-my @base = $aligner->generate_base( @mss );
-is( scalar @base, 7, "Got right number of words" );
-is( $base[0]->word, 'the', "Got correct first word" );
-is( scalar $base[0]->links, 3, "Got 3 links );
-is( scalar $base[0]->variants, 0, "Got 0 variants );
-is( $base[1]->word, 'bright', "Got correct second word" );
-is( scalar $base[1]->links, 3, "Got 3 links );
-is( scalar $base[1]->variants, 0, "Got 0 variants );
-is( $base[2]->word, 'black', "Got correct third word" );
-is( scalar $base[2]->links, 0, "Got 0 links );
-ok( scalar $base[2]->variants, "Got some variants );
-is( $base[3]->word, 'dog', "Got correct fourth word" );
-is( scalar $base[3]->links, 2, "Got 2 links );
-is( scalar $base[3]->variants, 1, "Got 1 variants );
-is( $base[4]->word, 'had', "Got correct fifth word" );
-is( scalar $base[4]->links, 3, "Got 3 links );
-is( scalar $base[4]->variants, 0, "Got 0 variants );
-is( $base[5]->word, 'his', "Got correct sixth word" );
-is( scalar $base[5]->links, 1, "Got 1 link );
-is( scalar $base[5]->variants, 1, "Got 1 variant );
-is( scalar( $base[5]->get_variant(0), 1, "Got 1 variant link );
-is( $base[6]->word, 'day', "Got correct seventh word" );
-is( scalar $base[6]->links, 3, "Got 3 links );
-is( scalar $base[7]->variants, 0, "Got 0 variants );
+my $base = $aligner->generate_base( @mss );
+# Get rid of the specials
+pop @$base;
+shift @$base;
+is( scalar @$base, 8, "Got right number of words" );
+is( $base->[0]->word, 'the', "Got correct first word" );
+is( scalar $base->[0]->links, 3, "Got 3 links" );
+is( scalar $base->[0]->variants, 0, "Got 0 variants" );
+is( $base->[1]->word, 'black', "Got correct second word" );
+is( scalar $base->[1]->links, 0, "Got 0 links" );
+is( scalar $base->[1]->variants, 1, "Got 1 variant" );
+is( $base->[1]->get_variant(0)->word, 'bright', "Got correct first variant" );
+is( scalar $base->[1]->get_variant(0)->links, 1, "Got a variant link" );
+is( $base->[2]->word, 'white', "Got correct second word" );
+is( scalar $base->[2]->links, 1, "Got 1 links" );
+is( scalar $base->[2]->variants, 0, "Got 0 variants" );
+is( $base->[3]->word, 'red', "Got correct third word" );
+is( scalar $base->[3]->links, 0, "Got 0 links" );
+is( scalar $base->[3]->variants, 1, "Got a variant" );
+is( $base->[3]->get_variant(0)->word, 'cat', "Got correct second variant" );
+is( scalar $base->[3]->get_variant(0)->links, 0, "Variant has no links" );
+is( $base->[4]->word, 'dog', "Got correct fourth word" );
+is( scalar $base->[4]->links, 2, "Got 2 links" );
+is( scalar $base->[4]->variants, 0, "Got 0 variants" );
+is( $base->[5]->word, 'had', "Got correct fifth word" );
+is( scalar $base->[5]->links, 3, "Got 3 links" );
+is( scalar $base->[5]->variants, 0, "Got 0 variants" );
+is( $base->[6]->word, 'his', "Got correct sixth word" );
+is( scalar $base->[6]->links, 1, "Got 1 link" );
+is( scalar $base->[6]->variants, 1, "Got 1 variant" );
+is( scalar $base->[6]->get_variant(0)->links, 1, "Got 1 variant link" );
+is( $base->[6]->get_variant(0)->word, 'her', "Got correct third variant");
+is( $base->[7]->word, 'day', "Got correct seventh word" );
+is( scalar $base->[7]->links, 3, "Got 3 links" );
+is( scalar $base->[7]->variants, 0, "Got 0 variants" );
 
 =end testing
 
 =cut
 
-sub _add_variant_matches {
-    my( $self, $var_base, $var_new, $orig_base, $base_idx ) = @_;
-    my( $base_wlist, $new_wlist ) = ( [], [] );
-
-    my @index_sets;
-    foreach my $idx ( 0 .. $#{$var_new} ) {
-	my $n = $var_new->[$idx];
-	foreach my $v ( @$var_base ) {
-	    if( $n->linked_to eq $v ) {
-		push( @index_sets, [ $base_idx->{$v}, $idx, $v ] );
-	    }
+sub _match_variants {
+	my( $self, $variants, $new, $base_idx ) = @_;
+	my @match_sets;
+	my $last_idx_matched = -1;
+	my %variant_matched;
+	foreach my $n_idx ( 0 .. $#{$new} ) {
+		my $n = $new->[$n_idx];
+		foreach my $v ( @$variants ) {
+			next if $base_idx->{$v} < $last_idx_matched;
+			next if exists $variant_matched{$v};
+			if( $self->{fuzzy_matches}->{$n->comparison_form}
+				eq $self->{fuzzy_matches}->{$v->comparison_form} ) {
+				$v->add_link( $n );
+				$variant_matched{$v} = 1;
+				push( @match_sets, [ $base_idx->{$v}, $n_idx, $v ] );
+				$last_idx_matched = $base_idx->{$v};
+			}
+		}
 	}
-    }
-
-    my( $last_b, $last_n ) = ( 0, 0 );
-    unless( @index_sets ) {
-	# If we had no variant matches, just balance and go.
-	$self->balance_arrays( $orig_base, $var_new );
-	return( $orig_base, $var_new );
-    }
-
-    # Okay, we had variant matches.
-    my %seen_base_indices;
-    foreach my $p ( @index_sets ) {
-	my( $b_idx, $n_idx, $v ) = @$p;
-	# Balance the arrays up to the indices we have.
-	my( @tb, @tn );
-	if( $b_idx > $last_b 
-	    && $b_idx < scalar @$orig_base ) {
-	    @tb = @{$orig_base}[$last_b .. $b_idx-1];
-	}
-	if( $n_idx > $last_n ) {
-	    @tn = @{$var_new}[$last_n .. $n_idx-1];
-	}
-	$self->balance_arrays( \@tb, \@tn );
-	push( @$base_wlist, @tb );
-	push( @$new_wlist, @tn );
-
-	# If this is the first occurrence of $b_idx, push the pair.
-	# If it is not the first occurrence, unlink the variant and
-	# then push the pair.
-	if( $seen_base_indices{$b_idx} 
-	    || $b_idx == -1
-	    || $b_idx == scalar( @$orig_base ) ) {
-	    # Unlink variant from base, push as extra.
-	    $v->variant_of->unlink_variant( $v );
-	    # Push the variant.
-	    push( @$base_wlist, $v );
-	} else {
-	    # Just push the base.
-	    push( @$base_wlist, $orig_base->[$b_idx] );
-	}
-	# Either way, push the new.
-	push( @$new_wlist, $var_new->[$n_idx] );
-
-	# Save the index pair we were just working on.
-	( $last_b, $last_n ) = ( $b_idx, $n_idx );
-    }
-
-    # Now push whatever remains of each array.
-
-    # ...and return the whole.
-    return( $base_wlist, $new_wlist );
+	return @match_sets;
 }
-# Return the word, either A or a variant of A, that matches B. 
-# Otherwise return undef, i.e. false.
 
-=begin notesting
+sub _add_variant_matches {
+ 	my( $self, $match_sets, $base, $new, $base_idx ) = @_;
+ 	my( $base_wlist, $new_wlist ) = ( [], [] );
+
+ 	my( $last_b, $last_n ) = ( 0, 0 );
+	my %seen_base_indices;
+	foreach my $p ( @$match_sets ) {
+		my( $b_idx, $n_idx, $v ) = @$p;
+		# Balance the arrays up to the indices we have.
+		my( @tb, @tn );
+		if( $b_idx > $last_b+1 
+ 			&& $b_idx < scalar @$base ) {
+ 			@tb = @{$base}[$last_b .. $b_idx-1];
+		}
+		if( $n_idx > $last_n+1 ) {
+			@tn = @{$new}[$last_n .. $n_idx-1];
+		}
+		$self->_balance_arrays( \@tb, \@tn );
+		push( @$base_wlist, @tb ) if @tb;
+		push( @$new_wlist, @tn ) if @tn;
+
+		# If this is the first occurrence of $b_idx, push the pair.
+		# If it is not the first occurrence, unlink the variant and
+		# then push the pair.
+		if( $seen_base_indices{$b_idx} 
+ 			|| $b_idx == -1
+			|| $b_idx == scalar( @$base ) ) {
+  			# Unlink variant from base, push as extra.
+			$DB::single = 1 unless $v->variant_of;
+ 			$v->variant_of->unlink_variant( $v );
+ 			# Push the variant.
+			push( @$base_wlist, $v );
+		} else {
+ 			# Just push the base.
+ 			push( @$base_wlist, $base->[$b_idx] );
+		}
+		# Either way, push the new.
+		push( @$new_wlist, $new->[$n_idx] );
+		$seen_base_indices{$b_idx} = 1;
+
+		# Save the index pair we were just working on.
+		( $last_b, $last_n ) = ( $b_idx, $n_idx );
+    }
+
+	# Now push whatever remains of each array.
+	my( @tb, @tn );
+	if( scalar @$base > $last_b+1 ) {
+		@tb = @{$base}[$last_b+1 .. $#{$base}];
+	}
+	if( scalar @$new > $last_n+1 ) {
+		@tn = @{$new}[$last_n+1 .. $#{$new}];
+	}
+	$self->_balance_arrays( \@tb, \@tn );
+	push( @$base_wlist, @tb ) if @tb;
+	push( @$new_wlist, @tn ) if @tn;
+
+	# ...and return the whole.
+	return( $base_wlist, $new_wlist );
+}
+
+=begin testing
 
 use Test::More::UTF8;
 use Text::TEI::Collate;
@@ -710,7 +739,7 @@ my %unique;
 map { $unique{$_} = 1 } values %{$aligner->{fuzzy_matches}};
 is( scalar keys %unique, 11, "Got correct number of fuzzy matching words" );
 
-=end notesting
+=end testing
 
 =cut
 
@@ -764,7 +793,7 @@ sub word_match {
 	return undef;
 }
 
-=begin notesting
+=begin testing
 
 use Test::More::UTF8;
 use Text::TEI::Collate;
@@ -777,7 +806,7 @@ ok( !$aligner->_is_near_word_match( 'ժամանակական', 'զշարագրա�
 ok( $aligner->_is_near_word_match( 'ընթերցողք', 'ընթերցողսն' ), "matched near-exact string 2" );
 ok( $aligner->_is_near_word_match( 'պատմագրացն', 'պատգամագրացն' ), "matched pretty close string" );
 
-=end notesting
+=end testing
 
 =cut
 
@@ -811,17 +840,15 @@ sub _is_near_word_match {
 
 sub _handle_diff_same {
 	my $self = shift;
-	my( $diff, $base_text, $new_text, $base_result, $new_result, $msg ) = @_;
+	my( $diff, $base_text, $new_text, $base_result, $new_result ) = @_;
  	# Get the index range.
- 	$msg = 'same' unless $msg;
 	my @rbase = $diff->Range( 1 );
 	my @rnew = $diff->Range( 2 );
  	my @base_wlist = @{$base_text}[@rbase];
 	my @new_wlist = @{$new_text}[@rnew];
  	my $msg_words = join( ' ', _stripped_words( \@base_wlist ) );
-	$msg_words .= ' / ' . join( ' ', _stripped_words( \@new_wlist ) )
-		unless( $msg eq 'same' );
- 	$self->debug( "Diff: pushing $msg words $msg_words", 2 );
+	$msg_words .= ' / ' . join( ' ', _stripped_words( \@new_wlist ) );
+ 	$self->debug( "Diff: pushing matched words $msg_words", 2 );
 	foreach my $i ( 0 .. $#base_wlist ) {
 		# Link the word to its match.  This means having to compare
 		# the words again, grr argh.
@@ -856,10 +883,16 @@ sub generate_base {
     my $self = shift;
     my @texts = @_;
 
+	my @word_arrays;
+	foreach( @texts ) {
+		push( @word_arrays, 
+			ref( $_ ) eq 'Text::TEI::Collate::Manuscript' ? $_->words : $_ );
+	}
+	
     # Error checking: are they all the same length?
-    my $width = scalar @texts;
+    my $width = scalar @word_arrays;
     my $length = 0;
-    foreach my $t ( @texts ) {
+    foreach my $t ( @word_arrays ) {
 	$length = scalar( @$t ) unless $length;
 	warn "ERROR: texts are not all same length"
 	    if scalar( @$t ) ne $length;
@@ -873,8 +906,8 @@ sub generate_base {
 	                             # word, but just in case there is a
 	                             # gap, it should be the right object.
 	foreach my $col ( 0 .. $width - 1 ) {
-	    if( $texts[$col]->[$idx]->comparison_form ne '' ) {
-		$word = $texts[$col]->[$idx];
+	    if( $word_arrays[$col]->[$idx]->comparison_form ne '' ) {
+		$word = $word_arrays[$col]->[$idx];
 		$word->is_base( 1 );
 		last;
 	    }
@@ -980,7 +1013,7 @@ sub _special {
 Takes a list of aligned manuscripts and returns a data structure suitable for 
 JSON encoding; documented at L<http://gregor.middell.net/collatex/api/collate>
 
-=begin notesting
+=begin testing
 
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
@@ -989,12 +1022,12 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 106;
+my $columns = 74;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
 
-=end notesting
+=end testing
 
 =cut
 
@@ -1016,7 +1049,7 @@ XML document in parallel segmentation format, with the words lexically marked
 as such.  At the moment returns a single paragraph, with the original div and
 paragraph breaks for each witness marked as a <witDetail/> in the apparatus.
 
-=begin notesting
+=begin testing
 
 use lib 't/lib';
 use Text::TEI::Collate;
@@ -1051,9 +1084,9 @@ is( scalar @witdesc, 5, "Found five msdesc nodes");
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 106, "Got the correct number of app entries");
+is( scalar @apps, 111, "Got the correct number of app entries");
 my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 182, "Got the correct number of matching words");
+is( scalar @words_not_in_app, 171, "Got the correct number of matching words");
 my @details = $xpc->findnodes( '//tei:witDetail' );
 my @detailwits;
 foreach ( @details ) {
@@ -1064,7 +1097,7 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 
 # TODO test the reconstruction of witnesses from the parallel-seg.
 
-=end notesting
+=end testing
 
 =cut
 
@@ -1351,7 +1384,7 @@ sub _combine_edges {
 Base method for graph-based output - create the (Graph::Easy) graph that will
 be used to generate graphml or svg.
 
-=begin notesting
+=begin testing
 
 use lib 't/lib';
 use Text::TEI::Collate;
@@ -1359,6 +1392,8 @@ use Text::WagnerFischer::Armenian;
 use Words::Armenian;
 use XML::LibXML::XPathContext;
 
+eval 'require Graph::Easy;';
+unless( $@ ) {
 # Get an alignment to test with
 my $testdir = "t/data/xml_plain";
 opendir( XF, $testdir ) or die "Could not open $testdir";
@@ -1381,13 +1416,19 @@ my $graph = $aligner->to_graph( @mss );
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
 is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
 is( scalar( $graph->edges ), 992, "Got the right number of edges" );
+}
 
-=end notesting
+=end testing
 
 =cut
 
 sub to_graph {
 	my( $self, @manuscripts ) = @_;
+	eval 'require Graph::Easy;';
+	if( $@ ) {
+		warn "Graph generation requires module Graph::Easy";
+		return;
+	}
 	my $graph = Graph::Easy->new();
 	# All manuscripts run from START to END.
 	my $start_node = $graph->add_node( 'n0' );
@@ -1441,19 +1482,6 @@ sub debug {
 
 1;
 
-=head1 BUGS / TODO
-
-=over
-
-=item *
-
-Refactor the string matching; currently it's done twice
-
-=item *
-
-Proper documentation
-
-=back
 
 =head1 AUTHOR
 

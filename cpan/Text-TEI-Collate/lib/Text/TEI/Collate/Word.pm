@@ -85,6 +85,7 @@ has 'variants' => (
 	handles => {
 		'variants' => 'elements',
 		'add_variant' => 'push',
+		'get_variant' => 'get',
 		'_clear_variants' => 'clear',
 		},
 	);
@@ -135,6 +136,10 @@ has '_mutable' => (
 	);
 
 $VERSION = "1.0";
+
+=head1 NAME
+
+Text::TEI::Collate::Word - represent a collatable word in a manuscript text
 
 =head1 DESCRIPTION
 
@@ -242,17 +247,19 @@ around BUILDARGS => sub {
 };
 
 around add_link => sub {
-    my( $self, @args ) = @_;
-    foreach( @args ) {
-	$_->_set_linked( $self );
-    }
+	my( $orig, $self, @args ) = @_;
+	foreach( @args ) {
+		$_->_set_linked( $self );
+	}
+	$self->$orig( @args );
 };
 
 around add_variant => sub {
-    my( $self, @args ) = @_;
-    foreach( @args ) {
-	$_->_set_variant_of( $self );
-    }
+	my( $orig, $self, @args ) = @_;
+	foreach( @args ) {
+		$_->_set_variant_of( $self );
+	}
+	$self->$orig( @args );
 };
 
 sub _init_from_json {

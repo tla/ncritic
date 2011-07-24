@@ -76,7 +76,7 @@ foreach( @xml_mss ) {
 # TODO Check for the right number and sort of divisional markers.
 
 # Test the word-wrapped XML files.  These have varied a little from the others.
-$expected_word_length = 282;
+$expected_word_length = 281;
 my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50,
 	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
     );

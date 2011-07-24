@@ -138,6 +138,73 @@ foreach( @mss ) {
 
 # =begin testing
 {
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $cols = 74;
+foreach( @mss ) {
+	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
+}
+
+#TODO test the actual collation validity sometime
+}
+
+
+
+# =begin testing
+{
+use Text::TEI::Collate;
+
+my @test = (
+    'the black dog had his day',
+    'the white dog had her day',
+    'the bright red dog had his day',
+    'the bright white cat had her day',
+);
+my $aligner = Text::TEI::Collate->new();
+my @mss = map { $aligner->read_source( $_ ) } @test;
+$aligner->align( @mss );
+my $base = $aligner->generate_base( @mss );
+# Get rid of the specials
+pop @$base;
+shift @$base;
+is( scalar @$base, 8, "Got right number of words" );
+is( $base->[0]->word, 'the', "Got correct first word" );
+is( scalar $base->[0]->links, 3, "Got 3 links" );
+is( scalar $base->[0]->variants, 0, "Got 0 variants" );
+is( $base->[1]->word, 'black', "Got correct second word" );
+is( scalar $base->[1]->links, 0, "Got 0 links" );
+is( scalar $base->[1]->variants, 1, "Got 1 variant" );
+is( $base->[1]->get_variant(0)->word, 'bright', "Got correct first variant" );
+is( scalar $base->[1]->get_variant(0)->links, 1, "Got a variant link" );
+is( $base->[2]->word, 'white', "Got correct second word" );
+is( scalar $base->[2]->links, 1, "Got 1 links" );
+is( scalar $base->[2]->variants, 0, "Got 0 variants" );
+is( $base->[3]->word, 'red', "Got correct third word" );
+is( scalar $base->[3]->links, 0, "Got 0 links" );
+is( scalar $base->[3]->variants, 1, "Got a variant" );
+is( $base->[3]->get_variant(0)->word, 'cat', "Got correct second variant" );
+is( scalar $base->[3]->get_variant(0)->links, 0, "Variant has no links" );
+is( $base->[4]->word, 'dog', "Got correct fourth word" );
+is( scalar $base->[4]->links, 2, "Got 2 links" );
+is( scalar $base->[4]->variants, 0, "Got 0 variants" );
+is( $base->[5]->word, 'had', "Got correct fifth word" );
+is( scalar $base->[5]->links, 3, "Got 3 links" );
+is( scalar $base->[5]->variants, 0, "Got 0 variants" );
+is( $base->[6]->word, 'his', "Got correct sixth word" );
+is( scalar $base->[6]->links, 1, "Got 1 link" );
+is( scalar $base->[6]->variants, 1, "Got 1 variant" );
+is( scalar $base->[6]->get_variant(0)->links, 1, "Got 1 variant link" );
+is( $base->[6]->get_variant(0)->word, 'her', "Got correct third variant");
+is( $base->[7]->word, 'day', "Got correct seventh word" );
+is( scalar $base->[7]->links, 3, "Got 3 links" );
+is( scalar $base->[7]->variants, 0, "Got 0 variants" );
+}
+
+
+
+# =begin testing
+{
 use Test::More::UTF8;
 use Text::TEI::Collate;
 use Text::TEI::Collate::Word;
@@ -178,6 +245,111 @@ ok( !$aligner->_is_near_word_match( 'հարիւրից', 'զ100ից' ), "did not 
 ok( !$aligner->_is_near_word_match( 'ժամանակական', 'զշարագրական' ), "did not match differing string 2" );
 ok( $aligner->_is_near_word_match( 'ընթերցողք', 'ընթերցողսն' ), "matched near-exact string 2" );
 ok( $aligner->_is_near_word_match( 'պատմագրացն', 'պատգամագրացն' ), "matched pretty close string" );
+}
+
+
+
+# =begin testing
+{
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $jsondata = $aligner->to_json( @mss );
+ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
+my @wits = @{$jsondata->{alignment}};
+is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
+my $columns = 74;
+foreach ( @wits ) {
+	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
+}
+}
+
+
+
+# =begin testing
+{
+use lib 't/lib';
+use Text::TEI::Collate;
+use Text::WagnerFischer::Armenian;
+use Words::Armenian;
+use XML::LibXML::XPathContext;
+# Get an alignment to test with
+my $testdir = "t/data/xml_plain";
+opendir( XF, $testdir ) or die "Could not open $testdir";
+my @files = readdir XF;
+my @mss;
+my $aligner = Text::TEI::Collate->new(
+	'fuzziness' => '50',
+	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	);
+foreach ( sort @files ) {
+	next if /^\./;
+	push( @mss, $aligner->read_source( "$testdir/$_",
+		'canonizer' => \&Words::Armenian::canonize_word
+		) );
+}
+$aligner->align( @mss );
+
+my $doc = $aligner->to_tei( @mss );
+is( ref( $doc ), 'XML::LibXML::Document', "Made TEI document header" );
+my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
+$xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
+
+# Test the creation of a document header from TEI files
+my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
+is( scalar @witdesc, 5, "Found five msdesc nodes");
+
+# Test the creation of apparatus entries
+my @apps = $xpc->findnodes( '//tei:app' );
+is( scalar @apps, 111, "Got the correct number of app entries");
+my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
+is( scalar @words_not_in_app, 171, "Got the correct number of matching words");
+my @details = $xpc->findnodes( '//tei:witDetail' );
+my @detailwits;
+foreach ( @details ) {
+	my $witstr = $_->getAttribute( 'wit' );
+	push( @detailwits, split( /\s+/, $witstr ));
+}
+is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
+
+# TODO test the reconstruction of witnesses from the parallel-seg.
+}
+
+
+
+# =begin testing
+{
+use lib 't/lib';
+use Text::TEI::Collate;
+use Text::WagnerFischer::Armenian;
+use Words::Armenian;
+use XML::LibXML::XPathContext;
+
+eval 'require Graph::Easy;';
+unless( $@ ) {
+# Get an alignment to test with
+my $testdir = "t/data/xml_plain";
+opendir( XF, $testdir ) or die "Could not open $testdir";
+my @files = readdir XF;
+my @mss;
+my $aligner = Text::TEI::Collate->new(
+	'fuzziness' => '50',
+	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	);
+foreach ( sort @files ) {
+	next if /^\./;
+	push( @mss, $aligner->read_source( "$testdir/$_",
+		'canonizer' => \&Words::Armenian::canonize_word
+		) );
+}
+$aligner->align( @mss );
+
+my $graph = $aligner->to_graph( @mss );
+
+is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
+is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 992, "Got the right number of edges" );
+}
 }
 
 

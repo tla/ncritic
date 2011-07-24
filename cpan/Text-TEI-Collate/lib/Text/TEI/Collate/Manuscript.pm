@@ -90,6 +90,10 @@ has '_xpc' => (
 
 no Moose::Util::TypeConstraints;
 
+=head1 NAME
+
+Text::TEI::Collate::Manuscript - represent a manuscript text for collation
+
 =head1 DESCRIPTION
 
 Text::TEI::Collate::Manuscript is an object that describes a manuscript.
@@ -307,19 +311,19 @@ sub _get_text_from_node {
 }
 
 sub _split_words {
-    my( $self, $string ) = @_;
-    my @raw_words = split( /\s+/, $string );
-    my @words;
-    foreach my $w ( @raw_words ) {
-	my $w_obj = Text::TEI::Collate::Word->new( 'string' => $w,
-						   'ms_sigil' => $self->sigil,
-						   'comparator' => $self->comparator,
-						   'canonizer' => $self->canonizer );
-	# Skip any words that have been canonized out of existence.
-	next if( length( $w_obj->word ) == 0 );
-	push( @words, $w_obj );
-    }
-    return @words;
+	my( $self, $string ) = @_;
+ 	my @raw_words = split( /\s+/, $string );
+ 	my @words;
+	foreach my $w ( @raw_words ) {
+		my %opts = ( 'string' => $w, 'ms_sigil' => $self->sigil );
+		$opts{'comparator'} = $self->comparator if $self->comparator;
+		$opts{'canonizer'} = $self->canonizer if $self->canonizer;
+		my $w_obj = Text::TEI::Collate::Word->new( %opts );
+ 		# Skip any words that have been canonized out of existence.
+		next if( length( $w_obj->word ) == 0 );
+		push( @words, $w_obj );
+ 	}
+ 	return @words;
 }
 
 sub _init_from_json {
