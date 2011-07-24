@@ -71,6 +71,12 @@ has 'links' => (
 		'add_link' => 'push',
 		},
 	);
+
+has 'linked_to' => (
+    is => 'ro',
+    isa => 'Text::TEI::Collate::Word',
+    writer => '_set_linked',
+    );
 	
 has 'variants' => (
 	traits => ['Array'],
@@ -79,8 +85,16 @@ has 'variants' => (
 	handles => {
 		'variants' => 'elements',
 		'add_variant' => 'push',
+		'_clear_variants' => 'clear',
 		},
 	);
+
+has 'variant_of' => (
+    is => 'ro',
+    isa => 'Text::TEI::Collate::Word',
+    writer => '_set_variant_of',
+    clearer => '_clear_variant_of',
+    );
 
 has 'ms_sigil' => (
 	is => 'ro',
@@ -225,6 +239,20 @@ around BUILDARGS => sub {
 		$newargs{'original_form'} = '';
 	}
 	return $class->$orig( %newargs );
+};
+
+around add_link => sub {
+    my( $self, @args ) = @_;
+    foreach( @args ) {
+	$_->_set_linked( $self );
+    }
+};
+
+around add_variant => sub {
+    my( $self, @args ) = @_;
+    foreach( @args ) {
+	$_->_set_variant_of( $self );
+    }
 };
 
 sub _init_from_json {
@@ -398,6 +426,10 @@ Returns the list of links, or an empty list.
 
 Adds to the list of 'like' words in this word's column.
 
+=head2 linked_to
+
+Returns the (base) word, if any, that this word is linked to.
+
 =head2 variants
 
 Returns the list of variants, or an empty list.
@@ -405,6 +437,24 @@ Returns the list of variants, or an empty list.
 =head2 add_variant
 
 Adds to the list of 'different' words in this word's column.
+
+=head2 variant_of
+
+Returns the word of which this word is a variant.
+
+=head2 unlink_variant
+
+Removes the given word from this word's list of variants.
+
+=cut
+
+sub unlink_variant {
+    my( $self, $other ) = @_;
+    my @v = grep { $_ ne $other } $self->variants;
+    $self->_clear_variants();
+    $self->add_variant( @v );
+    $other->_clear_variant_of;
+}
 
 =head2 state
 
