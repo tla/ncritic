@@ -3,9 +3,7 @@
 use strict;
 use lib 'lib';
 use Data::Dumper;
-use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
-use Words::Armenian;
 use utf8;
 
 binmode STDOUT, ":utf8";
@@ -23,17 +21,11 @@ my( @files ) = @ARGV;
 # and how fuzzy a match we can tolerate.
 my $fuzziness = "50";  # this is n%
 
-my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
-				       'debug' => 0,
-				       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-    );
+my $aligner = Text::TEI::Collate->new();
 
 my @manuscripts;
 foreach ( @files ) {
-    push( @manuscripts, $aligner->read_source( $_,
-		canonizer => \&Words::Armenian::canonize_word,
-		comparator => \&Words::Armenian::comparator,
-	  ) );
+    push( @manuscripts, $aligner->read_source( $_ ) );
 }
 my @results = $aligner->align( @manuscripts );
 

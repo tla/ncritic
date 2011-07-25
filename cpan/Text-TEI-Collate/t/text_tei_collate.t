@@ -19,6 +19,29 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 
 # =begin testing
 {
+use Text::TEI::Collate;
+use Test::More::UTF8;
+
+is( Text::TEI::Collate::alpha_distance( 'bedwange', 'bedvanghe' ), 3, "Correct alpha distance bedwange" );
+is( Text::TEI::Collate::alpha_distance( 'swaer', 'suaer' ), 2, "Correct alpha distance swaer" );
+is( Text::TEI::Collate::alpha_distance( 'the', 'teh' ), 0, "Correct alpha distance the" );
+is( Text::TEI::Collate::alpha_distance( 'αι̣τια̣ν̣', 'αιτιαν' ), 3, "correct distance one direction" );
+is( Text::TEI::Collate::alpha_distance( 'αιτιαν', 'αι̣τια̣ν̣' ), 3, "correct distance other direction" );
+
+my $aligner = Text::TEI::Collate->new();
+my( $ms1 ) = $aligner->read_source( 'Jn bedwange harde swaer Doe riepen si op gode met sinne' );
+my( $ms2 ) = $aligner->read_source( 'Jn bedvanghe harde suaer. Doe riepsi vp gode met sinne.' );
+$aligner->make_fuzzy_matches( $ms1->words, $ms2->words );
+is( scalar keys %{$aligner->{fuzzy_matches}}, 15, "Got correct number of vocabulary words with alpha match" );
+my %unique;
+map { $unique{$_} = 1 } values %{$aligner->{fuzzy_matches}};
+is( scalar keys %unique, 12, "Got correct number of fuzzy matching words with alpha match" );
+}
+
+
+
+# =begin testing
+{
 use lib 't/lib';
 use XML::LibXML;
 use Words::Armenian;
@@ -35,7 +58,7 @@ is( scalar @mss, 1, "Got a single object for a plaintext file");
 my $ms = pop @mss;
 	
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'A', "Got correct sigil A");
+is( $ms->sigil, 'C', "Got correct sigil A");
 is( scalar( @{$ms->words}), 181, "Got correct number of words in A");
 
 # Test a manuscript with a plaintext source, string
@@ -50,7 +73,7 @@ is( scalar @mss, 1, "Got a single object for a plaintext string");
 $ms = pop @mss;
 
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'B', "Got correct sigil B");
+is( $ms->sigil, 'D', "Got correct sigil B");
 is( scalar( @{$ms->words}), 183, "Got correct number of words in B");
 is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
 
@@ -141,7 +164,7 @@ foreach( @mss ) {
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 74;
+my $cols = 72;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
@@ -208,6 +231,7 @@ is( scalar $base->[7]->variants, 0, "Got 0 variants" );
 use Test::More::UTF8;
 use Text::TEI::Collate;
 use Text::TEI::Collate::Word;
+use Text::WagnerFischer;
 
 my $base_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'հարիւրից' );
 my $variant_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'զ100ից' );
@@ -216,7 +240,7 @@ my $new_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => '100ի�
 my $different_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'անգամ' );
 
 
-my $aligner = Text::TEI::Collate->new();
+my $aligner = Text::TEI::Collate->new( 'distance_sub' => \&Text::WagnerFischer::distance );
 $base_word->add_variant( $variant_word );
 is( $aligner->word_match( $base_word, $match_word), $base_word, "Matched base word" );
 is( $aligner->word_match( $base_word, $new_word), $variant_word, "Matched variant word" );
@@ -245,6 +269,8 @@ ok( !$aligner->_is_near_word_match( 'հարիւրից', 'զ100ից' ), "did not 
 ok( !$aligner->_is_near_word_match( 'ժամանակական', 'զշարագրական' ), "did not match differing string 2" );
 ok( $aligner->_is_near_word_match( 'ընթերցողք', 'ընթերցողսն' ), "matched near-exact string 2" );
 ok( $aligner->_is_near_word_match( 'պատմագրացն', 'պատգամագրացն' ), "matched pretty close string" );
+ok( $aligner->_is_near_word_match( 'αι̣τια̣ν̣', 'αιτιαν' ), "matched string one direction" );
+ok( $aligner->_is_near_word_match( 'αιτιαν', 'αι̣τια̣ν̣' ), "matched string other direction" );
 }
 
 
@@ -258,7 +284,7 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 74;
+my $columns = 72;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }

@@ -76,8 +76,8 @@ options are listed.
 the debugging output.
 
 =item B<distance_sub> - A reference to a function that calculates a
-Levenshtein-like distance between two words. Default is
-Text::WagnerFischer::distance.
+Levenshtein-like distance between two words. Default is alpha_distance.  A
+better but slower option is Text::WagnerFischer::distance.
 
 =item B<fuzziness> - The maximum allowable word distance for an approximate
 match, expressed as a percentage of Levenshtein distance / word length. It can
@@ -120,13 +120,7 @@ sub new {
 	
 	unless( defined $self->{distance_sub} ) {
 		# Use the default.
-		my $rc = eval { require Text::WagnerFischer };
-		if( $rc ) {
- 			$self->{distance_sub} = \&Text::WagnerFischer::distance;
-		} else {
-			warn "No edit distance subroutine passed; default Text::WagnerFischer::distance unavailable.  Cannot initialize collator.";
-			return undef;
-		}
+		$self->{distance_sub} = \&alpha_distance;
 	}
 	
 	unless( ref( $self->{fuzziness}) ) {
@@ -140,6 +134,64 @@ sub new {
 	
  	bless $self, $class;
 	return $self;
+}
+
+=head2 alpha_distance
+
+This is a rudimentary, and hopefully pretty quick, word distance function. It
+counts the occurrence of each letter in a word, and returns the some of
+lettercount differences between the two passed words.
+
+=begin testing
+
+use Text::TEI::Collate;
+use Test::More::UTF8;
+
+is( Text::TEI::Collate::alpha_distance( 'bedwange', 'bedvanghe' ), 3, "Correct alpha distance bedwange" );
+is( Text::TEI::Collate::alpha_distance( 'swaer', 'suaer' ), 2, "Correct alpha distance swaer" );
+is( Text::TEI::Collate::alpha_distance( 'the', 'teh' ), 0, "Correct alpha distance the" );
+is( Text::TEI::Collate::alpha_distance( 'αι̣τια̣ν̣', 'αιτιαν' ), 3, "correct distance one direction" );
+is( Text::TEI::Collate::alpha_distance( 'αιτιαν', 'αι̣τια̣ν̣' ), 3, "correct distance other direction" );
+
+my $aligner = Text::TEI::Collate->new();
+my( $ms1 ) = $aligner->read_source( 'Jn bedwange harde swaer Doe riepen si op gode met sinne' );
+my( $ms2 ) = $aligner->read_source( 'Jn bedvanghe harde suaer. Doe riepsi vp gode met sinne.' );
+$aligner->make_fuzzy_matches( $ms1->words, $ms2->words );
+is( scalar keys %{$aligner->{fuzzy_matches}}, 15, "Got correct number of vocabulary words with alpha match" );
+my %unique;
+map { $unique{$_} = 1 } values %{$aligner->{fuzzy_matches}};
+is( scalar keys %unique, 12, "Got correct number of fuzzy matching words with alpha match" );
+
+=end testing
+
+=cut
+
+sub alpha_distance {
+	my( $word1, $word2 ) = @_;
+	my @l1 = split( '', $word1 );
+	my @l2 = split( '', $word2 );
+	my( %f1, %f2 );
+	foreach( @l1 ) {
+		$f1{$_} += 1;
+	}
+	foreach( @l2 ) {
+		$f2{$_} += 1;
+	}
+	my $distance = 0;
+	my %seen;
+	foreach( keys %f1 ) {
+		$seen{$_} = 1;
+		my $val1 = $f1{$_};
+		my $val2 = $f2{$_} || 0;
+		$distance += abs( $val1 - $val2 );
+	}
+	foreach( keys %f2 ) {
+		next if $seen{$_};
+		my $val1 = $f1{$_} || 0;
+		my $val2 = $f2{$_} || 0;
+		$distance += abs( $val1 - $val2 );
+	}
+	return $distance;
 }
 
 =head2 read_source
@@ -186,7 +238,7 @@ is( scalar @mss, 1, "Got a single object for a plaintext file");
 my $ms = pop @mss;
 	
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'A', "Got correct sigil A");
+is( $ms->sigil, 'C', "Got correct sigil A");
 is( scalar( @{$ms->words}), 181, "Got correct number of words in A");
 
 # Test a manuscript with a plaintext source, string
@@ -201,7 +253,7 @@ is( scalar @mss, 1, "Got a single object for a plaintext string");
 $ms = pop @mss;
 
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'B', "Got correct sigil B");
+is( $ms->sigil, 'D', "Got correct sigil B");
 is( scalar( @{$ms->words}), 183, "Got correct number of words in B");
 is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
 
@@ -387,7 +439,7 @@ their wordlists collated.
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 74;
+my $cols = 72;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
@@ -680,7 +732,6 @@ sub _add_variant_matches {
  			|| $b_idx == -1
 			|| $b_idx == scalar( @$base ) ) {
   			# Unlink variant from base, push as extra.
-			$DB::single = 1 unless $v->variant_of;
  			$v->variant_of->unlink_variant( $v );
  			# Push the variant.
 			push( @$base_wlist, $v );
@@ -717,6 +768,7 @@ sub _add_variant_matches {
 use Test::More::UTF8;
 use Text::TEI::Collate;
 use Text::TEI::Collate::Word;
+use Text::WagnerFischer;
 
 my $base_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'հարիւրից' );
 my $variant_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'զ100ից' );
@@ -725,7 +777,7 @@ my $new_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => '100ի�
 my $different_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'անգամ' );
 
 
-my $aligner = Text::TEI::Collate->new();
+my $aligner = Text::TEI::Collate->new( 'distance_sub' => \&Text::WagnerFischer::distance );
 $base_word->add_variant( $variant_word );
 is( $aligner->word_match( $base_word, $match_word), $base_word, "Matched base word" );
 is( $aligner->word_match( $base_word, $new_word), $variant_word, "Matched variant word" );
@@ -763,7 +815,15 @@ sub make_fuzzy_matches {
 		# What else does $w match?
 		foreach my $x ( @all_words ) {
 			if( $self->_is_near_word_match( $w, $x ) ) {
-				$fm->{$x} = $w;
+				# If $x already exists, it was probably more popular.  Use
+				# it instead.
+				if( exists $fm->{$x} ) {
+					$fm->{$w} = $x;
+					last;
+				} else {
+					# Otherwise make $x match $w.
+					$fm->{$x} = $w;
+				}
 			}
 		}
 	}
@@ -805,6 +865,8 @@ ok( !$aligner->_is_near_word_match( 'հարիւրից', 'զ100ից' ), "did not 
 ok( !$aligner->_is_near_word_match( 'ժամանակական', 'զշարագրական' ), "did not match differing string 2" );
 ok( $aligner->_is_near_word_match( 'ընթերցողք', 'ընթերցողսն' ), "matched near-exact string 2" );
 ok( $aligner->_is_near_word_match( 'պատմագրացն', 'պատգամագրացն' ), "matched pretty close string" );
+ok( $aligner->_is_near_word_match( 'αι̣τια̣ν̣', 'αιτιαν' ), "matched string one direction" );
+ok( $aligner->_is_near_word_match( 'αιτιαν', 'αι̣τια̣ν̣' ), "matched string other direction" );
 
 =end testing
 
@@ -852,7 +914,10 @@ sub _handle_diff_same {
 	foreach my $i ( 0 .. $#base_wlist ) {
 		# Link the word to its match.  This means having to compare
 		# the words again, grr argh.
+		$DB::single = 1 if $self->_is_near_word_match( $base_wlist[$i]->comparison_form, $new_wlist[$i]->comparison_form ) 
+			ne $self->_is_near_word_match( $new_wlist[$i]->comparison_form, $base_wlist[$i]->comparison_form );
 		my $matched = $self->word_match( $base_wlist[$i], $new_wlist[$i] );
+		$DB::single = 1 if !$matched;
 		$matched->add_link( $new_wlist[$i] );
 	}
 	push( @$base_result, @base_wlist );
@@ -1022,7 +1087,7 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 74;
+my $columns = 72;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
