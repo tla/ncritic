@@ -116,28 +116,17 @@ sub _init_from_xmldesc {
 		warn "Manuscript initialization needs a TEI document!";
 		return;
 	}
-	
-	# Set up the tags we need, with or without namespaces.
-	my %tags;
-	map { $tags{$_} = $_ } qw/ settlement repository idno p lg /;
-	# Set up our XPath object
-	my $xpc = XML::LibXML::XPathContext->new( $xmlobj );
-	# Use namespace-aware tags if we have to 
-	if( $xmlobj->namespaceURI ) {
-	    $xpc->registerNs( 'tei', $xmlobj->namespaceURI );
-	    map { $tags{$_} = "tei:$_" } keys %tags;
-	}
-	$self->_set_xpc( $xpc );
-
-
 	# Get the identifier
+	my $xpc = XML::LibXML::XPathContext->new( $xmlobj );
+	$xpc->registerNs( 'tei', $xmlobj->namespaceURI );
+	$self->_set_xpc( $xpc );
 	if( my $desc = $xpc->find( '//tei:msDesc' ) ) {
 		my $descnode = $desc->get_node(1);
 		$self->_save_msdesc( $descnode );
 		my( $setNode, $reposNode, $idNode ) =
-			( $xpc->find( $tags{settlement} )->get_node(1),
-			  $xpc->find( $tags{repository} )->get_node(1),
-			  $xpc->find( $tags{idno} )->get_node(1) );
+			( $xpc->find( '//tei:settlement' )->get_node(1),
+			  $xpc->find( '//tei:repository' )->get_node(1),
+			  $xpc->find( '//tei:idno' )->get_node(1) );
 		$self->settlement( $setNode ? $setNode->textContent : '' );
 		$self->repository( $reposNode ? $reposNode->textContent : '' );
 		$self->idno( $idNode ? $idNode->textContent : '' );
@@ -198,8 +187,7 @@ sub _read_paragraphs_or_lines {
 
 	my @words;
 	my $xpc = $self->_xpc;
-	my $xpexpr = $tags{p} . ' | ' . $tags{lg};
- 	my @pgraphs = $xpc->findnodes( $xpexpr, $element );
+ 	my @pgraphs = $xpc->findnodes( './/tei:p | .//tei:lg', $element );
     return () unless @pgraphs;
 	foreach my $pg( @pgraphs ) {
 		# If this paragraph is the descendant of a note element,
