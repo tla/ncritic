@@ -4,10 +4,7 @@ author:
   - 'Tara L Andrews <aurum@cpan.org>'
 build_requires:
   ExtUtils::MakeMaker: 6.42
-  Graph::Easy: 0
   Test::More::UTF8: 0
-  Text::WagnerFischer: 0
-  Text::WagnerFischer::Armenian: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
@@ -22,18 +19,15 @@ no_index:
   directory:
     - inc
     - t
-recommends:
-  Graph::Easy: 0
-  Text::WagnerFischer: 0
 requires:
-  Algorithm::Diff: 0
+  Graph::Easy: 0
   IPC::Run: 0
   JSON: 0
   Module::Load: 0
   Moose: 0
   Moose::Util::TypeConstraints: 0
-  Throwable: 0
-  Try::Tiny: 0
+  Text::WagnerFischer: 0
+  Text::WagnerFischer::Armenian: 0
   XML::Easy::Syntax: 0
   XML::LibXML: 0
   XML::LibXML::XPathContext: 0
