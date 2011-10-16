@@ -142,3 +142,17 @@ foreach my $idx ( 0 .. $#wordcount ) {
 	is( join( ' ', map { $_->{t} } @{$json[0]->{witnesses}->[$idx]->{tokens}} ), $t, "Got correct words in plaintext JSON tokens" );
 }
 
+# Test opening a TEI file with no namespace 
+my $xmlparser = XML::LibXML->new();
+my $doc;
+eval { $doc = $xmlparser->parse_file( "$dirname/data/tei_no_ns.xml" )->documentElement(); };
+ok( defined $doc, "parsed the XML file tei_no_ns.xml" );
+my $ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'sourcetype' => 'xmldesc',
+	'source' => $doc,
+	);
+my $words = scalar @{$ms_obj->words};
+my @placeholders = grep { $_->placeholders } @{$ms_obj->words};
+is( $words, 30, "Got correct number of total words" );
+is( scalar @placeholders, 2, "Got correct number of placeholder words" );
+
