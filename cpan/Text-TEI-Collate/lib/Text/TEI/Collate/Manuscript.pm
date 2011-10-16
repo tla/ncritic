@@ -7,7 +7,7 @@ use Text::TEI::Collate::Word;
 use XML::LibXML;
 use XML::Easy::Syntax qw( $xml10_name_rx );
 
-$VERSION = "1.0";
+$VERSION = "1.1";
 %assigned_sigla = ();
 
 subtype 'SourceType',

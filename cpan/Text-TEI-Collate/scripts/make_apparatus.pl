@@ -6,17 +6,16 @@ use lib 'lib';
 use Data::Dumper;
 use Getopt::Long;
 use Storable;
-use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
-use Words::Armenian;
 use XML::LibXML;
 
 eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
-my( $debug, $fuzziness ) = ( undef, 50 );
+my( $debug, $fuzziness, $language ) = ( undef, 50, 'Default' );
 GetOptions( 
 	    'debug:i' => \$debug,
 	    'fuzziness=i' => \$fuzziness,
+	    'l|language=s' => \$language,
     );
 ## Option checking
 if( defined $debug ) {
@@ -30,7 +29,7 @@ my( @files ) = @ARGV;
 
 # how fuzzy a match we can tolerate
 my $aligner = Text::TEI::Collate->new( 'fuzziness' => $fuzziness,
-				       'debug' => $debug,
+				       'debuglevel' => $debug, 'language' => $language,
     );
 my @mss;
 if( scalar ( @files ) == 1 ) {
@@ -40,10 +39,7 @@ if( scalar ( @files ) == 1 ) {
     @mss = @$savedref;
 } else {
     foreach ( @files ) {
-	push( @mss, $aligner->read_source( $_,
-		'canonizer' => \&Words::Armenian::canonize_word,
-		'comparator' => \&Words::Armenian::comparator,
-	      ) );
+	push( @mss, $aligner->read_source( $_ ) );
     }
     $aligner->align( @mss );
 }

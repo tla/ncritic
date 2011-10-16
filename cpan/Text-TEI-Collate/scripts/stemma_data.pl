@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -CDS
+#!/usr/bin/perl -w
 
 use strict;
 use utf8;
@@ -7,12 +7,11 @@ use Data::Dumper;
 use Getopt::Long;
 use Storable;
 use Text::TEI::Collate;
-use Words::Armenian qw( am_downcase );
 use XML::LibXML;
 
 eval { no warnings; binmode $DB::OUT, ":utf8"; };
 
-my( $infile, $start_id, $end_id, $strict, $nexclude, $loose, $storable );
+my( $infile, $start_id, $end_id, $strict, $nexclude, $loose, $storable, $language );
 GetOptions( 
     'teifile=s' => \$infile,
     'start=i' => \$start_id,
@@ -21,6 +20,7 @@ GetOptions(
     'nexclude' => \$nexclude,
     'loose' => \$loose,
     'store=s' => \$storable,
+    'l|language=s' => \$language,
     );
 
 my( $input_doc, $xpc );
@@ -38,23 +38,11 @@ if( $infile ) {
     @results = @$savedref;
 } else {
     my $aligner = Text::TEI::Collate->new( 'fuzziness' => 50,
-					   'debug' => 0,
-					   'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-					   'canonizer' => \&Words::Armenian::canonize_word,
-					   'comparator' => \&Words::Armenian::comparator,
-					   'TEI' => 1,
+					   'debuglevel' => 0,
+					   'language' => $language,
 	);
     @results = $aligner->align( @ARGV );
 }
-
-# TODO get this from the XML attributes.  
-my %orth = %Words::Armenian::ORTHOGRAPHY;
-my %spell = %Words::Armenian::SPELLINGS;
-
-# Add some orthography entries.
-$orth{ 'Հռոմայեցւոց' } = 'հռոմայեցւոց';
-$orth{ 'հըռոմայեցւոց' } = 'հռոմայեցւոց';
-$orth{ 'հըռոմայեցոց' } = 'հռոմայեցոց';
 
 # Hold the 'nucleotide' sequence for each manuscript.
 my %sequences;
@@ -69,9 +57,7 @@ if( $infile ) {
 
 
 # For each row in the result table, assign a value A-(whatever) for
-# each word variation.  But first go through the spelling and
-# orthography hashes, and downcase the words, to put the variants into
-# buckets.
+# each word variation.  
 
 my( $started, $ended );
 my $length = 0;
@@ -105,9 +91,10 @@ if( $infile ) {
 
 	    unless( $loose ) {
 		my $orig_str = $str;
-		$str = am_downcase( $str );
-		$str = $spell{$str} if( !$loose && exists $spell{$str} );
-		$str = $orth{$str} if( exists $orth{$str} );
+		# TODO use the data in Lang::Armenian for this
+		# $str = am_downcase( $str );
+		# $str = $spell{$str} if( !$loose && exists $spell{$str} );
+		# $str = $orth{$str} if( exists $orth{$str} );
 		if( !$loose && $rdg->hasAttribute( 'type' ) ) {
 		    print STDERR "Reading $str in app $id is a variant of nothing\n"
 			if $rdg->getAttribute( 'type' ) =~ /variant/
@@ -132,10 +119,7 @@ if( $infile ) {
 	@unseen_sigla{ @witnesses } = ( 1 ) x scalar @witnesses;
 	foreach my $word ( @words ) {
 	    unless( $word->is_empty ) {
-		my $str = $word->word;
-		$str = am_downcase( $str ) unless $loose;
-		$str = $spell{$str} if ( !$loose && exists $spell{$str} );
-		$str = $orth{$str} if ( exists $orth{$str} );
+		my $str = $word->comparison_form;
 		add_hash_entry( \%buckets, $str, $word->ms_sigil );
 		delete $unseen_sigla{ $word->ms_sigil };
 	    }
