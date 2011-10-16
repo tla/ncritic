@@ -3,20 +3,63 @@ package Text::TEI::Collate;
 use strict;
 use vars qw( $VERSION );
 
+use Moose;
 use File::Temp;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Module::Load;
 use Text::TEI::Collate::Diff;
-# use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
-# use Try::Tiny;
 use XML::LibXML;
 
 $VERSION = "2.1";
 
 eval { no warnings; binmode $DB::OUT, ":utf8" };
+
+### Instance attributes
+
+has 'debuglevel' => (
+	is => 'ro',
+	isa => 'Int', 
+	default => 0,
+	);
+	
+has 'title' => (
+    is => 'rw',
+    isa => 'Str',
+    default => 'An nCritic collation',
+    );
+    
+has 'language' => (
+    is => 'rw',
+    isa => 'Str',
+    default => 'Default',
+    );
+    
+has 'fuzziness' => (
+    is => 'rw',
+    isa => 'HashRef[Int]',
+    default => sub{ { 'val' => 40, 'short' => 6, 'shortval' => 50 } },
+    );
+    
+has 'binmode' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 'utf8',
+    predicate => 'has_binmode',
+    );
+    
+has 'distance_sub' => (
+    is => 'rw',
+    isa => 'CodeRef',
+    );
+    
+has 'fuzziness_sub' => (
+    is => 'rw',
+    isa => 'CodeRef',
+    predicate => 'has_fuzziness_sub',
+    );
 
 =head1 NAME
 
@@ -75,8 +118,11 @@ options are listed.
 
 =over 4
 
-=item B<debug> - Default 0. The higher the number (between 0 and 3), the more
-the debugging output.
+=item B<debuglevel> - Default 0. The higher the number (between 0 and 3), the 
+more the debugging output.
+
+=item B<title> - Display title for the collation output results, should those
+results need a display title (e.g. TEI or graph output).
 
 =item B<language> - Specify the language module we should use from those
 available in Text::TEI::Collate::Lang.  Default is 'Default'.
@@ -87,10 +133,8 @@ also be expressed as a hashref with keys 'val', 'short', and 'shortval', if
 you want to increase the tolerance for short words (defined as at or below the
 value of 'short').
 
-=item B<canonizer> - Takes a subroutine ref. The sub should take a string and
-return a string. If defined, it will be called to produce a canonical form of
-the string in question. Useful for getting rid of ligatures, un-composing
-characters, correcting common spelling mistakes, etc.
+=item B<binmode> - If STDERR should be using something other than UTF-8, you 
+can set it here. You are probably in for a world of hurt anyway though.
 
 =back
 
@@ -108,30 +152,26 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 
 # Set the options.  Main option is a pointer to the fuzzy matching algorithm
 # that the user wishes to use.
-sub new {
-	my $proto = shift;
-	my $class = ref( $proto ) || $proto;
-	my %opts = @_;
- 	my $self = {
-		debug => 0,
-		language => 'Default',
-		fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
-		binmode => 'utf8',
-		%opts,
-	};
-	
-	unless( ref( $self->{fuzziness}) ) {
-		my $fuzz = $self->{fuzziness};
-		$self->{fuzziness} = { val => $fuzz, short => '0', shortval => $fuzz };
+
+around BUILDARGS => sub {
+    my $orig = shift;
+    my $class = shift;
+    my %args = @_;
+    # Support a single 'fuzziness' argument
+    if( exists $args{'fuzziness'} && !ref( $args{'fuzziness'} ) ) {
+        my $fuzz = $args{'fuzziness'};
+		$args{'fuzziness'} = { val => $fuzz, short => '0', shortval => $fuzz };
 	}
-    
-	if( my $b = $self->{'binmode'} ) {
+	return $class->$orig( %args );
+};
+
+sub BUILD {
+	my $self = shift;
+	if( $self->has_binmode ) {
+	    my $b = $self->binmode;
 		binmode STDERR, ":$b";
 	}
-	
- 	bless $self, $class;
- 	$self->use_language( $self->{'language'} );
-	return $self;
+	$self->use_language( $self->language );
 }
 
 =head2 use_language
@@ -143,13 +183,13 @@ the sources that are read hereafter.
 =begin testing
 
 my $aligner = Text::TEI::Collate->new();
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
 my $ok = eval { $aligner->use_language( 'Armenian' ); };
 ok( $ok, "Used existing language module" );
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
 
 $aligner->use_language( 'default' );
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
 my $not_ok = eval { $aligner->use_language( 'Klingon' ); };
@@ -174,8 +214,8 @@ sub use_language {
     $mod->can( 'distance' ) or die "No distance subroutine";
     $mod->can( 'comparator' ) or die "No comparator subroutine";
     $mod->can( 'canonizer' ) or die "No canonizer subroutine";
-    $self->{distance_sub} = $mod->can( 'distance' );
-    $self->{language} = $lang;
+    $self->distance_sub( $mod->can( 'distance' ) );
+    $self->language( $lang );
 }
 
 =head2 read_source
@@ -356,7 +396,7 @@ sub read_source {
 	}
 	
 	# Add any language-specific canonizer / comparator that we have defined.
-	$options{'language'} = $self->{'language'};
+	$options{'language'} = $self->language;
 
 	# We have the representations of the manuscript(s).  Initialize our object(s).
 	my @ms_objects;
@@ -853,19 +893,19 @@ sub _is_near_word_match {
  	my( $word1, $word2 ) = @_;
     
  	# Find our distance routine in case we need it.
-	unless( ref $self->{distance_sub} ) {
+	unless( ref $self->distance_sub ) {
 		warn "No word distance algorithm specified.  Cannot compare words.";
 		return;
  	}
- 	my $dist = $self->{'distance_sub'}->( $word1, $word2 );
+ 	my $dist = $self->distance_sub->( $word1, $word2 );
 
   	# Now see if the distance is low enough to be a match.
-	if( defined( $self->{'fuzziness_sub'} ) ) {
-		return $self->{'fuzziness_sub'}->( $word1, $word2, $dist );
+	if( $self->has_fuzziness_sub ) {
+		return $self->fuzziness_sub->( $word1, $word2, $dist );
 	} else {
 		my $ref_str = length( $word1 ) < length( $word2 ) ? $word1 : $word2;
-		my $fuzz = length( $ref_str ) > $self->{fuzziness}->{short}
-			? $self->{fuzziness}->{val} : $self->{fuzziness}->{shortval};
+		my $fuzz = length( $ref_str ) > $self->fuzziness->{short}
+			? $self->fuzziness->{val} : $self->fuzziness->{shortval};
 		return( $dist <= ( length( $ref_str ) * $fuzz / 100 ) );
 	}
 }
@@ -1147,7 +1187,7 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 
 	sub to_tei {
 		my( $self, @mss ) = @_;
-		( $doc, $body ) = _make_tei_doc( @mss );
+		( $doc, $body ) = _make_tei_doc( $self->title, @mss );
 		##  Generate a base by flattening all the results                               
 		my $initial_base = $self->generate_base( map { $_->words } @mss );
 		foreach my $idx ( 0 .. $#{$initial_base} ) {
@@ -1160,6 +1200,7 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 	}
 	
 	sub _make_tei_doc {
+	    my $title = shift;
 		my @mss = @_;
 		my $doc = XML::LibXML->createDocument( '1.0', 'UTF-8' );
 		my $root = $doc->createElementNS( $ns_uri, 'TEI' );
@@ -1169,10 +1210,10 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 		my $filedesc = $teiheader->addNewChild( $ns_uri, 'fileDesc' );
 		$filedesc->addNewChild( $ns_uri, 'titleStmt' )->
 			addNewChild( $ns_uri, 'title' )->
-			appendText( 'this is a title' );
+			appendText( $title );
 		$filedesc->addNewChild( $ns_uri, 'publicationStmt' )->
 			addNewChild( $ns_uri, 'p' )->
-			appendText( 'this is a publication statement' );
+			appendText( 'Created by nCritic' );
 		my $witnesslist = $filedesc->addNewChild( $ns_uri, 'sourceDesc')->
 			addNewChild( $ns_uri, 'listWit' );
 		foreach my $m ( @mss ) {
@@ -1506,7 +1547,7 @@ sub debug {
     $lvl = 0 unless $lvl;
     print STDERR 'DEBUG ' . ($lvl+1) . ": $msg"
 	. ( $no_newline ? '' : "\n" )
-	if $self->{'debug'} > $lvl;
+	if $self->debuglevel > $lvl;
 }
 
 1;
