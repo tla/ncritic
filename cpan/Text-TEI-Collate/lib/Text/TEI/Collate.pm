@@ -68,7 +68,7 @@ Text::TEI::Collate - a collation program for variant manuscript texts
 =head1 SYNOPSIS
 
   use Text::TEI::Collate;
-  my $aligner = Text::TEI::Collate->new();
+  my $aligner = Text::TEI::Collate->new( 'language' => 'Armenian' );
 
   # Read from strings.
   my @manuscripts;
@@ -90,24 +90,24 @@ Text::TEI::Collate - a collation program for variant manuscript texts
   
 =head1 DESCRIPTION
 
-Text::TEI::Collate is the beginnings of a collation program for multiple
-(transcribed) manuscript copies of a known text.  It is an
-object-oriented interface, mostly for the convenience of the author
-and for the ability to have global settings.
+Text::TEI::Collate is a collation program for multiple (transcribed)
+manuscript copies of a known text.  It is an object-oriented interface,
+mostly for the convenience of the author and for the ability to have global
+settings.
 
-The object is the alignment engine, or "aligner". The methods that a user will
-care about are "read_source" and "align", as well as the various output
-methods; the other methods in this file are public in case a user needs a
-subset of this package's functionality.
+The object is the alignment engine, or "aligner". The methods that a user
+will care about are "read_source" and "align", as well as the various
+output methods; the other methods in this file are public in case a user
+needs a subset of this package's functionality.
 
 An aligner takes two or more texts; the texts can be strings, filenames, or
 XML::LibXML::Document objects. It returns two or more Manuscript objects --
-one for each text input -- in which identical and similar words are lined up
-with each other, via empty-string padding.
+one for each text input -- in which identical and similar words are lined
+up with each other, via empty-string padding.
 
 Please see the documentation for L<Text::TEI::Collate::Manuscript> and
-L<Text::TEI::Collate::Word> for more information about the manuscript and word
-objects.
+L<Text::TEI::Collate::Word> for more information about the manuscript and
+word objects.
 
 =head1 METHODS
 
@@ -128,7 +128,7 @@ results need a display title (e.g. TEI or JSON output).
 available in Text::TEI::Collate::Lang.  Default is 'Default'.
 
 =item B<fuzziness> - The maximum allowable word distance for an approximate
-match, expressed as a percentage of Levenshtein distance / word length. It can
+match, expressed as a percentage of word distance / word length. It can
 also be expressed as a hashref with keys 'val', 'short', and 'shortval', if
 you want to increase the tolerance for short words (defined as at or below the
 value of 'short').
