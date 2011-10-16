@@ -1,11 +1,16 @@
 Revision history for Text::TEI::Collate
 
+2.1	 Mon 17 Oct 2011
+* Added explicit language module support.
+* Allowed for TEI source files that declare no namespace. (RT #71711)
+* Converted main collation module to use Moose.
+
 2.0	 Mon 25 Jul 2011
 
 * Rewrote core diff algorithm - collation is now a lot slower but
   rather more accurate, or at least it should be.
 * Fixed use of default canonizer / comparator for manuscript words
-* Fixed testing dependency on Graph::Easy, for real this time
+* Fixed testing dependency on Graph::Easy, for real this time. (RT #69639)
 
 1.2	 Mon 18 Jul 2011
 

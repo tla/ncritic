@@ -1,16 +1,4 @@
-For the core libraries:
-- write tests for gap detection and 2-word glommed matching
-- Decide if it is really useful to differentiate between
-  "orthographic" and "spelling" variation
-- Do a better job of comparing the words in a new text with the
-  "chained" alternative words that have already been collated.  This
-  would not be hard to do, it just hasn't been done.
+- Handle 2-word glommed matching
+- Revisit gap detection
 - Handle transposition properly
-
-For the editing scripts:
-- Allow reading group assignments on the command line
-- Safeguards against selecting something twice
-- Ability to back up and re-examine a choice
-- Have a filter for what sort of punctuation we care about.  Or just
-  use it more effectively.
-- Write a rule for capital / lowercase orthography
+- Add real grown-up exception handling

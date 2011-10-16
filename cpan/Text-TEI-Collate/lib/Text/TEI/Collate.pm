@@ -1,6 +1,8 @@
 package Text::TEI::Collate;
 
 use strict;
+use warnings;
+use 5.010;
 use vars qw( $VERSION );
 
 use Moose;
