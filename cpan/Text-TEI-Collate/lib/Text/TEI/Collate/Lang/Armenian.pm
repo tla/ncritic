@@ -1,12 +1,11 @@
-package Words::Armenian;
+package Text::TEI::Collate::Lang::Armenian;
 
 use strict;
-use Exporter 'import';
+use warnings;
 use utf8;
+use Text::WagnerFischer::Armenian;
 use vars qw( %PROPER_NAMES %ORTHOGRAPHY %SPELLINGS %PREFIXES %SUFFIXES 
              @EXPORT_OK );
-
-@EXPORT_OK = qw( am_downcase );
 
 sub am_downcase {
     my $word = shift;
@@ -24,7 +23,7 @@ sub am_downcase {
     return $out;
 }
 
-sub canonize_word {
+sub canonizer {
     my $word  = shift;
 
     # We don't really distinguish between commas and semicolons properly
@@ -53,7 +52,11 @@ sub comparator {
     $word = am_downcase( $word );
 
     return $word;
-}    
+}
+
+sub distance {
+    return Text::WagnerFischer::Armenian::distance( @_ );
+}
 
 # What is coming to us here is the word after going through canonization.
 sub print_word {

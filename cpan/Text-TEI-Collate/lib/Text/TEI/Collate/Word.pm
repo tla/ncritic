@@ -2,7 +2,7 @@ package Text::TEI::Collate::Word;
 
 use strict;
 use Moose;
-use Unicode::Normalize;
+use Module::Load;
 use vars qw( $VERSION );
 
 has 'word' => (
@@ -12,17 +12,11 @@ has 'word' => (
 	writer => '_set_word',
 	);
 	
-has 'comparator' => (
-	is => 'ro',
-	isa => 'Maybe[CodeRef]',
-	default => sub { \&unicode_normalize },
-	);
-	
-has 'canonizer' => (
-	is => 'ro',
-	isa => 'Maybe[CodeRef]',
-	default => sub { sub{ lc( $_[0] ) } },
-	);
+has 'language' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 'Default',
+    );
 	
 has 'comparison_form' => (
 	is => 'ro',
@@ -297,6 +291,10 @@ sub _restore_punct {
 sub BUILD {
 	my $self = shift;
 	$self->_evaluate_word unless $self->original_form;
+	# Delete the coderefs, so that we can serialize. We don't use them
+	# after init anyway.
+	delete $self->{'canonizer'};
+	delete $self->{'comparator'};
 	return $self;
 }
 
@@ -326,21 +324,17 @@ sub _evaluate_word {
 
 	# Save the word sans punctuation.
     $self->_set_word( $word );
+    
+    # Get the subroutines we need for the rest.
+    my $mod = 'Text::TEI::Collate::Lang::' . $self->language;
+    load( $mod );
+    my $canonizer = $mod->can( 'canonizer' );
+    my $comparator = $mod->can( 'comparator' );
 
 	# Canonicalize the word, if we have been handed a canonizer.
-	if( defined $self->canonizer ) {
-		$self->_set_canonical_form( &{$self->canonizer}( $word ) );
-	} else {
-		$self->_set_canonical_form( $word );
-	}
-
+	$self->_set_canonical_form( $canonizer->( $word ) );
 	# What is the string we will actually collate against?
-	if( defined $self->comparator ) {
-		$self->_set_comparison_form( &{$self->comparator}( $word ) );
-	} else {
-		$self->_set_comparison_form( $word );
-	}
-
+	$self->_set_comparison_form( $comparator->( $self->canonical_form ) );
 }
 
 # Accessors.
@@ -383,16 +377,10 @@ comparison form.
 If called with an argument, sets the punctuation marks that were passed with
 the word. Returns the word's puncutation.
 
-=head2 canonizer
+=head2 language
 
-If called with an argument, sets the canonizer subroutine that the word object
-should use. Returns the subroutine. Defaults to lc().
-
-=head2 comparator
-
-If called with an argument, sets the comparator subroutine that the word
-object should use. Returns the subroutine. Defaults to unicode_normalize in
-this package.
+The name of the language module we are using (from Text::TEI::Collate::Lang)
+to derive our canonical and comparison word forms.
 
 =head2 special
 
@@ -490,24 +478,6 @@ sub restore_state {
 	foreach my $key( @{$self->_mutable} ) {
 		$self->{$key} = $opts->{$key};
 	}
-}
-
-=head2 unicode_normalize
-
-A default normalization function for the words we are handed. Strips all
-accents from the word.
-
-=cut
-
-sub unicode_normalize {
-	my $word = shift;
-	my @normalized;
-	my @letters = split( '', lc( $word ) );
-	foreach my $l ( @letters ) {
-		my $d = chr( ord( NFKD( $l ) ) );
-		push( @normalized, $d );
-	}
-	return join( '', @normalized );
 }
 
 no Moose;

@@ -8,6 +8,7 @@ requires( 'perl' => '5.008003' );
 requires( 'Algorithm::Diff' );
 requires( 'IPC::Run' );
 requires( 'JSON' );
+requires( 'Module::Load' );
 requires( 'Moose' );
 requires( 'Moose::Util::TypeConstraints' );
 requires( 'XML::Easy::Syntax' );

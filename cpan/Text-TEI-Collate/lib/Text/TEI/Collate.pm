@@ -2,16 +2,19 @@ package Text::TEI::Collate;
 
 use strict;
 use vars qw( $VERSION );
-# use Algorithm::Diff;
+
 use File::Temp;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
+use Module::Load;
 use Text::TEI::Collate::Diff;
+# use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
+# use Try::Tiny;
 use XML::LibXML;
 
-$VERSION = "2.0";
+$VERSION = "2.1";
 
 eval { no warnings; binmode $DB::OUT, ":utf8" };
 
@@ -75,9 +78,8 @@ options are listed.
 =item B<debug> - Default 0. The higher the number (between 0 and 3), the more
 the debugging output.
 
-=item B<distance_sub> - A reference to a function that calculates a
-Levenshtein-like distance between two words. Default is alpha_distance.  A
-better but slower option is Text::WagnerFischer::distance.
+=item B<language> - Specify the language module we should use from those
+available in Text::TEI::Collate::Lang.  Default is 'Default'.
 
 =item B<fuzziness> - The maximum allowable word distance for an approximate
 match, expressed as a percentage of Levenshtein distance / word length. It can
@@ -112,16 +114,11 @@ sub new {
 	my %opts = @_;
  	my $self = {
 		debug => 0,
-		distance_sub => undef,
+		language => 'Default',
 		fuzziness => { 'val' => 40, 'short' => 6, 'shortval' => 50 },
 		binmode => 'utf8',
 		%opts,
 	};
-	
-	unless( defined $self->{distance_sub} ) {
-		# Use the default.
-		$self->{distance_sub} = \&alpha_distance;
-	}
 	
 	unless( ref( $self->{fuzziness}) ) {
 		my $fuzz = $self->{fuzziness};
@@ -133,65 +130,52 @@ sub new {
 	}
 	
  	bless $self, $class;
+ 	$self->use_language( $self->{'language'} );
 	return $self;
 }
 
-=head2 alpha_distance
+=head2 use_language
 
-This is a rudimentary, and hopefully pretty quick, word distance function. It
-counts the occurrence of each letter in a word, and returns the some of
-lettercount differences between the two passed words.
+Use one of the language modules defined in Text::TEI::Collate::Lang.  This will
+affect what is used for the distance sub, the canonizer, and the comparator for
+the sources that are read hereafter.
 
 =begin testing
 
-use Text::TEI::Collate;
-use Test::More::UTF8;
-
-is( Text::TEI::Collate::alpha_distance( 'bedwange', 'bedvanghe' ), 3, "Correct alpha distance bedwange" );
-is( Text::TEI::Collate::alpha_distance( 'swaer', 'suaer' ), 2, "Correct alpha distance swaer" );
-is( Text::TEI::Collate::alpha_distance( 'the', 'teh' ), 0, "Correct alpha distance the" );
-is( Text::TEI::Collate::alpha_distance( 'αι̣τια̣ν̣', 'αιτιαν' ), 3, "correct distance one direction" );
-is( Text::TEI::Collate::alpha_distance( 'αιτιαν', 'αι̣τια̣ν̣' ), 3, "correct distance other direction" );
-
 my $aligner = Text::TEI::Collate->new();
-my( $ms1 ) = $aligner->read_source( 'Jn bedwange harde swaer Doe riepen si op gode met sinne' );
-my( $ms2 ) = $aligner->read_source( 'Jn bedvanghe harde suaer. Doe riepsi vp gode met sinne.' );
-$aligner->make_fuzzy_matches( $ms1->words, $ms2->words );
-is( scalar keys %{$aligner->{fuzzy_matches}}, 15, "Got correct number of vocabulary words with alpha match" );
-my %unique;
-map { $unique{$_} = 1 } values %{$aligner->{fuzzy_matches}};
-is( scalar keys %unique, 12, "Got correct number of fuzzy matching words with alpha match" );
+is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
+my $ok = eval { $aligner->use_language( 'Armenian' ); };
+ok( $ok, "Used existing language module" );
+is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
+
+$aligner->use_language( 'default' );
+is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
+
+# TODO test Throwable object
+my $not_ok = eval { $aligner->use_language( 'Klingon' ); };
+ok( !$not_ok, "Died with nonexistent language module" );
 
 =end testing
 
 =cut
 
-sub alpha_distance {
-	my( $word1, $word2 ) = @_;
-	my @l1 = split( '', $word1 );
-	my @l2 = split( '', $word2 );
-	my( %f1, %f2 );
-	foreach( @l1 ) {
-		$f1{$_} += 1;
-	}
-	foreach( @l2 ) {
-		$f2{$_} += 1;
-	}
-	my $distance = 0;
-	my %seen;
-	foreach( keys %f1 ) {
-		$seen{$_} = 1;
-		my $val1 = $f1{$_};
-		my $val2 = $f2{$_} || 0;
-		$distance += abs( $val1 - $val2 );
-	}
-	foreach( keys %f2 ) {
-		next if $seen{$_};
-		my $val1 = $f1{$_} || 0;
-		my $val2 = $f2{$_} || 0;
-		$distance += abs( $val1 - $val2 );
-	}
-	return $distance;
+sub use_language {
+    my( $self, $lang ) = @_;
+    # Are we reverting to a default?
+    if( !$lang || $lang =~ /default/i ) {
+        # Use the default.
+        $lang = 'Default';
+    } 
+    
+    # Is the given language module defined, and does it have all the
+    # required subroutines?
+    my $mod = 'Text::TEI::Collate::Lang::' . $lang;
+    load( $mod );
+    $mod->can( 'distance' ) or die "No distance subroutine";
+    $mod->can( 'comparator' ) or die "No comparator subroutine";
+    $mod->can( 'canonizer' ) or die "No canonizer subroutine";
+    $self->{distance_sub} = $mod->can( 'distance' );
+    $self->{language} = $lang;
 }
 
 =head2 read_source
@@ -201,12 +185,6 @@ and a set of options, and get back one or more manuscript objects that can be
 collated.  Options include:
 
 =over
-
-=item B<canonizer> - reference to a subroutine that returns the canonized (e.g. spell-
-corrected) form of the original word.
-
-=item B<comparator> - reference to a subroutine that returns the normalized comparison
-string (e.g. all lowercase, no accents) for a word.
 
 =item B<encoding> - The encoding of the word source if we are reading from a file.  
 Defaults to utf-8.
@@ -222,23 +200,21 @@ Can also be read from a TEI <msdesc/> element.
 
 =begin testing
 
-use lib 't/lib';
 use XML::LibXML;
-use Words::Armenian;
 
 my $aligner = Text::TEI::Collate->new();
+$aligner->use_language( 'Armenian' );
 
 # Test a manuscript with a plaintext source, filename
 
 my @mss = $aligner->read_source( 't/data/plaintext/test1.txt',
 	'identifier' => 'plaintext 1',
-	'canonizer' => \&Words::Armenian::canonize_word,
 	);
 is( scalar @mss, 1, "Got a single object for a plaintext file");
 my $ms = pop @mss;
 	
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'C', "Got correct sigil A");
+is( $ms->sigil, 'A', "Got correct sigil A");
 is( scalar( @{$ms->words}), 181, "Got correct number of words in A");
 
 # Test a manuscript with a plaintext source, string
@@ -247,13 +223,12 @@ my @lines = <T2>;
 close T2;
 @mss = $aligner->read_source( join( '', @lines ),
 	'identifier' => 'plaintext 2',
-	'canonizer' => \&Words::Armenian::canonize_word,
 	);
 is( scalar @mss, 1, "Got a single object for a plaintext string");
 $ms = pop @mss;
 
 is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
-is( $ms->sigil, 'D', "Got correct sigil B");
+is( $ms->sigil, 'B', "Got correct sigil B");
 is( scalar( @{$ms->words}), 183, "Got correct number of words in B");
 is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
 
@@ -261,9 +236,7 @@ is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
 open( JS, "t/data/json/testwit.json" ) or die "Could not read test JSON";
 @lines = <JS>;
 close JS;
-@mss = $aligner->read_source( join( '', @lines ),
-	'canonizer' => \&Words::Armenian::canonize_word,
-	);
+@mss = $aligner->read_source( join( '', @lines ) );
 is( scalar @mss, 2, "Got two objects from the JSON string" );
 is( ref( $mss[0] ), 'Text::TEI::Collate::Manuscript', "Got manuscript object 1");
 is( ref( $mss[1] ), 'Text::TEI::Collate::Manuscript', "Got manuscript object 2");
@@ -275,9 +248,7 @@ is( $mss[0]->identifier, 'JSON 1', "Got correct identifier for ms 1");
 is( $mss[1]->identifier, 'JSON 2', "Got correct identifier for ms 2");
 
 # Test a manuscript with an XML source
-@mss = $aligner->read_source( 't/data/xml_plain/test3.xml',
-	'canonizer' => \&Words::Armenian::canonize_word,
-	);
+@mss = $aligner->read_source( 't/data/xml_plain/test3.xml' );
 is( scalar @mss, 1, "Got a single object from XML file" );
 $ms = pop @mss;
 
@@ -288,9 +259,7 @@ is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
 my $parser = XML::LibXML->new();
 my $doc = $parser->parse_file( 't/data/xml_plain/test3.xml' );
-@mss = $aligner->read_source( $doc,
-	'canonizer' => \&Words::Armenian::canonize_word,
-	);
+@mss = $aligner->read_source( $doc );
 is( scalar @mss, 1, "Got a single object from XML object" );
 $ms = pop @mss;
 
@@ -300,6 +269,7 @@ is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
 ## The mss we will test the rest of the tests with.
+$aligner->use_language( 'Greek' );
 @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 is( scalar @mss, 28, "Got correct number of mss from CX file" );
 my %wordcount = (
@@ -384,6 +354,9 @@ sub read_source {
 		warn "Unrecognized object $wordsource; reading no words";
 		return ();
 	}
+	
+	# Add any language-specific canonizer / comparator that we have defined.
+	$options{'language'} = $self->{'language'};
 
 	# We have the representations of the manuscript(s).  Initialize our object(s).
 	my @ms_objects;
@@ -439,7 +412,7 @@ their wordlists collated.
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 72;
+my $cols = 75;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
@@ -776,8 +749,8 @@ my $match_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'զհ
 my $new_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => '100ից' );
 my $different_word = Text::TEI::Collate::Word->new( ms_sigil => 'A', string => 'անգամ' );
 
-
-my $aligner = Text::TEI::Collate->new( 'distance_sub' => \&Text::WagnerFischer::distance );
+# not really Greek, but we want Text::WagnerFischer::distance here
+my $aligner = Text::TEI::Collate->new( 'language' => 'Greek' ); 
 $base_word->add_variant( $variant_word );
 is( $aligner->word_match( $base_word, $match_word), $base_word, "Matched base word" );
 is( $aligner->word_match( $base_word, $new_word), $variant_word, "Matched variant word" );
@@ -842,11 +815,14 @@ sub word_match {
 	# A and B are word objects.  We want to match if b matches a, 
 	# but also if b matches a variant of a.
 	my( $self, $a, $b ) = @_;
-	if( $self->_is_near_word_match( $a->comparison_form, $b->comparison_form ) ) {
+	my $a_key = $self->diff_key( $a ) || $a->comparison_form;
+	my $b_key = $self->diff_key( $b ) || $b->comparison_form;
+	if( $self->_is_near_word_match( $a_key, $b_key ) ) {
 		return $a;
 	}
 	foreach my $v ( $a->variants ) {
-		if( $self->_is_near_word_match( $v->comparison_form, $b->comparison_form ) ) {
+	    my $v_key = $self->diff_key( $v ) || $v->comparison_form;
+		if( $self->_is_near_word_match( $v_key, $b_key ) ) {
 			return $v;
 		}
 	}
@@ -881,12 +857,11 @@ sub _is_near_word_match {
 		warn "No word distance algorithm specified.  Cannot compare words.";
 		return;
  	}
- 	my $distance = $self->{'distance_sub'};
- 	my $dist = &$distance( $word1, $word2 );
+ 	my $dist = $self->{'distance_sub'}->( $word1, $word2 );
 
   	# Now see if the distance is low enough to be a match.
 	if( defined( $self->{'fuzziness_sub'} ) ) {
-		return &{$self->{'fuzziness_sub'}}( $word1, $word2, $dist );
+		return $self->{'fuzziness_sub'}->( $word1, $word2, $dist );
 	} else {
 		my $ref_str = length( $word1 ) < length( $word2 ) ? $word1 : $word2;
 		my $fuzz = length( $ref_str ) > $self->{fuzziness}->{short}
@@ -914,8 +889,6 @@ sub _handle_diff_same {
 	foreach my $i ( 0 .. $#base_wlist ) {
 		# Link the word to its match.  This means having to compare
 		# the words again, grr argh.
-		$DB::single = 1 if $self->_is_near_word_match( $base_wlist[$i]->comparison_form, $new_wlist[$i]->comparison_form ) 
-			ne $self->_is_near_word_match( $new_wlist[$i]->comparison_form, $base_wlist[$i]->comparison_form );
 		my $matched = $self->word_match( $base_wlist[$i], $new_wlist[$i] );
 		$DB::single = 1 if !$matched;
 		$matched->add_link( $new_wlist[$i] );
@@ -1087,7 +1060,7 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 72;
+my $columns = 76;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -1116,10 +1089,7 @@ paragraph breaks for each witness marked as a <witDetail/> in the apparatus.
 
 =begin testing
 
-use lib 't/lib';
 use Text::TEI::Collate;
-use Text::WagnerFischer::Armenian;
-use Words::Armenian;
 use XML::LibXML::XPathContext;
 # Get an alignment to test with
 my $testdir = "t/data/xml_plain";
@@ -1128,13 +1098,11 @@ my @files = readdir XF;
 my @mss;
 my $aligner = Text::TEI::Collate->new(
 	'fuzziness' => '50',
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	'language' => 'Armenian',
 	);
 foreach ( sort @files ) {
 	next if /^\./;
-	push( @mss, $aligner->read_source( "$testdir/$_",
-		'canonizer' => \&Words::Armenian::canonize_word
-		) );
+	push( @mss, $aligner->read_source( "$testdir/$_" ) );
 }
 $aligner->align( @mss );
 
@@ -1149,9 +1117,9 @@ is( scalar @witdesc, 5, "Found five msdesc nodes");
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 111, "Got the correct number of app entries");
+is( scalar @apps, 106, "Got the correct number of app entries");
 my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 171, "Got the correct number of matching words");
+is( scalar @words_not_in_app, 174, "Got the correct number of matching words");
 my @details = $xpc->findnodes( '//tei:witDetail' );
 my @detailwits;
 foreach ( @details ) {
@@ -1453,8 +1421,6 @@ be used to generate graphml or svg.
 
 use lib 't/lib';
 use Text::TEI::Collate;
-use Text::WagnerFischer::Armenian;
-use Words::Armenian;
 use XML::LibXML::XPathContext;
 
 eval 'require Graph::Easy;';
@@ -1466,21 +1432,19 @@ my @files = readdir XF;
 my @mss;
 my $aligner = Text::TEI::Collate->new(
 	'fuzziness' => '50',
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
+	'language' => 'Armenian',
 	);
 foreach ( sort @files ) {
 	next if /^\./;
-	push( @mss, $aligner->read_source( "$testdir/$_",
-		'canonizer' => \&Words::Armenian::canonize_word
-		) );
+	push( @mss, $aligner->read_source( "$testdir/$_" ) );
 }
 $aligner->align( @mss );
 
 my $graph = $aligner->to_graph( @mss );
 
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 381, "Got the right number of nodes" );
-is( scalar( $graph->edges ), 992, "Got the right number of edges" );
+is( scalar( $graph->nodes ), 376, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 985, "Got the right number of edges" );
 }
 
 =end testing

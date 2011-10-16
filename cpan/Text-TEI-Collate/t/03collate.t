@@ -1,12 +1,9 @@
 #!/usr/bin/perl -w
 
 use strict;
-use lib 't/lib';
 use File::Basename;
 use Test::More 'no_plan';
-use Text::WagnerFischer::Armenian qw( distance );
 use Text::TEI::Collate;
-use Words::Armenian;
 use utf8;
 
 binmode STDOUT, ":utf8";
@@ -20,12 +17,11 @@ my $testdir_xml = "$dirname/data/xml_plain";
 my $testdir_xmlfull = "$dirname/data/xml_word";
 
 # Set the expected values.
-my $expected_word_length = 281;
+my $expected_word_length = 280;
 
 # Test the plaintext files
-my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50,
-       'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-    );
+my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50, 
+                                             'language' => 'Armenian' );
 opendir( PLAIN, "$testdir_plain" ) or die "Could not find plaintext test files: $@";
 my @plain_fn;
 while( my $fn = readdir PLAIN ) {
@@ -34,10 +30,7 @@ while( my $fn = readdir PLAIN ) {
 }
 my @plain_mss;
 foreach ( sort @plain_fn ) {
-    push( @plain_mss, $aligner_plain->read_source( $_,
-		   'canonizer' => \&Words::Armenian::canonize_word,
-		   'comparator' => \&Words::Armenian::comparator,
-	  ) );
+    push( @plain_mss, $aligner_plain->read_source( $_ ) );
 }
 $aligner_plain->align( @plain_mss );
 is( scalar @plain_mss, 5, "Returned five objects" );
@@ -49,9 +42,8 @@ foreach( @plain_mss ) {
 }
 
 # Test the freeform XML files
-my $aligner_xml = Text::TEI::Collate->new( 'fuzziness' => 50,
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-    );
+my $aligner_xml = Text::TEI::Collate->new( 'fuzziness' => 50, 
+                                           'language' => 'Armenian' );
 opendir( XML, "$testdir_xml" ) or die "Could not find XML test files: $@";
 my @xml_fn;
 while( my $fn = readdir XML ) {
@@ -60,10 +52,7 @@ while( my $fn = readdir XML ) {
 }
 my @xml_mss;
 foreach ( sort @xml_fn ) {
-    push( @xml_mss, $aligner_plain->read_source( $_,
-       'canonizer' => \&Words::Armenian::canonize_word,
-	   'comparator' => \&Words::Armenian::comparator,
-	  ) );
+    push( @xml_mss, $aligner_plain->read_source( $_ ) );
 }
 $aligner_xml->align( @xml_mss );
 is( scalar @xml_mss, 5, "Returned five objects" );
@@ -76,10 +65,9 @@ foreach( @xml_mss ) {
 # TODO Check for the right number and sort of divisional markers.
 
 # Test the word-wrapped XML files.  These have varied a little from the others.
-$expected_word_length = 281;
-my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50,
-	'distance_sub' => \&Text::WagnerFischer::Armenian::distance,
-    );
+$expected_word_length = 278;
+my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50, 
+                                               'language' => 'Armenian' );
 opendir( XMLFULL, "$testdir_xmlfull" ) or die "Could not find xmlfulltext test files: $@";
 my @xmlfull_fn;
 while( my $fn = readdir XMLFULL ) {
@@ -88,10 +76,7 @@ while( my $fn = readdir XMLFULL ) {
 }
 my @xmlfull_mss;
 foreach ( sort @xmlfull_fn ) {
-    push( @xmlfull_mss, $aligner_xmlfull->read_source( $_,
-       'canonizer' => \&Words::Armenian::canonize_word,
-	   'comparator' => \&Words::Armenian::comparator,
-	  ) );
+    push( @xmlfull_mss, $aligner_xmlfull->read_source( $_ ) );
 }
 $aligner_xml->align( @xmlfull_mss );
 is( scalar @xmlfull_mss, 5, "Returned five objects" );
