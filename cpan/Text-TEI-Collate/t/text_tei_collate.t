@@ -20,13 +20,13 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 # =begin testing
 {
 my $aligner = Text::TEI::Collate->new();
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
 my $ok = eval { $aligner->use_language( 'Armenian' ); };
 ok( $ok, "Used existing language module" );
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
 
 $aligner->use_language( 'default' );
-is( $aligner->{distance_sub}, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
 my $not_ok = eval { $aligner->use_language( 'Klingon' ); };
@@ -291,6 +291,7 @@ my @mss;
 my $aligner = Text::TEI::Collate->new(
 	'fuzziness' => '50',
 	'language' => 'Armenian',
+	'title' => 'Test Armenian collation',
 	);
 foreach ( sort @files ) {
 	next if /^\./;
@@ -306,6 +307,8 @@ $xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
 # Test the creation of a document header from TEI files
 my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
 is( scalar @witdesc, 5, "Found five msdesc nodes");
+my $title = $xpc->findvalue( '//tei:titleStmt/tei:title' );
+is( $title, $aligner->title, "TEI doc title set correctly" );
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );

@@ -122,7 +122,7 @@ options are listed.
 more the debugging output.
 
 =item B<title> - Display title for the collation output results, should those
-results need a display title (e.g. TEI or graph output).
+results need a display title (e.g. TEI or JSON output).
 
 =item B<language> - Specify the language module we should use from those
 available in Text::TEI::Collate::Lang.  Default is 'Default'.
@@ -1111,7 +1111,7 @@ foreach ( @wits ) {
 
 sub to_json {
 	my( $self, @mss ) = @_;
-	my $result = { 'alignment' => [] };
+	my $result = { 'title' => $self->title, 'alignment' => [] };
 	foreach my $ms ( @mss ) {
 		push( @{$result->{'alignment'}},
 			  { 'witness' => $ms->sigil,
@@ -1139,6 +1139,7 @@ my @mss;
 my $aligner = Text::TEI::Collate->new(
 	'fuzziness' => '50',
 	'language' => 'Armenian',
+	'title' => 'Test Armenian collation',
 	);
 foreach ( sort @files ) {
 	next if /^\./;
@@ -1154,6 +1155,8 @@ $xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
 # Test the creation of a document header from TEI files
 my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
 is( scalar @witdesc, 5, "Found five msdesc nodes");
+my $title = $xpc->findvalue( '//tei:titleStmt/tei:title' );
+is( $title, $aligner->title, "TEI doc title set correctly" );
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
@@ -1494,6 +1497,7 @@ is( scalar( $graph->edges ), 985, "Got the right number of edges" );
 
 sub to_graph {
 	my( $self, @manuscripts ) = @_;
+	# TODO use lighter-weight Graph instead
 	eval 'require Graph::Easy;';
 	if( $@ ) {
 		warn "Graph generation requires module Graph::Easy";
