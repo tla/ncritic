@@ -60,7 +60,8 @@ my %required;
 for ( sort keys %used ) {
     my $first_in = Module::CoreList->first_release($_);
     next if defined $first_in and $first_in <= 5.00803;
-    next if /^(Text::TEI::Collate|Words::Armenian|inc|t)(::|$)/;
+    next if /^(Text::TEI::Collate|inc|t)(::|$)/;
+    next if /^\d/;  # skip use VERSION
 
     #warn $_;
     ok( exists $required{$_}, "$_ in Makefile.PL" )
