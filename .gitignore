@@ -1,3 +1,4 @@
 *~
+.DS_Store
 *.bbprojectd
 catalyst/lib/Text
