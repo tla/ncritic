@@ -2,8 +2,23 @@ package Text::TEI::Collate::Lang::Greek;
 
 use strict;
 use warnings;
+use Text::TEI::Collate::Lang;
 use Text::WagnerFischer;
 use Unicode::Normalize;
+
+=head1 NAME
+
+Text::TEI::Collate::Lang::Armenian - (Classical) Armenian language module for
+Text::TEI::Collate
+
+=head1 DESCRIPTION
+
+This module is an extension of Text::TEI::Collate::Lang for the Greek
+language.  At this point it is really just a placeholder for later use.
+
+Also see documentation for Text::TEI::Collate::Lang. 
+
+=head1 METHODS
 
 =head2 distance
 
@@ -15,43 +30,11 @@ sub distance {
     return Text::WagnerFischer::distance( @_ );
 }
 
-=head2 canonizer
-
-This is essentially just the lc() builtin function.
-
-=cut
-
-sub canonizer {
-    return lc( $_[0] );
-}
-
-=head2 comparator
-
-This is a function that replaces all characters with their base character 
-after an NFKD (Normalization Form Compatibility Decomposition) operation.
-
-=begin testing
-
-use Test::More::UTF8;
-use Text::TEI::Collate::Lang::Greek;
-
-my $comp = \&Text::TEI::Collate::Lang::Greek::comparator;
-is( $comp->( 'abcd' ), 'abcd', "Got correct no-op comparison string" );
-is( $comp->( "ἔστιν" ), "εστιν", "Got correct unaccented comparison string");
-
-=end testing
-
-=cut
-
-sub comparator {
-   	my $word = shift;
-	my @normalized;
-	my @letters = split( '', lc( $word ) );
-	foreach my $l ( @letters ) {
-		my $d = chr( ord( NFKD( $l ) ) );
-		push( @normalized, $d );
-	}
-	return join( '', @normalized );
-}
+sub canonizer { return Text::TEI::Collate::Lang::canonizer( @_ ) }
+sub comparator { return Text::TEI::Collate::Lang::comparator( @_ ) }
 
 1;
+
+=head1 AUTHOR
+
+Tara L Andrews E<lt>aurum@cpan.orgE<gt>

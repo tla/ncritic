@@ -173,35 +173,41 @@ sub BUILD {
 	    my $b = $self->binmode;
 		binmode STDERR, ":$b";
 	}
-	$self->use_language( $self->language );
+	
+	$self->_use_language( $self->language );
 }
 
-=head2 use_language
-
-Use one of the language modules defined in Text::TEI::Collate::Lang.  This will
-affect what is used for the distance sub, the canonizer, and the comparator for
-the sources that are read hereafter.
+around 'language' => sub {
+	my $orig = shift;
+	my $self = shift;
+	if( @_ ) {
+		# Check that we can use this language.
+		$self->_use_language( @_ );
+	}
+	# We didn't throw an exception? Good.
+	$self->$orig( @_ );
+};
 
 =begin testing
 
 my $aligner = Text::TEI::Collate->new();
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
-my $ok = eval { $aligner->use_language( 'Armenian' ); };
+my $ok = eval { $aligner->language( 'Armenian' ); };
 ok( $ok, "Used existing language module" );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
 
-$aligner->use_language( 'default' );
+$aligner->language( 'default' );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
-my $not_ok = eval { $aligner->use_language( 'Klingon' ); };
+my $not_ok = eval { $aligner->language( 'Klingon' ); };
 ok( !$not_ok, "Died with nonexistent language module" );
 
 =end testing
 
 =cut
 
-sub use_language {
+sub _use_language {
     my( $self, $lang ) = @_;
     # Are we reverting to a default?
     if( !$lang || $lang =~ /default/i ) {
@@ -217,7 +223,6 @@ sub use_language {
     $mod->can( 'comparator' ) or die "No comparator subroutine";
     $mod->can( 'canonizer' ) or die "No canonizer subroutine";
     $self->distance_sub( $mod->can( 'distance' ) );
-    $self->language( $lang );
 }
 
 =head2 read_source
@@ -245,7 +250,7 @@ Can also be read from a TEI <msdesc/> element.
 use XML::LibXML;
 
 my $aligner = Text::TEI::Collate->new();
-$aligner->use_language( 'Armenian' );
+$aligner->language( 'Armenian' );
 
 # Test a manuscript with a plaintext source, filename
 
@@ -311,7 +316,7 @@ is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
 ## The mss we will test the rest of the tests with.
-$aligner->use_language( 'Greek' );
+$aligner->language( 'Greek' );
 @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 is( scalar @mss, 28, "Got correct number of mss from CX file" );
 my %wordcount = (

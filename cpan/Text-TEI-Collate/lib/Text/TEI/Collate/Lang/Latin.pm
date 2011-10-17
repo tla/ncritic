@@ -2,50 +2,21 @@ package Text::TEI::Collate::Lang::Latin;
 
 use strict;
 use warnings;
+use Text::TEI::Collate::Lang;
 
-=head2 distance
+=head1 NAME
 
-This is the same as what is in Default. Really I should subclass that.
+Text::TEI::Collate::Lang::Armenian - (Classical) Armenian language module for
+Text::TEI::Collate
 
-=cut
+=head1 DESCRIPTION
 
-sub distance {
-	my( $word1, $word2 ) = @_;
-	my @l1 = split( '', $word1 );
-	my @l2 = split( '', $word2 );
-	my( %f1, %f2 );
-	foreach( @l1 ) {
-		$f1{$_} += 1;
-	}
-	foreach( @l2 ) {
-		$f2{$_} += 1;
-	}
-	my $distance = 0;
-	my %seen;
-	foreach( keys %f1 ) {
-		$seen{$_} = 1;
-		my $val1 = $f1{$_};
-		my $val2 = $f2{$_} || 0;
-		$distance += abs( $val1 - $val2 );
-	}
-	foreach( keys %f2 ) {
-		next if $seen{$_};
-		my $val1 = $f1{$_} || 0;
-		my $val2 = $f2{$_} || 0;
-		$distance += abs( $val1 - $val2 );
-	}
-	return $distance;
-}
+This module is an extension of Text::TEI::Collate::Lang for the Latin
+language.  It is really just here to normalize 'v' to 'u', and 'j' to 'i'.
 
-=head2 canonizer
+Also see documentation for Text::TEI::Collate::Lang.
 
-This is essentially just the lc() builtin function.
-
-=cut
-
-sub canonizer {
-    return lc( $_[0] );
-}
+=head1 METHODS
 
 =head2 comparator
 
@@ -55,11 +26,17 @@ This is a function to normalize some Latin spelling.
 
 sub comparator {
    	my $word = shift;
-    $word =~ s/\W//g;
     $word =~ s/v/u/g;
     $word =~ s/j/i/g;
     $word =~ s/cha/ca/g;
     return $word;
 }
 
+sub distance { return Text::TEI::Collate::Lang::distance( @_ ) }
+sub canonizer { return Text::TEI::Collate::Lang::canonizer( @_ ) }
+
 1;
+
+=head1 AUTHOR
+
+Tara L Andrews E<lt>aurum@cpan.orgE<gt>

@@ -21,15 +21,15 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 {
 my $aligner = Text::TEI::Collate->new();
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
-my $ok = eval { $aligner->use_language( 'Armenian' ); };
+my $ok = eval { $aligner->language( 'Armenian' ); };
 ok( $ok, "Used existing language module" );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
 
-$aligner->use_language( 'default' );
+$aligner->language( 'default' );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
-my $not_ok = eval { $aligner->use_language( 'Klingon' ); };
+my $not_ok = eval { $aligner->language( 'Klingon' ); };
 ok( !$not_ok, "Died with nonexistent language module" );
 }
 
@@ -40,7 +40,7 @@ ok( !$not_ok, "Died with nonexistent language module" );
 use XML::LibXML;
 
 my $aligner = Text::TEI::Collate->new();
-$aligner->use_language( 'Armenian' );
+$aligner->language( 'Armenian' );
 
 # Test a manuscript with a plaintext source, filename
 
@@ -106,7 +106,7 @@ is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
 ## The mss we will test the rest of the tests with.
-$aligner->use_language( 'Greek' );
+$aligner->language( 'Greek' );
 @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 is( scalar @mss, 28, "Got correct number of mss from CX file" );
 my %wordcount = (
