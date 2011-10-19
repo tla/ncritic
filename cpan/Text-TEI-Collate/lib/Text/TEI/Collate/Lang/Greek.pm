@@ -31,6 +31,19 @@ sub distance {
 }
 
 sub canonizer { return Text::TEI::Collate::Lang::canonizer( @_ ) }
+
+=begin testing
+
+use Test::More::UTF8;
+use Text::TEI::Collate::Lang::Greek;
+
+my $comp = \&Text::TEI::Collate::Lang::Greek::comparator;
+is( $comp->( "αι̣τια̣ν̣" ), "αιτιαν", "Got correct comparison string for Greek underdots" );
+
+=end testing
+
+=cut
+
 sub comparator { return Text::TEI::Collate::Lang::comparator( @_ ) }
 
 1;

@@ -103,6 +103,7 @@ sub comparator {
 	my @letters = split( '', lc( $word ) );
 	foreach my $l ( @letters ) {
 		my $d = chr( ord( NFKD( $l ) ) );
+		next unless $d =~ /[[:alpha:]]/; # toss out e.g. Greek underdots
 		push( @normalized, $d );
 	}
 	return join( '', @normalized );

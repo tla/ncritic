@@ -12,8 +12,7 @@ use Test::More::UTF8;
 use Text::TEI::Collate::Lang::Greek;
 
 my $comp = \&Text::TEI::Collate::Lang::Greek::comparator;
-is( $comp->( 'abcd' ), 'abcd', "Got correct no-op comparison string" );
-is( $comp->( "ἔστιν" ), "εστιν", "Got correct unaccented comparison string");
+is( $comp->( "αι̣τια̣ν̣" ), "αιτιαν", "Got correct comparison string for Greek underdots" );
 }
 
 
