@@ -462,7 +462,7 @@ their wordlists collated.
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 75;
+my $cols = 74;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
@@ -508,7 +508,6 @@ sub align {
 
 	# $base_text now holds all the words, linked in one way or another.
 	# Make a result array from this.
-
   	my @result_array = map { [] } @manuscripts;
 	my %ridx;
 	foreach( 0 .. $#manuscripts ) {
@@ -534,6 +533,12 @@ sub align {
 	# Take the contents of @result_array and put them back into the
  	# manuscripts.
 	foreach my $i ( 0 .. $#result_array ) {
+	    ## Sanity check that we haven't lost or gained any words
+	    my $ms = $manuscripts[$i];
+	    my $old_string = join( '.', map { $_->canonical_form } @{$ms->words} );
+	    my @real_words = grep { !$_->invisible } @{$result_array[$i]};
+	    my $new_string = join( '.', map { $_->canonical_form } @real_words );
+	    # warn "Manuscript words differ! $old_string vs. $new_string" unless $old_string eq $new_string;
 		$manuscripts[$i]->replace_words( $result_array[$i] );
 	}
 
@@ -585,8 +590,9 @@ sub build_array {
 			# Grab the word sets from each text.
 			my @base_wlist = @{$base_text}[$diff->Range( 1 )];
 			my @new_wlist = @{$text}[$diff->Range( 2 )];
-			# Does the base have variants against which we can collate the new words?
-			# If so, try running against the variants, and collate according to the result.
+			# Does the base have variants against which we can collate the 
+			# new words? If so, try running against the variants, and 
+			# collate according to the result.
 			my @var_wlist;
  			my %base_idx;
  			map { push( @var_wlist, $_->variants ) } @base_wlist;
@@ -727,11 +733,61 @@ sub _match_variants {
 	return @match_sets;
 }
 
+=begin testing
+
+use Text::TEI::Collate;
+use Text::TEI::Collate::Word;
+
+my $aligner = Text::TEI::Collate->new();
+
+# TODO case where first element of one array is not matched.
+# base was 'and|B(very|D) white|B(green|C/special|D)'
+# new (E) was: 'not very special'
+# test the result.
+
+# Set up the base: 'and|B(very|D) white|B(green|C/special|D)'
+my @base;
+foreach my $w ( qw/ and white / ) {
+    push( @base, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'B' ) );
+}
+my $v1 = Text::TEI::Collate::Word->new( 'string' => 'very', 'ms_sigil' => 'D' );
+$base[0]->add_variant( $v1 );
+my $v2 = Text::TEI::Collate::Word->new( 'string' => 'green', 'ms_sigil' => 'C' );
+my $v3 = Text::TEI::Collate::Word->new( 'string' => 'special', 'ms_sigil' => 'D' );
+$v2->add_variant( $v3 );
+$base[1]->add_variant( $v2 );
+
+# Set up the new
+my @new;
+foreach my $w ( qw/ not very special / ) {
+    push( @new, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'E' ) );
+}
+
+# Set up the base_idx
+my $base_idx = { $v1 => 0, $v2 => 1, $v3 => 1 };
+
+# Get the right matches in the first place
+$aligner->make_fuzzy_matches( [ @base, $v1, $v2, $v3 ], \@new );
+my @matches = $aligner->_match_variants( [ $v1, $v2, $v3 ], \@new, $base_idx );
+is( scalar @matches, 2, "Got two matches from constructed case" );
+is_deeply( $matches[0], [ 0, 1, $v1 ], "First match is correct" );
+is_deeply( $matches[1], [ 1, 2, $v3 ], "Second match is correct" );
+
+# Now do the real testing
+my( $nb, $nn ) = $aligner->_add_variant_matches( \@matches, \@base, \@new, $base_idx );
+is( scalar @$nb, 3, "Got three base words" );
+is( scalar @$nn, 3, "Got three new words" );
+is( $nb->[0], $aligner->empty_word, "Empty word at front of base" );
+
+=end testing
+
+=cut
+
 sub _add_variant_matches {
  	my( $self, $match_sets, $base, $new, $base_idx ) = @_;
  	my( $base_wlist, $new_wlist ) = ( [], [] );
 
- 	my( $last_b, $last_n ) = ( 0, 0 );
+ 	my( $last_b, $last_n ) = ( -1, -1 );
 	my %seen_base_indices;
 	foreach my $p ( @$match_sets ) {
 		my( $b_idx, $n_idx, $v ) = @$p;
@@ -739,18 +795,19 @@ sub _add_variant_matches {
 		my( @tb, @tn );
 		if( $b_idx > $last_b+1 
  			&& $b_idx < scalar @$base ) {
- 			@tb = @{$base}[$last_b .. $b_idx-1];
+ 			@tb = @{$base}[ ( $last_b < 0 ? 0 : $last_b ) .. $b_idx-1];
 		}
 		if( $n_idx > $last_n+1 ) {
-			@tn = @{$new}[$last_n .. $n_idx-1];
+			@tn = @{$new}[ ( $last_n < 0 ? 0 : $last_n ) .. $n_idx-1];
 		}
 		$self->_balance_arrays( \@tb, \@tn );
 		push( @$base_wlist, @tb ) if @tb;
 		push( @$new_wlist, @tn ) if @tn;
 
 		# If this is the first occurrence of $b_idx, push the pair.
-		# If it is not the first occurrence, unlink the variant and
-		# then push the pair.
+		# If it is not the first occurrence, we have more than one 'new' 
+		# match on one 'base' plus variants.  Unlink the subsequent 
+		# variant into its own column and then push the pair.
 		if( $seen_base_indices{$b_idx} 
  			|| $b_idx == -1
 			|| $b_idx == scalar( @$base ) ) {
@@ -818,6 +875,7 @@ is( scalar keys %unique, 11, "Got correct number of fuzzy matching words" );
 
 =cut
 
+# TODO This doesn't match against base variants - does that matter?
 sub make_fuzzy_matches {
 	my( $self, $base, $other ) = @_;
 	my %frequency;
@@ -1031,59 +1089,60 @@ sub _wordlist_slice {
 # text actually begins and ends.
 my $GAP_MIN_SIZE = 18;
 sub begin_end_mark {
-    my $self = shift;
-    my @manuscripts = @_;
-    foreach my $text( @manuscripts ) {
-	my $wordlist = $text->words;
-	my $sigil = $text->sigil;
-	my $first_word_idx = -1;
-	my $last_word_idx = -1;
-	my $gap_start = -1;
-	my $gap_end = -1;
-	foreach my $idx( 0 .. $#{$wordlist} ) {
-	    my $word_obj = $wordlist->[$idx];
-	    if( $first_word_idx > -1 ) {
-		# We have found and coped with the first word; 
-		# now we are looking for substantive gaps.
-		if ( $word_obj->comparison_form ) {
-		    $last_word_idx = $idx;
-		    if( $gap_start > 0 &&
-			( $gap_end - $gap_start ) > $GAP_MIN_SIZE ) {
-			# Put in the gap start & end markers.  Here we are
-			# replacing a blank, rather than adding to the array.
- 			foreach( $gap_start, $gap_end ) {
- 			    my $tag =  $_ < $gap_end ? 'BEGINGAP' : 'ENDGAP';
- 			    my $gapdesc = $tag . "_1_$_";
-  			    $self->_wordlist_slice( $wordlist, $gapdesc,
- 					    [ _special( $tag, $sigil ) ] );
- 			}
-		    }
-		    # Either way we are not now in a gap.  Reset the counters.
-		    $gap_end = $gap_start = -1;
-		# else empty space; are we in a gap?
-		} elsif( $gap_start < 0 ) { 
-		    $gap_start = $idx;
-		} else {
-		    $gap_end = $idx;
-		}
-	    # else we are still looking for the first non-blank word.
-	    } elsif( $word_obj->comparison_form ) {
-		$first_word_idx = $idx;
-		# We have found the first real word.  Splice in a begin marker.
-		my $slicedesc = join( '_', 'begin', 0, $idx-1 );
+	my $self = shift;
+	my @manuscripts = @_;
+	foreach my $text( @manuscripts ) {
+		my $wordlist = $text->words;
+		my $sigil = $text->sigil;
+		my $first_word_idx = -1;
+		my $last_word_idx = -1;
+		my $gap_start = -1;
+		my $gap_end = -1;
+		## TODO BUG Modifying wordlist as we cycle through its indices, bad stuff!
+		foreach my $idx( 0 .. $#{$wordlist} ) {
+			my $word_obj = $wordlist->[$idx];
+			if( $first_word_idx > -1 ) {
+				# We have found and coped with the first word; 
+				# now we are looking for substantive gaps.
+				if ( $word_obj->comparison_form ) {
+					$last_word_idx = $idx;
+					if( $gap_start > 0 &&
+						( $gap_end - $gap_start ) > $GAP_MIN_SIZE ) {
+						# Put in the gap start & end markers.  Here we are
+						# replacing a blank, rather than adding to the array.
+						foreach( $gap_start, $gap_end ) {
+							my $tag =  $_ < $gap_end ? 'BEGINGAP' : 'ENDGAP';
+							my $gapdesc = $tag . "_1_$_";
+							$self->_wordlist_slice( $wordlist, $gapdesc,
+											[ _special( $tag, $sigil ) ] );
+						}
+					}
+					# Either way we are not now in a gap.  Reset the counters.
+					$gap_end = $gap_start = -1;
+				# else empty space; are we in a gap?
+				} elsif( $gap_start < 0 ) { 
+					$gap_start = $idx;
+				} else {
+					$gap_end = $idx;
+				}
+			# else we are still looking for the first non-blank word.
+			} elsif( $word_obj->comparison_form ) {
+				$first_word_idx = $idx;
+				# We have found the first real word.  Splice in a begin marker.
+				my $slicedesc = join( '_', 'begin', 0, $idx-1 );
+				$self->_wordlist_slice( $wordlist, $slicedesc, 
+										[ _special( 'BEGIN', $sigil ) ] );
+			} # else it's a blank before the first word.
+		} ## end foreach
+		
+		# Now put in the END element after the last word found.
+		# First account for the fact that we shifted the end of the array.
+		my $end_idx = $last_word_idx == $#{$wordlist} - 1 ? 
+			$last_word_idx+1 : $last_word_idx;
+		my $slicedesc = join( '_', 'end', 0, $end_idx );
 		$self->_wordlist_slice( $wordlist, $slicedesc, 
-					[ _special( 'BEGIN', $sigil ) ] );
-	    } # else it's a blank before the first word.
-	} ## end foreach
-	
-	# Now put in the END element after the last word found.
-	# First account for the fact that we shifted the end of the array.
-	my $end_idx = $last_word_idx == $#{$wordlist} - 1 ? 
-	    $last_word_idx+1 : $last_word_idx;
-	my $slicedesc = join( '_', 'end', 0, $end_idx );
-	$self->_wordlist_slice( $wordlist, $slicedesc, 
-				[ _special( 'END', $sigil ) ] );
-    }
+								[ _special( 'END', $sigil ) ] );
+	}
 }
 
 # Helper function for begin_end_mark, to create a mark
@@ -1111,7 +1170,7 @@ ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back")
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
 # Without the beginning and end marks, we have 74 word spots.
-my $columns = 74;
+my $columns = 72;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -1175,7 +1234,7 @@ while( my $row = $csv->getline( $io ) ) {
         is( $row->[0], "λέγει", "Got the right first word" );
     }
 }
-is( $rowctr, 74, "Got expected number of rows in CSV" );
+is( $rowctr, 72, "Got expected number of rows in CSV" );
 
 =end testing
 

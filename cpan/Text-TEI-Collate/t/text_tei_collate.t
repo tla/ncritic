@@ -151,7 +151,7 @@ foreach( @mss ) {
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $cols = 75;
+my $cols = 74;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
@@ -215,6 +215,55 @@ is( scalar $base->[7]->variants, 0, "Got 0 variants" );
 
 # =begin testing
 {
+use Text::TEI::Collate;
+use Text::TEI::Collate::Word;
+
+my $aligner = Text::TEI::Collate->new();
+
+# TODO case where first element of one array is not matched.
+# base was 'and|B(very|D) white|B(green|C/special|D)'
+# new (E) was: 'not very special'
+# test the result.
+
+# Set up the base: 'and|B(very|D) white|B(green|C/special|D)'
+my @base;
+foreach my $w ( qw/ and white / ) {
+    push( @base, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'B' ) );
+}
+my $v1 = Text::TEI::Collate::Word->new( 'string' => 'very', 'ms_sigil' => 'D' );
+$base[0]->add_variant( $v1 );
+my $v2 = Text::TEI::Collate::Word->new( 'string' => 'green', 'ms_sigil' => 'C' );
+my $v3 = Text::TEI::Collate::Word->new( 'string' => 'special', 'ms_sigil' => 'D' );
+$v2->add_variant( $v3 );
+$base[1]->add_variant( $v2 );
+
+# Set up the new
+my @new;
+foreach my $w ( qw/ not very special / ) {
+    push( @new, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'E' ) );
+}
+
+# Set up the base_idx
+my $base_idx = { $v1 => 0, $v2 => 1, $v3 => 1 };
+
+# Get the right matches in the first place
+$aligner->make_fuzzy_matches( [ @base, $v1, $v2, $v3 ], \@new );
+my @matches = $aligner->_match_variants( [ $v1, $v2, $v3 ], \@new, $base_idx );
+is( scalar @matches, 2, "Got two matches from constructed case" );
+is_deeply( $matches[0], [ 0, 1, $v1 ], "First match is correct" );
+is_deeply( $matches[1], [ 1, 2, $v3 ], "Second match is correct" );
+
+# Now do the real testing
+my( $nb, $nn ) = $aligner->_add_variant_matches( \@matches, \@base, \@new, $base_idx );
+is( scalar @$nb, 3, "Got three base words" );
+is( scalar @$nn, 3, "Got three new words" );
+is( $nb->[0], $aligner->empty_word, "Empty word at front of base" );
+}
+
+
+
+# =begin testing
+{
 use Test::More::UTF8;
 use Text::TEI::Collate;
 use Text::TEI::Collate::Word;
@@ -272,7 +321,7 @@ ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back")
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
 # Without the beginning and end marks, we have 74 word spots.
-my $columns = 74;
+my $columns = 72;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -310,7 +359,7 @@ while( my $row = $csv->getline( $io ) ) {
         is( $row->[0], "λέγει", "Got the right first word" );
     }
 }
-is( $rowctr, 74, "Got expected number of rows in CSV" );
+is( $rowctr, 72, "Got expected number of rows in CSV" );
 }
 
 
