@@ -150,13 +150,22 @@ foreach( @mss ) {
 {
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+my @orig_wordlists = map { $_->words } @mss;
 $aligner->align( @mss );
-my $cols = 74;
+my $cols = 75;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
-
-#TODO test the actual collation validity sometime
+foreach my $i ( 0 .. $#mss ) {
+    my $ms = $mss[$i];
+    my @old_words = map { $_->canonical_form } @{$orig_wordlists[$i]};
+    my @real_words = map { $_->canonical_form } grep { !$_->invisible } @{$ms->words};
+    is( scalar @old_words, scalar @real_words, "Manuscript " . $ms->sigil . " has an unchanged word total" );
+    foreach my $j ( 0 .. $#old_words ) {
+        my $rw = $j < scalar @real_words ? $real_words[$j] : '';
+        is( $rw, $old_words[$j], "...word at index $j is correct" );
+    }
+}
 }
 
 
@@ -220,11 +229,6 @@ use Text::TEI::Collate::Word;
 
 my $aligner = Text::TEI::Collate->new();
 
-# TODO case where first element of one array is not matched.
-# base was 'and|B(very|D) white|B(green|C/special|D)'
-# new (E) was: 'not very special'
-# test the result.
-
 # Set up the base: 'and|B(very|D) white|B(green|C/special|D)'
 my @base;
 foreach my $w ( qw/ and white / ) {
@@ -237,7 +241,7 @@ my $v3 = Text::TEI::Collate::Word->new( 'string' => 'special', 'ms_sigil' => 'D'
 $v2->add_variant( $v3 );
 $base[1]->add_variant( $v2 );
 
-# Set up the new
+# Set up the new: 'not very special'
 my @new;
 foreach my $w ( qw/ not very special / ) {
     push( @new, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'E' ) );
@@ -328,12 +332,35 @@ is( $base->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
 is( $other->words->[-1]->special, 'END', "Got ending mark at end" );
 is( $other->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
 # Check empty spaces
-my $base_exp = [ 'BEGIN', 'the', 'black', undef, undef, undef, 'cat', 'END' ];
+my $base_exp = [ 'BEGIN', 'the', 'black', '', '', '', 'cat', 'END' ];
 my $other_exp = [ 'BEGIN', 'the', 'black', 'and', 'white', 'little', 'cat', 'END' ];
 my @base_str = map { $_->printable } @{$base->words};
 my @other_str = map { $_->printable } @{$other->words};
 is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
 is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
+
+my @test = (
+    'The black dog chases a red cat.',
+    'A red cat chases the black dog.',
+    'A red cat chases the yellow dog<',
+);
+my @mss = map { $aligner->read_source( $_ ) } @test;
+$aligner->align( @mss );
+
+$base = $mss[0];
+$other = $mss[2];
+is( scalar @{$base->words}, 13, "Got 11 columns plus top and tail" );
+is( scalar @{$other->words}, 13, "Got 11 columns plus top and tail" );
+$base_exp = [ 'BEGIN', 'the', 'black', 'dog', 'chases', 'a', 'red', 'cat', 'END', '', '', '', '' ];
+$other_exp = [ '', '', '', '', 'BEGIN', 'a', 'red', 'cat', 'chases', 'the', 'yellow', 'dog', 'END' ];
+@base_str = map { $_->printable } @{$base->words};
+@other_str = map { $_->printable } @{$other->words};
+is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
+is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
+is( $base->words->[-5]->special, 'END', "Got ending mark at end for base" );
+is( $base->words->[0]->special, 'BEGIN', "Got beginning mark at start for base" );
+is( $other->words->[-1]->special, 'END', "Got ending mark at end for other" );
+is( $other->words->[4]->special, 'BEGIN', "Got beginning mark at start for other" );
 }
 
 
@@ -347,8 +374,8 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-# Without the beginning and end marks, we have 74 word spots.
-my $columns = 72;
+# Without the beginning and end marks, we have 75 word spots.
+my $columns = 73;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -386,7 +413,7 @@ while( my $row = $csv->getline( $io ) ) {
         is( $row->[0], "λέγει", "Got the right first word" );
     }
 }
-is( $rowctr, 72, "Got expected number of rows in CSV" );
+is( $rowctr, 73, "Got expected number of rows in CSV" );
 }
 
 
@@ -424,9 +451,9 @@ is( $title, $aligner->title, "TEI doc title set correctly" );
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 106, "Got the correct number of app entries");
+is( scalar @apps, 107, "Got the correct number of app entries");
 my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 174, "Got the correct number of matching words");
+is( scalar @words_not_in_app, 175, "Got the correct number of matching words");
 my @details = $xpc->findnodes( '//tei:witDetail' );
 my @detailwits;
 foreach ( @details ) {
@@ -466,8 +493,8 @@ $aligner->align( @mss );
 my $graph = $aligner->to_graph( @mss );
 
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 376, "Got the right number of nodes" );
-is( scalar( $graph->edges ), 985, "Got the right number of edges" );
+is( scalar( $graph->nodes ), 380, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 992, "Got the right number of edges" );
 }
 }
 

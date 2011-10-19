@@ -461,13 +461,22 @@ their wordlists collated.
 
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+my @orig_wordlists = map { $_->words } @mss;
 $aligner->align( @mss );
-my $cols = 74;
+my $cols = 75;
 foreach( @mss ) {
 	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
 }
-
-#TODO test the actual collation validity sometime
+foreach my $i ( 0 .. $#mss ) {
+    my $ms = $mss[$i];
+    my @old_words = map { $_->canonical_form } @{$orig_wordlists[$i]};
+    my @real_words = map { $_->canonical_form } grep { !$_->invisible } @{$ms->words};
+    is( scalar @old_words, scalar @real_words, "Manuscript " . $ms->sigil . " has an unchanged word total" );
+    foreach my $j ( 0 .. $#old_words ) {
+        my $rw = $j < scalar @real_words ? $real_words[$j] : '';
+        is( $rw, $old_words[$j], "...word at index $j is correct" );
+    }
+}
 
 =end testing
 
@@ -533,21 +542,6 @@ sub align {
 	# Take the contents of @result_array and put them back into the
  	# manuscripts.
 	foreach my $i ( 0 .. $#result_array ) {
-	    ## Sanity check that we haven't lost or gained any words
-	    my $ms = $manuscripts[$i];
-	    my @old_words = map { $_->canonical_form } @{$ms->words};
-	    my @real_words = map { $_->canonical_form }
-	        grep { !$_->invisible } @{$result_array[$i]};
-	    $DB::single = 1 unless @old_words == $real_words;
-	    warn "Manuscript " . $ms->sigil . " word totals changed! " 
-	        . scalar @old_words . " -> " . scalar @real_words
-	        unless @old_words == @real_words;
-	    foreach my $j ( 0 .. $#old_words ) {
-	        my $rw = $j < scalar @real_words ? $real_words[$j] : '';
-	        warn "Word at index $j differs: " . $old_words[$j] 
-	            . " vs. " . $real_words[$j]
-	            unless $rw eq $old_words[$j];
-	    }
 		$manuscripts[$i]->replace_words( $result_array[$i] );
 	}
 
@@ -736,6 +730,7 @@ sub _match_variants {
 				$variant_matched{$v} = 1;
 				push( @match_sets, [ $base_idx->{$v}, $n_idx, $v ] );
 				$last_idx_matched = $base_idx->{$v};
+				last; # N is matched, stop looking at Vs.
 			}
 		}
 	}
@@ -749,11 +744,6 @@ use Text::TEI::Collate::Word;
 
 my $aligner = Text::TEI::Collate->new();
 
-# TODO case where first element of one array is not matched.
-# base was 'and|B(very|D) white|B(green|C/special|D)'
-# new (E) was: 'not very special'
-# test the result.
-
 # Set up the base: 'and|B(very|D) white|B(green|C/special|D)'
 my @base;
 foreach my $w ( qw/ and white / ) {
@@ -766,7 +756,7 @@ my $v3 = Text::TEI::Collate::Word->new( 'string' => 'special', 'ms_sigil' => 'D'
 $v2->add_variant( $v3 );
 $base[1]->add_variant( $v2 );
 
-# Set up the new
+# Set up the new: 'not very special'
 my @new;
 foreach my $w ( qw/ not very special / ) {
     push( @new, Text::TEI::Collate::Word->new( 'string' => $w, 'ms_sigil' => 'E' ) );
@@ -931,14 +921,17 @@ sub diff_key {
 sub word_match {
 	# A and B are word objects.  We want to match if b matches a, 
 	# but also if b matches a variant of a.
-	my( $self, $a, $b ) = @_;
-	my $a_key = $self->diff_key( $a ) || $a->comparison_form;
-	my $b_key = $self->diff_key( $b ) || $b->comparison_form;
+	my( $self, $a, $b, $use_diffkey ) = @_;
+	my $a_key = $a->comparison_form;
+	$a_key = $self->diff_key( $a ) if $self->diff_key( $a ) && $use_diffkey;
+	my $b_key = $b->comparison_form;
+	$b_key = $self->diff_key( $b ) if $self->diff_key( $b ) && $use_diffkey;
 	if( $self->_is_near_word_match( $a_key, $b_key ) ) {
 		return $a;
 	}
 	foreach my $v ( $a->variants ) {
-	    my $v_key = $self->diff_key( $v ) || $v->comparison_form;
+	    my $v_key = $v->comparison_form;
+	    $v_key = $self->diff_key( $v ) if $self->diff_key( $v ) && $use_diffkey;
 		if( $self->_is_near_word_match( $v_key, $b_key ) ) {
 			return $v;
 		}
@@ -977,14 +970,17 @@ sub _is_near_word_match {
  	my $dist = $self->distance_sub->( $word1, $word2 );
 
   	# Now see if the distance is low enough to be a match.
+  	my $answer;
 	if( $self->has_fuzziness_sub ) {
-		return $self->fuzziness_sub->( $word1, $word2, $dist );
+		$answer = $self->fuzziness_sub->( $word1, $word2, $dist );
 	} else {
 		my $ref_str = length( $word1 ) < length( $word2 ) ? $word1 : $word2;
 		my $fuzz = length( $ref_str ) > $self->fuzziness->{short}
 			? $self->fuzziness->{val} : $self->fuzziness->{shortval};
-		return( $dist <= ( length( $ref_str ) * $fuzz / 100 ) );
+		$answer = $dist <= ( length( $ref_str ) * $fuzz / 100 );
 	}
+	# $self->debug( "Words $word1 and $word2 " . ( $answer ? 'matched' : 'did not match' ), 3 );
+	return $answer;
 }
 
 ## Diff handling functions.  Used in build_array and in match_and_align_words.  
@@ -1005,8 +1001,9 @@ sub _handle_diff_same {
  	$self->debug( "Diff: pushing matched words $msg_words", 2 );
 	foreach my $i ( 0 .. $#base_wlist ) {
 		# Link the word to its match.  This means having to compare
-		# the words again, grr argh.
-		my $matched = $self->word_match( $base_wlist[$i], $new_wlist[$i] );
+		# the words again, grr argh.  Use the diff key this time because
+		# we used it when finding these 'same'.
+		my $matched = $self->word_match( $base_wlist[$i], $new_wlist[$i], 1 );
 		$DB::single = 1 if !$matched;
 		$matched->add_link( $new_wlist[$i] );
 	}
@@ -1118,6 +1115,28 @@ my @other_str = map { $_->printable } @{$other->words};
 is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
 is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
 
+my @test = (
+    'The black dog chases a red cat.',
+    'A red cat chases the black dog.',
+    'A red cat chases the yellow dog<',
+);
+my @mss = map { $aligner->read_source( $_ ) } @test;
+$aligner->align( @mss );
+
+$base = $mss[0];
+$other = $mss[2];
+is( scalar @{$base->words}, 13, "Got 11 columns plus top and tail" );
+is( scalar @{$other->words}, 13, "Got 11 columns plus top and tail" );
+$base_exp = [ 'BEGIN', 'the', 'black', 'dog', 'chases', 'a', 'red', 'cat', 'END', '', '', '', '' ];
+$other_exp = [ '', '', '', '', 'BEGIN', 'a', 'red', 'cat', 'chases', 'the', 'yellow', 'dog', 'END' ];
+@base_str = map { $_->printable } @{$base->words};
+@other_str = map { $_->printable } @{$other->words};
+is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
+is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
+is( $base->words->[-5]->special, 'END', "Got ending mark at end for base" );
+is( $base->words->[0]->special, 'BEGIN', "Got beginning mark at start for base" );
+is( $other->words->[-1]->special, 'END', "Got ending mark at end for other" );
+is( $other->words->[4]->special, 'BEGIN', "Got beginning mark at start for other" );
 
 =end testing
 
@@ -1179,10 +1198,8 @@ sub begin_end_mark {
 
 		
 		# Now put in the END element after the last word found.
-		# First account for the fact that we shifted the end of the array.
-		my $end_idx = $last_word_idx == $#{$wordlist} - 1 ? 
-			$last_word_idx+1 : $last_word_idx;
-		my $slicedesc = join( '_', 'end', 0, $end_idx );
+		# First account for the fact that we just spliced a BEGIN into the array.
+		$slicedesc = join( '_', 'end', 0, $last_word_idx + 1 );
 		$self->_wordlist_slice( $wordlist, $slicedesc, 
 								[ _special( 'END', $sigil ) ] );
 	}
@@ -1212,8 +1229,8 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-# Without the beginning and end marks, we have 74 word spots.
-my $columns = 72;
+# Without the beginning and end marks, we have 75 word spots.
+my $columns = 73;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -1277,7 +1294,7 @@ while( my $row = $csv->getline( $io ) ) {
         is( $row->[0], "λέγει", "Got the right first word" );
     }
 }
-is( $rowctr, 72, "Got expected number of rows in CSV" );
+is( $rowctr, 73, "Got expected number of rows in CSV" );
 
 =end testing
 
@@ -1345,9 +1362,9 @@ is( $title, $aligner->title, "TEI doc title set correctly" );
 
 # Test the creation of apparatus entries
 my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 106, "Got the correct number of app entries");
+is( scalar @apps, 107, "Got the correct number of app entries");
 my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 174, "Got the correct number of matching words");
+is( scalar @words_not_in_app, 175, "Got the correct number of matching words");
 my @details = $xpc->findnodes( '//tei:witDetail' );
 my @detailwits;
 foreach ( @details ) {
@@ -1672,8 +1689,8 @@ $aligner->align( @mss );
 my $graph = $aligner->to_graph( @mss );
 
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 376, "Got the right number of nodes" );
-is( scalar( $graph->edges ), 985, "Got the right number of edges" );
+is( scalar( $graph->nodes ), 380, "Got the right number of nodes" );
+is( scalar( $graph->edges ), 992, "Got the right number of edges" );
 }
 
 =end testing
@@ -1733,6 +1750,25 @@ sub debug {
 	if $self->debuglevel > $lvl;
 }
 
+## Utility function for debugging 
+sub show_links {
+    my( $self, $base ) = @_;
+    foreach my $w ( @$base ) {
+        _show_word_with_links( $w, 1 );
+    }
+}
+sub _show_word_with_links {
+    my( $w, $tab ) = @_;
+    my $prefix = "\t" x $tab;
+    print STDERR $w->printable . " " . $w->ms_sigil . "\n";
+    foreach my $l ( $w->links ) {
+        print STDERR $prefix . "L: " . $l->printable . " " . $l->ms_sigil . "\n";
+    }
+    foreach my $v ( $w->variants ) {
+        print STDERR $prefix . "Variant: ";
+        _show_word_with_links( $v, $tab+1 );
+    }
+}
 1;
 
 

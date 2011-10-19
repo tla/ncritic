@@ -17,7 +17,7 @@ my $testdir_xml = "$dirname/data/xml_plain";
 my $testdir_xmlfull = "$dirname/data/xml_word";
 
 # Set the expected values.
-my $expected_word_length = 280;
+my $expected_word_length = 282;
 
 # Test the plaintext files
 my $aligner_plain = Text::TEI::Collate->new( 'fuzziness' => 50, 
@@ -65,7 +65,7 @@ foreach( @xml_mss ) {
 # TODO Check for the right number and sort of divisional markers.
 
 # Test the word-wrapped XML files.  These have varied a little from the others.
-$expected_word_length = 278;
+$expected_word_length = 280;
 my $aligner_xmlfull = Text::TEI::Collate->new( 'fuzziness' => 50, 
                                                'language' => 'Armenian' );
 opendir( XMLFULL, "$testdir_xmlfull" ) or die "Could not find xmlfulltext test files: $@";
