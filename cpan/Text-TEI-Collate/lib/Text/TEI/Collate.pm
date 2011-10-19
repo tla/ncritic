@@ -535,10 +535,19 @@ sub align {
 	foreach my $i ( 0 .. $#result_array ) {
 	    ## Sanity check that we haven't lost or gained any words
 	    my $ms = $manuscripts[$i];
-	    my $old_string = join( '.', map { $_->canonical_form } @{$ms->words} );
-	    my @real_words = grep { !$_->invisible } @{$result_array[$i]};
-	    my $new_string = join( '.', map { $_->canonical_form } @real_words );
-	    # warn "Manuscript words differ! $old_string vs. $new_string" unless $old_string eq $new_string;
+	    my @old_words = map { $_->canonical_form } @{$ms->words};
+	    my @real_words = map { $_->canonical_form }
+	        grep { !$_->invisible } @{$result_array[$i]};
+	    $DB::single = 1 unless @old_words == $real_words;
+	    warn "Manuscript " . $ms->sigil . " word totals changed! " 
+	        . scalar @old_words . " -> " . scalar @real_words
+	        unless @old_words == @real_words;
+	    foreach my $j ( 0 .. $#old_words ) {
+	        my $rw = $j < scalar @real_words ? $real_words[$j] : '';
+	        warn "Word at index $j differs: " . $old_words[$j] 
+	            . " vs. " . $real_words[$j]
+	            unless $rw eq $old_words[$j];
+	    }
 		$manuscripts[$i]->replace_words( $result_array[$i] );
 	}
 
@@ -1085,6 +1094,35 @@ sub _wordlist_slice {
     }
 }
 
+=begin testing
+
+use Text::TEI::Collate;
+
+my $aligner = Text::TEI::Collate->new();
+my( $base ) = $aligner->read_source( 'The black cat' );
+my( $other ) = $aligner->read_source( 'The black and white little cat' );
+$aligner->align( $base, $other );
+# Check length
+is( scalar @{$base->words}, 8, "Got six columns plus top and tail" );
+is( scalar @{$other->words}, 8, "Got six columns plus top and tail" );
+# Check contents
+is( $base->words->[-1]->special, 'END', "Got ending mark at end" );
+is( $base->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
+is( $other->words->[-1]->special, 'END', "Got ending mark at end" );
+is( $other->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
+# Check empty spaces
+my $base_exp = [ 'BEGIN', 'the', 'black', '', '', '', 'cat', 'END' ];
+my $other_exp = [ 'BEGIN', 'the', 'black', 'and', 'white', 'little', 'cat', 'END' ];
+my @base_str = map { $_->printable } @{$base->words};
+my @other_str = map { $_->printable } @{$other->words};
+is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
+is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
+
+
+=end testing
+
+=cut
+
 # begin_end_mark: Note, with special words spliced in, where each
 # text actually begins and ends.
 my $GAP_MIN_SIZE = 18;
@@ -1098,18 +1136,19 @@ sub begin_end_mark {
 		my $last_word_idx = -1;
 		my $gap_start = -1;
 		my $gap_end = -1;
-		## TODO BUG Modifying wordlist as we cycle through its indices, bad stuff!
-		foreach my $idx( 0 .. $#{$wordlist} ) {
+		foreach my $idx ( 0 .. $#{$wordlist} ) {
 			my $word_obj = $wordlist->[$idx];
 			if( $first_word_idx > -1 ) {
 				# We have found and coped with the first word; 
 				# now we are looking for substantive gaps.
-				if ( $word_obj->comparison_form ) {
+				if ( !$word_obj->is_empty ) {
 					$last_word_idx = $idx;
 					if( $gap_start > 0 &&
 						( $gap_end - $gap_start ) > $GAP_MIN_SIZE ) {
 						# Put in the gap start & end markers.  Here we are
 						# replacing a blank, rather than adding to the array.
+						# This should be okay as we are not changing the index
+						# of the rest of the word elements.
 						foreach( $gap_start, $gap_end ) {
 							my $tag =  $_ < $gap_end ? 'BEGINGAP' : 'ENDGAP';
 							my $gapdesc = $tag . "_1_$_";
@@ -1119,21 +1158,25 @@ sub begin_end_mark {
 					}
 					# Either way we are not now in a gap.  Reset the counters.
 					$gap_end = $gap_start = -1;
-				# else empty space; are we in a gap?
+				# else empty space; have we found a gap?
 				} elsif( $gap_start < 0 ) { 
 					$gap_start = $idx;
+				# else we know we are in a gap; push the end forward.
 				} else {
 					$gap_end = $idx;
 				}
 			# else we are still looking for the first non-blank word.
-			} elsif( $word_obj->comparison_form ) {
+			} elsif( !$word_obj->is_empty ) {
+				# We have found the first real word.  Note where the begin
+				# marker should go.
 				$first_word_idx = $idx;
-				# We have found the first real word.  Splice in a begin marker.
-				my $slicedesc = join( '_', 'begin', 0, $idx-1 );
-				$self->_wordlist_slice( $wordlist, $slicedesc, 
-										[ _special( 'BEGIN', $sigil ) ] );
 			} # else it's a blank before the first word.
 		} ## end foreach
+		
+		# Splice in the BEGIN element before the $first_word_idx.
+		my $slicedesc = join( '_', 'begin', 0, $first_word_idx-1 );
+		$self->_wordlist_slice( $wordlist, $slicedesc, [ _special( 'BEGIN', $sigil ) ] );
+
 		
 		# Now put in the END element after the last word found.
 		# First account for the fact that we shifted the end of the array.

@@ -313,6 +313,33 @@ ok( $aligner->_is_near_word_match( 'αιτιαν', 'αι̣τια̣ν̣' ), "matc
 
 # =begin testing
 {
+use Text::TEI::Collate;
+
+my $aligner = Text::TEI::Collate->new();
+my( $base ) = $aligner->read_source( 'The black cat' );
+my( $other ) = $aligner->read_source( 'The black and white little cat' );
+$aligner->align( $base, $other );
+# Check length
+is( scalar @{$base->words}, 8, "Got six columns plus top and tail" );
+is( scalar @{$other->words}, 8, "Got six columns plus top and tail" );
+# Check contents
+is( $base->words->[-1]->special, 'END', "Got ending mark at end" );
+is( $base->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
+is( $other->words->[-1]->special, 'END', "Got ending mark at end" );
+is( $other->words->[0]->special, 'BEGIN', "Got beginning mark at start" );
+# Check empty spaces
+my $base_exp = [ 'BEGIN', 'the', 'black', undef, undef, undef, 'cat', 'END' ];
+my $other_exp = [ 'BEGIN', 'the', 'black', 'and', 'white', 'little', 'cat', 'END' ];
+my @base_str = map { $_->printable } @{$base->words};
+my @other_str = map { $_->printable } @{$other->words};
+is_deeply( \@base_str, $base_exp, "Right sequence of words in base" );
+is_deeply( \@other_str, $other_exp, "Right sequence of words in other" );
+}
+
+
+
+# =begin testing
+{
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
