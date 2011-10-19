@@ -148,11 +148,26 @@ my $doc;
 eval { $doc = $xmlparser->parse_file( "$dirname/data/tei_no_ns.xml" )->documentElement(); };
 ok( defined $doc, "parsed the XML file tei_no_ns.xml" );
 my $ms_obj = Text::TEI::Collate::Manuscript->new( 
-	'sourcetype' => 'xmldesc',
-	'source' => $doc,
-	);
+    'sourcetype' => 'xmldesc',
+    'source' => $doc,
+    );
 my $words = scalar @{$ms_obj->words};
 my @placeholders = grep { $_->placeholders } @{$ms_obj->words};
 is( $words, 30, "Got correct number of total words" );
 is( scalar @placeholders, 2, "Got correct number of placeholder words" );
+
+# Test opening a TEI file with no formatting whitespace
+$xmlparser = XML::LibXML->new();
+my $doc2;
+eval { $doc2 = $xmlparser->parse_file( "$dirname/data/tei_no_space.xml" )->documentElement(); };
+ok( defined $doc2, "parsed the XML file tei_no_space.xml" );
+my $ms_obj2 = Text::TEI::Collate::Manuscript->new( 
+	'sourcetype' => 'xmldesc',
+	'source' => $doc2,
+	);
+my $words2 = scalar @{$ms_obj2->words};
+my @placeholders2 = grep { $_->placeholders } @{$ms_obj2->words};
+is( $words2, 30, "Got correct number of total words" );
+is( scalar @placeholders2, 2, "Got correct number of placeholder words" );
+
 

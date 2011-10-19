@@ -206,7 +206,7 @@ sub _read_paragraphs_or_lines {
 		next if scalar @noop_container;
 		# If there are any #text nodes that are direct children of
 		# this paragraph, the whole thing needs to be processed.
-		if( my @textnodes = $xpc->findnodes( 'child::text()' ) ) {
+		if( my @textnodes = $xpc->findnodes( 'child::text()', $pg ) ) {
 			# We have to split the words by whitespace.
 			my $string = _get_text_from_node( $pg );
 			my @pg_words = $self->_split_words( $string );
