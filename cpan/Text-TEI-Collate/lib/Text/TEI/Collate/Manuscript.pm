@@ -350,20 +350,41 @@ sub _init_from_json {
 	$self->replace_words( \@words );
 }
 
+=head2 tokenize_as_json
+
+Returns a JSON serialization of the Manuscript object, of the form:
+
+ { id: $self->sigil, name: $self->identifier, tokens: [ WORDLIST ] }
+
+where each Word object in the word list is serialized as
+
+ { t: $w->word, c: $w->canonical_form, n: $w->comparison_form,
+   punctuation: [ $w->punctuation ], placeholders: [ $w->placeholders ] }
+   
+This method optionally takes a list of array indices to skip when serializing
+the wordlist (useful when we want to exclude certain special tokens.)
+
+=cut
+
 sub tokenize_as_json {
 	my $self = shift;
+	my %skiprow;
+	map { $skiprow{$_} = 1 } @_;
+
 	my @wordlist;
-	foreach ( @{$self->words} ) {
-		if( $_->is_empty ) {
+	foreach my $i ( 0 .. $#{$self->words} ) {
+	    next if $skiprow{$i};
+	    my $w = $self->words->[$i];
+		if( $w->is_empty ) {
 			push( @wordlist, undef );
 		} else {
-			my $word = { 't' => $_->word || '' };
-			$word->{'n'} = $_->comparison_form;
-			$word->{'c'} = $_->canonical_form;
-			$word->{'punctuation'} = [ $_->punctuation ]
-				if scalar( $_->punctuation );
-			$word->{'placeholders'} = [ $_->placeholders ] 
-				if scalar( $_->placeholders );
+			my $word = { 't' => $w->word || '' };
+			$word->{'n'} = $w->comparison_form;
+			$word->{'c'} = $w->canonical_form;
+			$word->{'punctuation'} = [ $w->punctuation ]
+				if scalar( $w->punctuation );
+			$word->{'placeholders'} = [ $w->placeholders ] 
+				if scalar( $w->placeholders );
 			push( @wordlist, $word );
 		}
     }

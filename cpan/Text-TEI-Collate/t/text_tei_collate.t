@@ -271,10 +271,46 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 76;
+# Without the beginning and end marks, we have 74 word spots.
+my $columns = 74;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
+}
+
+
+
+# =begin testing
+{
+use IO::String;
+use Text::CSV_XS;
+use Test::More::UTF8;
+
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $csvstring = $aligner->to_csv( @mss );
+ok( $csvstring, "Got a CSV string returned" );
+# Parse the CSV data and test that it parsed
+my $io = IO::String->new( $csvstring );
+my $csv = Text::CSV_XS->new( { binary => 1 } );
+
+# Test the number of columns in the first row
+my $sigilrow = $csv->getline( $io );
+ok( $sigilrow, "Got a row" );
+is( scalar @$sigilrow, 28, "Got the correct number of witnesses" );
+
+# Test the number of rows in the table
+my $rowctr = 0;
+while( my $row = $csv->getline( $io ) ) {
+    is( scalar @$row, 28, "Got a reading for all columns" );
+    $rowctr++;
+    if( $rowctr == 1 ) {
+        # Test that we are getting our encoding right
+        is( $row->[0], "λέγει", "Got the right first word" );
+    }
+}
+is( $rowctr, 74, "Got expected number of rows in CSV" );
 }
 
 

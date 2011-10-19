@@ -6,10 +6,13 @@ use 5.010;
 use vars qw( $VERSION );
 
 use Moose;
+use Encode qw( decode_utf8 );
 use File::Temp;
+use Graph::Easy;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Module::Load;
+use Text::CSV_XS;
 use Text::TEI::Collate::Diff;
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
@@ -1107,7 +1110,8 @@ my $jsondata = $aligner->to_json( @mss );
 ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
 my @wits = @{$jsondata->{alignment}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
-my $columns = 76;
+# Without the beginning and end marks, we have 74 word spots.
+my $columns = 74;
 foreach ( @wits ) {
 	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
 }
@@ -1119,12 +1123,84 @@ foreach ( @wits ) {
 sub to_json {
 	my( $self, @mss ) = @_;
 	my $result = { 'title' => $self->title, 'alignment' => [] };
+	my @invisible_row;
+
+    # Leave out the rows with no actual word tokens.
+	foreach my $i ( 0 .. $#{$mss[0]->words} ) {
+	    my @rowitems = map { $_->words->[$i] } @mss;
+	    push( @invisible_row, $i ) 
+	        unless grep { $_ && !$_->invisible } @rowitems;
+	}
 	foreach my $ms ( @mss ) {
 		push( @{$result->{'alignment'}},
 			  { 'witness' => $ms->sigil,
-				'tokens' => $ms->tokenize_as_json()->{'tokens'}, } );
+				'tokens' => $ms->tokenize_as_json( @invisible_row )->{'tokens'}, } );
 	}
 	return $result;
+}
+
+=head2 to_csv
+
+Takes a list of aligned Manuscript objects and returns a CSV file, one 
+column per Manuscript.  The first row contains the manuscript sigla; the 
+subsequent rows contain the aligned text.
+
+=begin testing
+
+use IO::String;
+use Text::CSV_XS;
+use Test::More::UTF8;
+
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $csvstring = $aligner->to_csv( @mss );
+ok( $csvstring, "Got a CSV string returned" );
+# Parse the CSV data and test that it parsed
+my $io = IO::String->new( $csvstring );
+my $csv = Text::CSV_XS->new( { binary => 1 } );
+
+# Test the number of columns in the first row
+my $sigilrow = $csv->getline( $io );
+ok( $sigilrow, "Got a row" );
+is( scalar @$sigilrow, 28, "Got the correct number of witnesses" );
+
+# Test the number of rows in the table
+my $rowctr = 0;
+while( my $row = $csv->getline( $io ) ) {
+    is( scalar @$row, 28, "Got a reading for all columns" );
+    $rowctr++;
+    if( $rowctr == 1 ) {
+        # Test that we are getting our encoding right
+        is( $row->[0], "λέγει", "Got the right first word" );
+    }
+}
+is( $rowctr, 74, "Got expected number of rows in CSV" );
+
+=end testing
+
+=cut
+
+sub to_csv {
+    my( $self, @mss ) = @_;
+    my @out;
+    my $csv = Text::CSV_XS->new( { binary => 1, quote_null => 0 } );
+    
+    # First get the witness sigla.
+    my @sigla = map { $_->sigil } @mss;  
+    $csv->combine( @sigla );
+    push( @out, decode_utf8( $csv->string ) );
+    
+    # Now go through the aligned text, leaving out invisible-only rows.
+    my $length = scalar @{$mss[0]->words};
+    foreach my $i ( 0 .. $length-1 ) {
+        my @words = map { $_->words->[$i] } @mss;
+        next unless grep { $_ && !$_->invisible } @words;
+        my $status = $csv->combine( map { $_ ? $_->word : undef } @words );
+        # TODO throw an error unless $status
+        push( @out, decode_utf8( $csv->string ) );
+    }
+    return join( "\n", @out );
 }
 
 =head2 to_tei
@@ -1504,12 +1580,6 @@ is( scalar( $graph->edges ), 985, "Got the right number of edges" );
 
 sub to_graph {
 	my( $self, @manuscripts ) = @_;
-	# TODO use lighter-weight Graph instead
-	eval 'require Graph::Easy;';
-	if( $@ ) {
-		warn "Graph generation requires module Graph::Easy";
-		return;
-	}
 	my $graph = Graph::Easy->new();
 	# All manuscripts run from START to END.
 	my $start_node = $graph->add_node( 'n0' );

@@ -224,6 +224,7 @@ around BUILDARGS => sub {
 			$newargs{'is_empty'} = 1;
 			$newargs{'word'} = '';
 			$newargs{'ms_sigil'} = '';
+			$newargs{'invisible'} = 1;
 		} elsif( $key eq 'special' ) {
 			$newargs{'special'} = $args{'special'};
 			$newargs{'word'} = '';
