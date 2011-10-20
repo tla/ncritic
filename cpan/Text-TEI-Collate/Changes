@@ -1,6 +1,11 @@
 Revision history for Text::TEI::Collate
 
-2.1	 Mon 17 Oct 2011
+2.1	 Thu 20 Oct 2011
+* Turned all warnings and 'die' statements into Throwable exceptions.
+* Began to integrate CollateX use cases
+* Fixed several bugs to do with variant matching, begin-end marking, etc.
+* Fixed a bug when parsing TEI files without pretty-printing.
+* Added CSV export option.
 * Added explicit language module support.
 * Allowed for TEI source files that declare no namespace. (RT #71711)
 * Converted main collation module to use Moose.

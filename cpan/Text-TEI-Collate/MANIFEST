@@ -9,8 +9,11 @@ inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
+inline2test.conf
 lib/Text/TEI/Collate.pm
 lib/Text/TEI/Collate/Diff.pm
+lib/Text/TEI/Collate/Error.pm
+lib/Text/TEI/Collate/Lang.pm
 lib/Text/TEI/Collate/Lang/Armenian.pm
 lib/Text/TEI/Collate/Lang/Default.pm
 lib/Text/TEI/Collate/Lang/Greek.pm
@@ -29,6 +32,7 @@ scripts/stemma_data.pl
 t/01dependencies.t
 t/02ms_open.t
 t/03collate.t
+t/04collatextests.t
 t/99-pod.t
 t/data/cx/beckett.xml
 t/data/cx/darwin.xml
@@ -40,7 +44,9 @@ t/data/plaintext/test2.txt
 t/data/plaintext/test3.txt
 t/data/plaintext/test4.txt
 t/data/plaintext/test5.txt
+t/data/tei_no_msdesc.xml
 t/data/tei_no_ns.xml
+t/data/tei_no_space.xml
 t/data/test1.txt
 t/data/test2.txt
 t/data/test3.txt
@@ -58,6 +64,7 @@ t/data/xml_word/test4.xml
 t/data/xml_word/test5.xml
 t/text_tei_collate.t
 t/text_tei_collate_diff.t
+t/text_tei_collate_lang.t
 t/text_tei_collate_lang_default.t
 t/text_tei_collate_lang_greek.t
 t/text_tei_collate_word.t
