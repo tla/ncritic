@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/css" href="format.css" ?>
+<!DOCTYPE TEI PUBLIC "-//TEI//DTD TEI P5//EN" "tei.dtd" >
 <TEI>
   <teiHeader>
     <fileDesc>
@@ -14,15 +15,6 @@
         <note>Created by the <ref target="http://www.oeaw.ac.at/kvk/cte/">Classical Text
             Editor</ref></note>
       </notesStmt>
-      <sourceDesc>
-        <msDesc xml:id="A">
-          <msIdentifier>
-            <settlement>Washington D.C.</settlement>
-            <repository>Dumbarton Oaks</repository>
-            <idno>Test file A</idno>
-          </msIdentifier>
-        </msDesc>
-      </sourceDesc>
     </fileDesc>
     <encodingDesc>
       <variantEncoding method="double-end-point" location="internal"/>

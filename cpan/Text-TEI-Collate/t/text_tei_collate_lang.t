@@ -29,6 +29,7 @@ use Text::TEI::Collate::Lang;
 my $comp = \&Text::TEI::Collate::Lang::comparator;
 is( $comp->( 'abcd' ), 'abcd', "Got correct no-op comparison string" );
 is( $comp->( "ἔστιν" ), "εστιν", "Got correct unaccented comparison string");
+is( $comp->( "զ100" ), "զ100", "Got correct comparison string with digits");
 }
 
 

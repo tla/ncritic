@@ -3,6 +3,7 @@ package Text::TEI::Collate::Word;
 use strict;
 use Moose;
 use Module::Load;
+use Text::TEI::Collate::Error;
 use vars qw( $VERSION );
 
 has 'word' => (
@@ -292,10 +293,6 @@ sub _restore_punct {
 sub BUILD {
 	my $self = shift;
 	$self->_evaluate_word unless $self->original_form;
-	# Delete the coderefs, so that we can serialize. We don't use them
-	# after init anyway.
-	delete $self->{'canonizer'};
-	delete $self->{'comparator'};
 	return $self;
 }
 
@@ -447,38 +444,18 @@ Removes the given word from this word's list of variants.
 sub unlink_variant {
     my( $self, $other ) = @_;
     my @v = grep { $_ ne $other } $self->variants;
+    if( @v == $self->variants ) {
+        throw( ident => 'missing link',
+               message => "Variant " . $other->printable 
+                    . "not present in list of variants for " . $self->printable );
+    }
     $self->_clear_variants();
     $self->add_variant( @v );
     $other->_clear_variant_of;
 }
 
-=head2 state
-
-Returns a hash of all the values that might be changed by a re-comparison.
-Useful to 'back up' a word before attempting a rematch. Currently does not
-expect any of the 'mutable' keys to contain data structure refs. Meant for
-internal use by the collator.
-
-=cut
-
-sub state {
-	my $self = shift;
-	my $opts = {};
-	foreach my $key( @{$self->_mutable} ) {
-		warn( "Not making full copy of ref stored in $key" ) 
-			if ref( $self->{$key} );
-		$opts->{$key} = $self->{$key};
-	}
-	return $opts;
-}
-
-sub restore_state {
-	my $self = shift;
-	my $opts = shift;
-	return unless ref( $opts ) eq 'HASH';
-	foreach my $key( @{$self->_mutable} ) {
-		$self->{$key} = $opts->{$key};
-	}
+sub throw {
+    Text::TEI::Collate::Error->throw( @_ );
 }
 
 no Moose;

@@ -15,6 +15,8 @@ requires( 'Moose::Util::TypeConstraints' );
 requires( 'Text::CSV_XS' );
 requires( 'Text::WagnerFischer' );
 requires( 'Text::WagnerFischer::Armenian' );
+requires( 'Throwable::X' );
+requires( 'TryCatch' );
 requires( 'XML::Easy::Syntax' );
 requires( 'XML::LibXML' );
 requires( 'XML::LibXML::XPathContext' );

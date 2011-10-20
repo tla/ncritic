@@ -5,6 +5,7 @@ use File::Basename;
 use IO::File;
 use Test::More 'no_plan';
 use Text::TEI::Collate::Manuscript;
+use TryCatch;
 use XML::LibXML;
 
 binmode STDOUT, ":utf8";
@@ -71,8 +72,7 @@ foreach my $fn ( sort @files ) {
 	next if $fn =~ /^\./;
     # Parse the file
     my $xmlparser = XML::LibXML->new();
-    my $doc;
-    eval { $doc = $xmlparser->parse_file( "$testdir_xml/$fn" )->documentElement(); };
+    my $doc = $xmlparser->parse_file( "$testdir_xml/$fn" )->documentElement();
     ok( defined $doc, "parsed the XML file $fn" );
     my $ms_obj = Text::TEI::Collate::Manuscript->new( 
 	'source' => $doc,
@@ -108,8 +108,7 @@ foreach my $fn ( sort @files ) {
     next if $fn =~ /^\./;
     # Parse the file
     my $xmlparser = XML::LibXML->new();
-    my $doc;
-    eval { $doc = $xmlparser->parse_file( "$testdir_xmlfull/$fn" )->documentElement(); };
+    my $doc = $xmlparser->parse_file( "$testdir_xmlfull/$fn" )->documentElement();
     ok( defined $doc, "parsed the XML file $fn" );
     my $ms_obj = Text::TEI::Collate::Manuscript->new( 
 	'sourcetype' => 'xmldesc',
@@ -144,8 +143,7 @@ foreach my $idx ( 0 .. $#wordcount ) {
 
 # Test opening a TEI file with no namespace 
 my $xmlparser = XML::LibXML->new();
-my $doc;
-eval { $doc = $xmlparser->parse_file( "$dirname/data/tei_no_ns.xml" )->documentElement(); };
+my $doc = $xmlparser->parse_file( "$dirname/data/tei_no_ns.xml" )->documentElement();
 ok( defined $doc, "parsed the XML file tei_no_ns.xml" );
 my $ms_obj = Text::TEI::Collate::Manuscript->new( 
     'sourcetype' => 'xmldesc',
@@ -158,8 +156,7 @@ is( scalar @placeholders, 2, "Got correct number of placeholder words" );
 
 # Test opening a TEI file with no formatting whitespace
 $xmlparser = XML::LibXML->new();
-my $doc2;
-eval { $doc2 = $xmlparser->parse_file( "$dirname/data/tei_no_space.xml" )->documentElement(); };
+my $doc2 = $xmlparser->parse_file( "$dirname/data/tei_no_space.xml" )->documentElement();
 ok( defined $doc2, "parsed the XML file tei_no_space.xml" );
 my $ms_obj2 = Text::TEI::Collate::Manuscript->new( 
 	'sourcetype' => 'xmldesc',
@@ -171,3 +168,14 @@ is( $words2, 30, "Got correct number of total words" );
 is( scalar @placeholders2, 2, "Got correct number of placeholder words" );
 
 
+try {
+    $doc = $xmlparser->parse_file( "$dirname/data/tei_no_msdesc.xml" )->documentElement();
+    my $no_ms_obj = Text::TEI::Collate::Manuscript->new( 
+	'sourcetype' => 'xmldesc',
+	'source' => $doc,
+	);
+} catch ( Text::TEI::Collate::Error $e where { $_->ident eq 'bad source' } ) {
+    ok( 1, "Caught error we were looking for" );
+} catch {
+    ok( 0, "Caught error we were looking for" );
+}

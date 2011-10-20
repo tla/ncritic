@@ -14,8 +14,10 @@ use JSON qw( decode_json );
 use Module::Load;
 use Text::CSV_XS;
 use Text::TEI::Collate::Diff;
+use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
 use Text::TEI::Collate::Manuscript;
+use TryCatch;
 use XML::LibXML;
 
 $VERSION = "2.1";
@@ -193,6 +195,9 @@ around 'language' => sub {
 
 =begin testing
 
+use Text::TEI::Collate;
+use TryCatch;
+
 my $aligner = Text::TEI::Collate->new();
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
 my $ok = eval { $aligner->language( 'Armenian' ); };
@@ -203,9 +208,13 @@ $aligner->language( 'default' );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
-my $not_ok = eval { $aligner->language( 'Klingon' ); };
-ok( !$not_ok, "Died with nonexistent language module" );
-
+try {
+    $aligner->language( 'Klingon' );
+} catch( Text::TEI::Collate::Error $e ) {
+    is( $e->ident, 'bad language module', "Caught the lang module error we expected" );
+} catch {
+    ok( 0, "FAILED to catch expected exception" );
+}
 =end testing
 
 =cut
@@ -221,10 +230,18 @@ sub _use_language {
     # Is the given language module defined, and does it have all the
     # required subroutines?
     my $mod = 'Text::TEI::Collate::Lang::' . $lang;
-    load( $mod );
-    $mod->can( 'distance' ) or die "No distance subroutine";
-    $mod->can( 'comparator' ) or die "No comparator subroutine";
-    $mod->can( 'canonizer' ) or die "No canonizer subroutine";
+    try {
+        load( $mod );
+    } catch {
+        throw( ident => 'bad language module',
+               message => "Could not load $lang module: $@" );
+    }
+    foreach my $langsub ( qw/ distance canonizer comparator / ) {
+        unless( $mod->can( $langsub ) ) {
+            throw( ident => 'bad language module',
+                   message => "Language module $lang has no $langsub function" );
+        }
+    }
     $self->distance_sub( $mod->can( 'distance' ) );
 }
 
@@ -400,9 +417,9 @@ sub read_source {
 		}
 	} elsif ( ref( $wordsource ) eq 'XML::LibXML::Document' ) { # A LibXML object
 		( $format, @docroots ) = _get_xml_roots( $wordsource );
-	} else {   
-		warn "Unrecognized object $wordsource; reading no words";
-		return ();
+	} else {
+	    throw( ident => 'bad source',
+	           message => "Unrecognized object $wordsource; reading no words" );
 	}
 	
 	# Add any language-specific canonizer / comparator that we have defined.
@@ -423,11 +440,7 @@ sub read_source {
 sub _get_xml_roots {
 	my( $xmldoc ) = @_;
 	my( @docroots, $format );
-	if( $xmldoc->documentElement->nodeName =~ /^tei/i ) {
-		# It is TEI format.
-		@docroots = ( { source => $xmldoc->documentElement } );
-		$format = 'xmldesc';
-	} elsif( $xmldoc->documentElement->nodeName =~ /^examples/i ) {
+	if( $xmldoc->documentElement->nodeName =~ /^examples/i ) {
 		# It is CollateX simple input format.  Read the text
 		# strings and then treat it as plaintext.
 		my @collationtexts = $xmldoc->documentElement->getChildrenByTagName( 'example' );
@@ -439,14 +452,13 @@ sub _get_xml_roots {
 								source => $_->textContent } } @witnesses;
 			$format = 'plaintext';
 		} else {
-			warn "Found no example elements in CollateX XML";
-			return ();
+            throw( ident => 'bad source',
+	               message => "Found no example elements in CollateX XML" );
 		}
 	} else {
-		# Uh-oh, it is not a TEI or CollateX sort of document.
-		warn "Cannot parse XML document type " 
-			. $xmldoc->documentElement->nodeName . "; reading no words";
-		return ();
+		# Assume that it is TEI format.  We will throw an error later if not.
+		@docroots = ( { source => $xmldoc->documentElement } );
+		$format = 'xmldesc';
 	}
 	return( $format, @docroots );  
 }
@@ -497,23 +509,24 @@ sub align {
 
  	# The first file becomes the base, for now.
  	# SOMEDAY: Work parsimony info into the choosing of a base
- 	my @ms_texts = map { $_->words } @manuscripts;
- 	my $base_text = shift @ms_texts;
+	my @ms_texts = map { $_->words } @manuscripts;
+	my $base_text = shift @ms_texts;
 
- 	for ( 0 .. $#ms_texts ) {
-	    my $text = $ms_texts[$_];
-	    $self->debug( "Beginning run of build_array for text " . ($_+2) );
-	    my( $result1, $result2 ) = $self->build_array( $base_text, $text );
-	    
-	    # Are the resulting arrays the same length?
-	    if( scalar( @$result1 ) != scalar( @$result2 ) ) {
-		warn "Result arrays for text $_ are not the same length!";
-	    }
-	    
-	    # Generate the new base by flattening result2 onto the back of result1,
-	    # filling in all the gaps.
-	    $base_text = $self->generate_base( $result1, $result2 );
- 	}
+	for ( 0 .. $#ms_texts ) {
+		my $text = $ms_texts[$_];
+		$self->debug( "Beginning run of build_array for text " . ($_+2) );
+		my( $result1, $result2 ) = $self->build_array( $base_text, $text );
+		
+		# Are the resulting arrays the same length?
+		if( scalar( @$result1 ) != scalar( @$result2 ) ) {
+            throw( ident => 'bad collation',
+                   message => "Result arrays for text $_ are not the same length!" );
+		}
+		
+		# Generate the new base by flattening result2 onto the back of result1,
+		# filling in all the gaps.
+		$base_text = $self->generate_base( $result1, $result2 );
+	}
 
 	# $base_text now holds all the words, linked in one way or another.
 	# Make a result array from this.
@@ -964,8 +977,8 @@ sub _is_near_word_match {
     
  	# Find our distance routine in case we need it.
 	unless( ref $self->distance_sub ) {
-		warn "No word distance algorithm specified.  Cannot compare words.";
-		return;
+		throw( ident => 'bad language module',
+		       message => "No word comparison algorithm specified." );
  	}
  	my $dist = $self->distance_sub->( $word1, $word2 );
 
@@ -1041,34 +1054,34 @@ sub generate_base {
 			ref( $_ ) eq 'Text::TEI::Collate::Manuscript' ? $_->words : $_ );
 	}
 	
-    # Error checking: are they all the same length?
-    my $width = scalar @word_arrays;
-    my $length = 0;
-    foreach my $t ( @word_arrays ) {
-	$length = scalar( @$t ) unless $length;
-	warn "ERROR: texts are not all same length"
-	    if scalar( @$t ) ne $length;
-    }
-
-    # Get busy.  Take a word from T0 if it's there; otherwise take a word
-    # from T1, otherwise T2, etc.  
-    my @new_base;
-    foreach my $idx ( 0 .. $length-1 ) {
-	my $word = $self->empty_word;  # We should never end up using this
-	                             # word, but just in case there is a
-	                             # gap, it should be the right object.
-	foreach my $col ( 0 .. $width - 1 ) {
-	    if( $word_arrays[$col]->[$idx]->comparison_form ne '' ) {
-		$word = $word_arrays[$col]->[$idx];
-		$word->is_base( 1 );
-		last;
-	    }
+	# Error checking: are they all the same length?
+	my $width = scalar @word_arrays;
+	my $length = scalar @{$word_arrays[0]};
+	foreach my $t ( @word_arrays ) {
+		throw( ident => 'bad result',
+		       message => 'Word arrays differ in length: ' . scalar @$t . "vs. $length" )
+		    unless @$t == $length;
 	}
-	# Disabled due to BEGIN shenanigans
-	# warn( "No word found in any column at index $idx!" )
-	    # if( $word eq $self->empty_word );
-	push( @new_base, $word );
-    }
+
+	# Get busy.	 Take a word from T0 if it's there; otherwise take a word
+	# from T1, otherwise T2, etc.  
+	my @new_base;
+	foreach my $idx ( 0 .. $length-1 ) {
+		my $word = $self->empty_word;  # We should never end up using this
+									 # word, but just in case there is a
+									 # gap, it should be the right object.
+		foreach my $col ( 0 .. $width - 1 ) {
+			if( $word_arrays[$col]->[$idx]->comparison_form ne '' ) {
+				$word = $word_arrays[$col]->[$idx];
+				$word->is_base( 1 );
+				last;
+			}
+		}
+		# Disabled due to BEGIN shenanigans
+		# warn( "No word found in any column at index $idx!" )
+			# if( $word eq $self->empty_word );
+		push( @new_base, $word );
+	}
     
     return \@new_base;
 }
@@ -1316,7 +1329,9 @@ sub to_csv {
         my @words = map { $_->words->[$i] } @mss;
         next unless grep { $_ && !$_->invisible } @words;
         my $status = $csv->combine( map { $_ ? $_->word : undef } @words );
-        # TODO throw an error unless $status
+        throw( ident => 'output error',
+	           message => "Could not convert " . $csv->error_input . " to CSV" ) 
+	        unless $status;
         push( @out, decode_utf8( $csv->string ) );
     }
     return join( "\n", @out );
@@ -1530,8 +1545,9 @@ is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
 				$char->appendText( $p->{char} );
 				$last_pos = $p->{pos};
 			} else {
-				warn "Punctuation mismatch: " . join( '/', $p->{char}, 
-					$p->{pos} ) . " on " . $str;
+			    throw( ident => 'data inconsistency',
+			           message => "Punctuation mismatch: " 
+			            . join( '/', $p->{char}, $p->{pos} ) . " on " . $str );
 			}
 		}
 		# Now append what is left of the word after the last punctuation.
@@ -1642,7 +1658,9 @@ sub to_svg {
 	push( @cmd, $dot->filename );
 	my( $svg, $err );
 	run( \@cmd, ">", binary(), \$svg, '2>', \$err );
-	warn $err if $err;
+	throw( ident => 'output error',
+	       message => 'SVG output failed: $err' )
+	    if $err;
 	return $svg;    
 }
 
@@ -1748,6 +1766,11 @@ sub debug {
     print STDERR 'DEBUG ' . ($lvl+1) . ": $msg"
 	. ( $no_newline ? '' : "\n" )
 	if $self->debuglevel > $lvl;
+}
+
+## Utility function for exception handling
+sub throw {
+    Text::TEI::Collate::Error->throw( @_ );
 }
 
 ## Utility function for debugging 

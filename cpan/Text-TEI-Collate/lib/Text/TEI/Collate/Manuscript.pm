@@ -3,7 +3,9 @@ package Text::TEI::Collate::Manuscript;
 use vars qw( $VERSION %assigned_sigla %tags );
 use Moose;
 use Moose::Util::TypeConstraints;
+use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
+use TryCatch;
 use XML::LibXML;
 use XML::Easy::Syntax qw( $xml10_name_rx );
 
@@ -113,8 +115,8 @@ sub BUILD {
 sub _init_from_xmldesc {
 	my( $self, $xmlobj ) = @_;
 	unless( $xmlobj->nodeName eq 'TEI' ) {
-		warn "Manuscript initialization needs a TEI document!";
-		return;
+		throw( ident => "bad source", 
+		       message => "Source XML must be TEI (this is " . $xmlobj->nodeName . ")" );
 	}
 
 	# Set up the tags we need, with or without namespaces.
@@ -146,8 +148,8 @@ sub _init_from_xmldesc {
 		}
 		$self->identifier( join( ' ', $self->{'settlement'}, $self->{'idno'} ) );
 	} else {
-		warn "Could not find manuscript description in doc; creating generic manuscript";
-		$self->identifier( '==Unknown manuscript==' );
+	    throw( ident => "bad source",
+	           message => "Could not find manuscript description element in TEI header" );
 	}
 
 	# Now get the words out.
@@ -161,7 +163,8 @@ sub _init_from_xmldesc {
 	if( $teitext ) {
 		@words = _tokenize_text( $self, $teitext );
 	} else {
-		warn "No text in document '" . $self->{'identifier'} . "!";
+	    throw( ident => "bad source",
+	           message => "No text element in document '" . $self->{'identifier'} . "!" );
 	}
 	
 	$self->replace_words( \@words );
@@ -228,7 +231,13 @@ sub _read_paragraphs_or_lines {
 			my $first_word = 1;
 			foreach my $c ( $pg->childNodes() ) {
 				# Trickier.  Need to parse the component tags.
-				my $text = _get_text_from_node( $c );
+				my $text;
+				try {
+    				$text = _get_text_from_node( $c );
+    			} catch( Text::TEI::Collate::Error $e 
+    			            where { $_->has_tag( 'lb' ) } ) {
+    			    next;
+    			}
 				unless( defined $text ) {
 					print STDERR "WARNING: no text in node " . $c->nodeName 
 						. "\n" unless $c->nodeName eq 'lb';
@@ -266,53 +275,57 @@ sub _read_paragraphs_or_lines {
 # check it for lack of spaces.  
 
 sub _get_text_from_node {
-    my( $node ) = @_;
-    my $text = '';
-    # We can have an lb or pb in the middle of a word; if we do, the
-    # whitespace (including \n) after the break becomes insignificant
-    # and we want to nuke it.
-    my $strip_leading_space = 0; 
-    foreach my $c ($node->childNodes() ) {
-	if( $c->nodeName eq 'num' 
-	    && defined $c->getAttribute( 'value' ) ) {
-	    # Push the number.
-	    $text .= $c->getAttribute( 'value' );
-	    # If this is just after a line/page break, return to normal behavior.
-	    $strip_leading_space = 0;
-	} elsif ( $c->nodeName =~ /^[lp]b$/ ) {
-	    # Set a flag that strips leading whitespace until we
-	    # get to the next bit of non-whitespace.
-	    $strip_leading_space = 1;
-	} elsif ( $c->nodeName eq 'del'
-		  || $c->nodeName eq 'fw'    # for catchwords
-		  || $c->nodeName eq 'sic'
-		  || $c->nodeName eq 'note'  #TODO: decide how to deal with notes
-		  || $c->textContent eq '' 
-		  || ref( $c ) eq 'XML::LibXML::Comment' ) {
-	    next;
-	} else {
-	    my $tagtxt;
-	    if( ref( $c ) eq 'XML::LibXML::Text' ) {
-		# A text node.
-		$tagtxt = $c->textContent;
-	    } else {
-		$tagtxt = _get_text_from_node( $c );
-	    }
-	    if( $strip_leading_space ) {
-		$tagtxt =~ s/^[\s\n]+//s;
-		# Unset the flag as soon as we see non-whitespace.
-		$strip_leading_space = 0 if $tagtxt;
-	    }
-	    $text .= $tagtxt;
-	} 
-    }
-    # If this is in a w tag, strip all the whitespace.
-    if( $node->nodeName eq 'w'
-	|| ( $node->nodeName eq 'seg' 
-	     && $node->getAttribute( 'type' ) eq 'word' ) ) {
-	$text =~ s/\s+//g;
-    }
-    return $text;
+	my( $node ) = @_;
+	my $text = '';
+	# We can have an lb or pb in the middle of a word; if we do, the
+	# whitespace (including \n) after the break becomes insignificant
+	# and we want to nuke it.
+	my $strip_leading_space = 0; 
+	foreach my $c ($node->childNodes() ) {
+		if( $c->nodeName eq 'num' 
+			&& defined $c->getAttribute( 'value' ) ) {
+			# Push the number.
+			$text .= $c->getAttribute( 'value' );
+			# If this is just after a line/page break, return to normal behavior.
+			$strip_leading_space = 0;
+		} elsif ( $c->nodeName =~ /^[lp]b$/ ) {
+			# Set a flag that strips leading whitespace until we
+			# get to the next bit of non-whitespace.
+			$strip_leading_space = 1;
+		} elsif ( $c->nodeName eq 'del'
+				  || $c->nodeName eq 'fw'	 # for catchwords
+				  || $c->nodeName eq 'sic'
+				  || $c->nodeName eq 'note'	 #TODO: decide how to deal with notes
+				  || $c->textContent eq '' 
+				  || ref( $c ) eq 'XML::LibXML::Comment' ) {
+			next;
+		} else {
+			my $tagtxt;
+			if( ref( $c ) eq 'XML::LibXML::Text' ) {
+				# A text node.
+				$tagtxt = $c->textContent;
+			} else {
+				$tagtxt = _get_text_from_node( $c );
+			}
+			if( $strip_leading_space ) {
+				$tagtxt =~ s/^[\s\n]+//s;
+				# Unset the flag as soon as we see non-whitespace.
+				$strip_leading_space = 0 if $tagtxt;
+			}
+			$text .= $tagtxt;
+		} 
+	}
+	# If this is in a w tag, strip all the whitespace.
+	if( $node->nodeName eq 'w'
+		|| ( $node->nodeName eq 'seg' 
+			 && $node->getAttribute( 'type' ) eq 'word' ) ) {
+		$text =~ s/\s+//g;
+	}
+	throw( ident => "text not found",
+	       tags => [ $node->nodeName ],
+	       message => "No text found in node " . $node->nodeName )
+	    unless $text;
+	return $text;
 }
 
 sub _split_words {
@@ -421,6 +434,10 @@ sub _init_from_plaintext {
 		return $curr_sig;
 	}
 	
+}
+
+sub throw {
+    Text::TEI::Collate::Error->throw( @_ );
 }
 
 no Moose;

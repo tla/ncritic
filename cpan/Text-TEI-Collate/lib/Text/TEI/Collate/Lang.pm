@@ -92,6 +92,7 @@ use Text::TEI::Collate::Lang;
 my $comp = \&Text::TEI::Collate::Lang::comparator;
 is( $comp->( 'abcd' ), 'abcd', "Got correct no-op comparison string" );
 is( $comp->( "ἔστιν" ), "εστιν", "Got correct unaccented comparison string");
+is( $comp->( "զ100" ), "զ100", "Got correct comparison string with digits");
 
 =end testing
 
@@ -103,7 +104,7 @@ sub comparator {
 	my @letters = split( '', lc( $word ) );
 	foreach my $l ( @letters ) {
 		my $d = chr( ord( NFKD( $l ) ) );
-		next unless $d =~ /[[:alpha:]]/; # toss out e.g. Greek underdots
+		next unless $d =~ /[[:alnum:]]/; # toss out e.g. Greek underdots
 		push( @normalized, $d );
 	}
 	return join( '', @normalized );

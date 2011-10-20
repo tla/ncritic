@@ -19,6 +19,9 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 
 # =begin testing
 {
+use Text::TEI::Collate;
+use TryCatch;
+
 my $aligner = Text::TEI::Collate->new();
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
 my $ok = eval { $aligner->language( 'Armenian' ); };
@@ -29,8 +32,13 @@ $aligner->language( 'default' );
 is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
 
 # TODO test Throwable object
-my $not_ok = eval { $aligner->language( 'Klingon' ); };
-ok( !$not_ok, "Died with nonexistent language module" );
+try {
+    $aligner->language( 'Klingon' );
+} catch( Text::TEI::Collate::Error $e ) {
+    is( $e->ident, 'bad language module', "Caught the lang module error we expected" );
+} catch {
+    ok( 0, "FAILED to catch expected exception" );
+}
 }
 
 
