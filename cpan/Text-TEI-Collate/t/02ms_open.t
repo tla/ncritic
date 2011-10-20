@@ -153,6 +153,7 @@ my $words = scalar @{$ms_obj->words};
 my @placeholders = grep { $_->placeholders } @{$ms_obj->words};
 is( $words, 30, "Got correct number of total words" );
 is( scalar @placeholders, 2, "Got correct number of placeholder words" );
+is( $ms_obj->identifier, 'Test file A', "Got correct identifier" );
 
 # Test opening a TEI file with no formatting whitespace
 $xmlparser = XML::LibXML->new();
@@ -166,6 +167,7 @@ my $words2 = scalar @{$ms_obj2->words};
 my @placeholders2 = grep { $_->placeholders } @{$ms_obj2->words};
 is( $words2, 30, "Got correct number of total words" );
 is( scalar @placeholders2, 2, "Got correct number of placeholder words" );
+is( $ms_obj2->identifier, 'Dumbarton OaksHard Drive', "Got correct identifier" );
 
 
 try {

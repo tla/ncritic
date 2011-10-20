@@ -17,9 +17,7 @@
       <sourceDesc>
         <msDesc xml:id="A">
           <msIdentifier>
-            <settlement>Washington D.C.</settlement>
-            <repository>Dumbarton Oaks</repository>
-            <idno>Test file A</idno>
+            <msName>Test file A</msName>
           </msIdentifier>
         </msDesc>
       </sourceDesc>

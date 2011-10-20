@@ -120,7 +120,7 @@ sub _init_from_xmldesc {
 	}
 
 	# Set up the tags we need, with or without namespaces.
-	map { $tags{$_} = "//$_" } qw/ msDesc settlement repository idno p lg /;
+	map { $tags{$_} = "//$_" } qw/ msDesc msName settlement repository idno p lg /;
 	# Set up our XPath object
 	my $xpc = XML::LibXML::XPathContext->new( $xmlobj );
 	# Use namespace-aware tags if we have to 
@@ -134,19 +134,34 @@ sub _init_from_xmldesc {
 	if( my $desc = $xpc->find( $tags{msDesc} ) ) {
 		my $descnode = $desc->get_node(1);
 		$self->_save_msdesc( $descnode );
+		# First try to use settlement/repository/idno.
 		my( $setNode, $reposNode, $idNode ) =
-			( $xpc->find( $tags{settlement} )->get_node(1),
-			  $xpc->find( $tags{repository} )->get_node(1),
-			  $xpc->find( $tags{idno} )->get_node(1) );
+			( $xpc->find( $tags{settlement}, $descnode )->get_node(1),
+			  $xpc->find( $tags{repository}, $descnode )->get_node(1),
+			  $xpc->find( $tags{idno}, $descnode )->get_node(1) );
 		$self->settlement( $setNode ? $setNode->textContent : '' );
 		$self->repository( $reposNode ? $reposNode->textContent : '' );
 		$self->idno( $idNode ? $idNode->textContent : '' );
-		if( $descnode->hasAttribute('xml:id') ) {
+		if( $self->settlement && $self->idno ) {
+	    	$self->identifier( join( ' ', $self->{'settlement'}, $self->{'idno'} ) );
+		} else {
+		    # Look for an msName.
+		    my $msNameNode = $xpc->find( $tags{msName}, $descnode )->get_node(1);
+		    if( $msNameNode ) {
+                $self->identifier( $msNameNode->textContent );
+            } else {
+                # We have an msDesc but who knows what is in it?
+                my $desc = $descnode->textContent;
+                $desc =~ s/\n/ /gs;
+                $desc =~ s/\s+/ /g;
+                $self->identifier( $desc );
+            }
+        }
+        if( $descnode->hasAttribute('xml:id') ) {
 			$self->sigil( $descnode->getAttribute('xml:id') );
 		} else {
 			$self->auto_assign_sigil();
 		}
-		$self->identifier( join( ' ', $self->{'settlement'}, $self->{'idno'} ) );
 	} else {
 	    throw( ident => "bad source",
 	           message => "Could not find manuscript description element in TEI header" );
