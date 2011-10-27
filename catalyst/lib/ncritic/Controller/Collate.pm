@@ -1,11 +1,16 @@
 package ncritic::Controller::Collate;
 use Encode qw/ encode_utf8 decode_utf8 /;
-use JSON qw( encode_json );
+use JSON qw/ encode_json /;
 use Moose;
 use namespace::autoclean;
-use Text::TEI::Collate;
+use TryCatch;
 
 BEGIN { extends 'Catalyst::Controller' }
+
+## Service constants
+my $TR_LOC = 'http://gregor.middell.net';
+my $TR_BASE = '/text-repo/text';
+
 
 =head1 NAME
 
@@ -25,6 +30,153 @@ The root page (/collate)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
+    $c->stash->{template} = 'collation_ui.tt2';	
+}
+
+=head2 collate/sendName 
+
+Simple JSON call to set the name of the text we are collating.
+
+=cut
+
+sub sendName :Local {
+    my ( $self, $c ) = @_;
+    my $aligner = $c->model( 'Collate' );
+    # TODO catch a failure
+    $aligner->title( $c->req->params->{'name'} );
+    $c->stash->{'result'} = { 'status' => 'ok' };
+    $c->forward( 'View::JSON' );
+}
+
+=head2 collate/setLanguage
+
+Simple JSON call to set the language modules to use for the collation of this text.
+
+=cut
+
+sub setLanguage :Local {
+    my ( $self, $c ) = @_;
+    my $aligner = $c->model( 'Collate' );
+    try {
+        $aligner->language( $c->req->params->{'language'} );
+        $c->stash->{'result'} = { 'status' => 'ok' };
+    } catch ( Text::TEI::Collate::Error $e ) {
+        $c->stash->{'result'} = { 'error' => $e->message };
+        $c->response->code( 500 );
+    }
+    $c->forward( 'View::JSON' );
+}
+
+=head2 collate/source
+
+REST interface that handles file upload (and deletion) via the AJAX 
+library we are using on client side.  When we POST to this with form data,
+it will read in the files, stash them in our model, and then return a JSON 
+array of:
+ { name: filename
+   size: filesize
+   url: access URL from text repository
+   thumbnail_url: whatever
+   delete_url: access URL from text repository
+   delete_type: DELETE }
+If something goes wrong with parsing the text, we will return an 'errormsg'
+key with the problem.
+   
+GET with a URL argument will return the JSON data for the file requested.
+GET with no URL argument will return the JSON data for all files uploaded
+in this session.
+
+DELETE with a URL argument will delete all the data associated with the 
+specified file that was uploaded.  Returns a JSON status/error message.
+
+=cut
+
+sub source :Local {
+    my( $self, $c, $arg ) = @_;
+    # Files to upload are in param 'files[]'
+    my @answer;
+    if( $c->request->method eq 'POST' ) {
+        foreach my $field ( $c->request->upload ) {
+            my $u = $c->request->upload( $field );
+            # Get the sequence number of this file and use it as a key.
+            my $key = _create_file_key( $c->session );
+            # Read in the upload file and pass it to collate's read_source.
+            # TODO Not sure what size is actually used for...
+            my $data = { 'name' => $u->filename, 'size' => $u->size };
+            my $collator = $c->model( 'Collate' );
+            my @manuscripts;
+            my $err;
+#             try { 
+                @manuscripts = $collator->read_source( $u->tempname ); 
+#             } catch ( $err ) {
+#                 # We were not successful.
+#                 # TODO try to say why
+#                 $data->{'errormsg'} = "Unable to read texts from source";
+#                 $c->response->code( 500 );
+#             }
+            if( @manuscripts ) {
+                # We were successful.
+                # TODO make thumbnails for xml vs json vs plaintext sources?
+                my $sourceuri = $c->uri_for('source') . "/$key";
+                $data->{'url'} = $sourceuri;
+                $data->{'delete_url'} = $sourceuri;
+                $data->{'delete_type'} = 'DELETE';
+                # Push the complete $data hash onto our return array
+                # Save this file data into our session
+                $c->session->{'sources'}->{$key} = 
+                    { 'data' => $data, 'mss' => \@manuscripts };
+                $c->response->code( 201 );
+                $c->response->headers->header( 'Location' => $sourceuri );
+            }
+            push( @answer, $data );
+        }
+    } elsif( $c->request->method eq 'GET' ) {
+        if( $arg ) {
+            # Return the data hash for the requested file.
+            my $sourcedata = $c->session->{'sources'}->{$arg};
+            if( $sourcedata ) {
+                push( @answer, $sourcedata->{'data'} );
+            } else {
+                push( @answer, { 'errormsg' => "No such uploaded file ID $arg" } );
+            }
+        } else {
+            # Return the data hash for all files we have in this session.
+            my @ids = sort { $a <=> $b } keys %{$c->session->{'sources'}};
+            @answer = map { $c->session->{'sources'}->{$_}->{'data'} } @ids;
+        }
+    } elsif( $c->request->method eq 'DELETE' ) {
+        my $gone = delete $c->session->{'sources'}->{$arg};
+        if( $gone ) {
+            my $numtexts = scalar @{$gone->{'mss'}};
+            push( @answer, { 'status' => "Deleted source with $numtexts texts" } );
+        } else {
+            push( @answer, { 'errormsg' => "No such source $arg" } );
+        }
+    }
+    $c->stash->{'result'} = \@answer;
+    $c->forward( 'View::JSON' );
+}
+
+sub _create_file_key {
+    my $session = shift;
+    return 0 unless exists $session->{'sources'};
+    my $highest = 0;
+    foreach my $k ( keys %{$session->{'sources'}} ) {
+        $highest = $k > $highest ? $k : $highest;
+    }
+    return $highest + 1;
+}
+
+=head1 MICROSERVICE INTERFACE
+
+=head2 collatejson
+
+The bare microservice page (/collate/collatejson)
+
+=cut
+
+sub collatejson :Local {
+    my ( $self, $c ) = @_;
     $c->stash->{template} = 'collateform.tt2';	
 }
 
@@ -39,6 +191,12 @@ my %output_action = (
 	'application/xhtml+xml' => 'HTML',
 	'text/html' => 'HTML'
 	);
+
+=head2 run_collation
+
+The microservice action to run the collation on JSON input (/collate/run_collation)
+
+=cut
 
 sub run_collation :Local {
 	my( $self, $c ) = @_;
@@ -59,7 +217,7 @@ sub run_collation :Local {
 	$c->log->debug( "Requested format $format");
 	# Run the collation from our JSON string.
 	# TODO exception handling!
-	my $collator = Text::TEI::Collate->new();
+	my $collator = $c->model('Collate');
 	my @manuscripts = $collator->read_source( $json );
 	$c->log->debug( "Parsed " . scalar(@manuscripts) . " mss from the JSON");
 	$collator->align( @manuscripts );
@@ -81,7 +239,7 @@ sub run_collation :Local {
 	}
 }
 
-sub _restore_format {
+sub _restore_format :Private {
 	# Small helper function to get around the inability of form values to 
 	# contain a '+' character.
 	my $format = shift;
@@ -91,6 +249,8 @@ sub _restore_format {
 	}
 	return $format;
 }
+
+=head1 UTILITIES ETC.
 
 =head2 collate/doc
 

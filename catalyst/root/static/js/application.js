@@ -16,16 +16,7 @@ $(function () {
     'use strict';
 
     // Initialize the jQuery File Upload widget:
-    // and override 'add' to use an App Engine upload URL
-    $('#fileupload').fileupload({
-      add: function (e, data) {
-        var that = this;
-        $.getJSON('/getUploadURL', function (url) {
-          data.url = url;
-          $.blueimpUI.fileupload.prototype.options.add.call(that, e, data);
-        });
-      }
-    });
+    $('#fileupload').fileupload();
     
     // Load existing files:
     $.getJSON($('#fileupload form').prop('action'), function (files) {

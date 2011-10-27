@@ -21,6 +21,9 @@ use Catalyst qw/
     ConfigLoader
     Static::Simple
 	Unicode::Encoding
+	Session
+    Session::Store::BerkeleyDB
+    Session::State::Cookie
 /;
 
 extends 'Catalyst';

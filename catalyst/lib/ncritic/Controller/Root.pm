@@ -1,7 +1,6 @@
 package ncritic::Controller::Root;
 use Moose;
 use namespace::autoclean;
-use Text::TEI::Collate;
 
 BEGIN { extends 'Catalyst::Controller' }
 

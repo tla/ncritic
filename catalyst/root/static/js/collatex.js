@@ -1,18 +1,19 @@
-var curUrl = 1;
-
-function removeUrl(fileRemove) {
-    $(fileRemove).parent().remove();
+function sendName() {
+    var data = {};
+    data.name = $('#textName').val();
+    $.getJSON('collate/sendName', data, function(data) { return true; });
 }
 
-function newUrl() {
-    var urlLine = "<div><input type='text' name='url" + curUrl + "' id='url" + curUrl + "' class='textfieldX'/><div id='removeUrl' onclick='removeUrl(this)' class='divLink ui-button-icon-primary ui-icon ui-icon-cancel' style='float: right; margin-right: 15px; margin-top:2px;'></div></div>";
-    $("#allUrls").append($(urlLine));
-    curUrl++;
+function setLang( lang ) {
+    var data = {};
+    data.language = lang;
+    $.getJSON('collate/setLanguage', data, function(data) { return true; });
 }
+    
 
 function submitForm() {
     urls = $('#choosefile').serialize();
-    $.getJSON('/return_texts', urls,
+    $.getJSON('return_texts', urls,
     function(data) {
         $('#submittedFileList').html('');
         if (data) {
@@ -84,10 +85,6 @@ function showErrorConsole( error_text ) {
 
 $(document).ready(function(e) {
     $('#collatedResult').val('');
-    newUrl();
-    $("#addAnotherUrl").click(function(e) {
-        newUrl();
-    });
     $("#error_console").ajaxError(function(event, request, settings){
         showErrorConsole( request.responseText );
     });

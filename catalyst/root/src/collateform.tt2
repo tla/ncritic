@@ -1,5 +1,8 @@
 [% META title = 'Collation JSON Input' 
 				service = 'Collation' -%]
+				
+[% BLOCK extrastyle %][% END %]
+[% BLOCK extrajs %][% END %]
 
   <form method="post" action="[% c.uri_for('run_collation') %]">
       JSON witnesses to collate<br/>

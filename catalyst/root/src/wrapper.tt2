@@ -2,41 +2,36 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>[% template.title or "Text::TEI::Collate as Microservices" %]</title>
+    <title>[% template.title or "nCritic" %]</title>
     <link rel="stylesheet" href="[% c.uri_for('/static/css/main.css') %]" />
+    [% INCLUDE extrastyle %]
+    [% INCLUDE extrajs %]
   </head>
 
   <body>
-    <div id="outer">
-      <div id="header">
-	[%# TODO put Interedition logo here -%]
-	<img src="[% c.uri_for('/static/images/interedition.gif') %]" />
-	[%# Insert the page title -%]
-	<h1>[% template.title or site.title %]</h1>
-      </div>
-
-      <div id="bodyblock">
+  <div class="header"><img src="[% c.uri_for('/static/images/ncritic_logo_147x52.png') %]" alt="nCritic logo" width="147" height="52" align="right" id="logoL"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="intro">Welcome to nCritic, a text collation program based on the diff algorithm and fuzzy matching. Someday I may even write documentation.</div>
+  <div id="error_console"><span class="error">[% error_msg %]</span></div>
+  <!-- div id="dialog" title="Help">
+        <p>Help coming, well, someday.</p>
+  </div -->
+  
+  <div id="bodyblock">
 	<div id="menu">
 	  Navigation:
 	  <ul>
-            <li><a href="[% c.uri_for('/') %]" title="ncritic Services">Home</a></li>
-			<li><a href="[% c.uri_for('') %]" title="[% template.service %]">[% template.service %] service</a></li>
-            <li><a href="[% c.uri_for('doc') %]" title="Instructions">Instructions for use</a></li>
-            <li><a href="http://www.interedition.eu/">Interedition</a></li>
+        <li><a href="[% c.uri_for('/') %]" title="ncritic Services">Home</a></li>
+        <li><a href="[% c.uri_for('doc') %]" title="Instructions">Instructions for use</a></li>
+        <!-- TODO add specific menu options for microservices -->    
+        <li><a href="http://www.interedition.eu/">Interedition</a></li>
 	  </ul>
 	</div><!-- end menu -->
 
 	<div id="content">
-	  [%# Status and error messages %]
-	  <span class="message">[% status_msg %]</span>
-	  <span class="error">[% error_msg %]</span>
-	  [%# This is where TT will stick all of your template's contents. -%]
 	  [% content %]
 	</div><!-- end content -->
-      </div><!-- end bodyblock -->
+  </div><!-- end bodyblock -->
 
-      <div id="footer">Powered by Catalyst</div>
-    </div><!-- end outer -->
-
+  <div id="footer">Powered by Catalyst</div>
   </body>
 </html>
