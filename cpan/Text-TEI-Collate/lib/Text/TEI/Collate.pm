@@ -629,7 +629,7 @@ sub build_array {
 					}
 				}
 				# Get the first variant(s) of the next hunk
-				if( $diff->Next && $diff->Items(1) ) {
+				if( $diff->Next && !$diff->Same && $diff->Items(1) ) {
 					my @next = $diff->Items(1);
 					push( @var_wlist, $next[0]->variants );
 					foreach my $v ( $next[0]->variants ) {
@@ -791,6 +791,34 @@ is( scalar @$nb, 3, "Got three base words" );
 is( scalar @$nn, 3, "Got three new words" );
 is( $nb->[0], $aligner->empty_word, "Empty word at front of base" );
 
+# Test case from the wild that caused unbalanced arrays
+my $k1 = "een vier quam daer uten steene dat";
+my $k2 = "een vier quam daer vten steene diet";
+my $k3 = "ende vier quam dar vten stene diet";
+
+$aligner = Text::TEI::Collate->new();
+$aligner->distance_sub( sub { $_[0] eq $_[1] ? 0 : 50 } ); # exact matches only
+my @mss;
+foreach( ( $k1, $k2, $k3 ) ) {
+    push( @mss, $aligner->read_source( $_ ) );
+}
+my @strings;
+foreach my $m ( @mss ) {
+    push( @strings, join( ' ', map { $_->canonical_form } grep { !$_->invisible } @{$m->words} ) );
+}
+
+$aligner->align( @mss );
+my $val = scalar( @{$mss[0]->words} );
+is( scalar( @{$mss[1]->words} ), $val, "Second ms has right word count" );
+is( scalar( @{$mss[2]->words} ), $val, "Third ms has right word count" );
+
+# Check that the words are the same
+foreach my $i ( 0 .. $#mss ) {
+    my $ns = join( ' ', map { $_->canonical_form } grep { !$_->invisible } @{$mss[$i]->words} );
+    is( $ns, $strings[$i], "Words in ms $i have not changed" );
+}
+
+
 =end testing
 
 =cut
@@ -807,10 +835,10 @@ sub _add_variant_matches {
 		my( @tb, @tn );
 		if( $b_idx > $last_b+1 
  			&& $b_idx < scalar @$base ) {
- 			@tb = @{$base}[ ( $last_b < 0 ? 0 : $last_b ) .. $b_idx-1];
+ 			@tb = @{$base}[ $last_b+1 .. $b_idx-1];
 		}
 		if( $n_idx > $last_n+1 ) {
-			@tn = @{$new}[ ( $last_n < 0 ? 0 : $last_n ) .. $n_idx-1];
+			@tn = @{$new}[ $last_n+1 .. $n_idx-1];
 		}
 		$self->_balance_arrays( \@tb, \@tn );
 		push( @$base_wlist, @tb ) if @tb;
