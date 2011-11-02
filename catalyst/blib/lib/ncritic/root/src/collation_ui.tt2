@@ -17,7 +17,7 @@
 <div class="col01 coll">
   <h1><span class="nmr">1</span>&nbsp;Sources</h1>
   <h2><span class="nmr">1.1</span>&nbsp;Tell us about the text</h2>
-  <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo">
+  <form action="" method="POST" enctype="multipart/form-data" name="textInfo">
     Name: &nbsp;<input id="textName" onChange="sendName()" /><br/>
     <ul>
       <p>Language:</p>
@@ -153,3 +153,14 @@
 	<p>&nbsp;</p>
 	</div>
   </form>
+
+</div>
+<div class="col03 coll">
+  <h1><span class="nmr">3</span> Result</h1>
+  <form action="" method="post" enctype="multipart/form-data" name="Resultform" id="Resultform">
+    <h2>Collated Result<img id="ajax-loader" src="[% c.uri_for('/static/images/ajax-loader.gif') %]"/></h2>
+    <textarea rows=25 cols=33 id="collatedResult" name="result"></textarea>
+    <p><div id="resultButton"></div></p>
+    <input type="hidden" id="result_submit_button" name="" value=""/>
+  </form>
+</div>

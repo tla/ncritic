@@ -1,0 +1,17 @@
+[% META title = 'Collation HTML Result'
+        service = 'Collation' -%]
+	<table>
+[% FOREACH ms = mss -%]
+		<tr>
+			<th>[% ms.sigil %] ([% ms.identifier %])</th>
+[%   FOREACH word = ms.words -%]
+[%     IF word.word -%]
+    	<td>[% word.word %]</td>
+[%     ELSE -%]
+			<td/>
+[%     END -%]
+[%   END -%]
+     </tr>
+[% END -%]
+   </table>
+

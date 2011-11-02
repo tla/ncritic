@@ -44,7 +44,7 @@
 }
 
 .fileupload-buttonbar .ui-button {
-  vertical-align: text-top;
+  vertical-align: middle;
 }
 
 .fileupload-content {
@@ -137,7 +137,7 @@
 }
 
 button.delete {
-  /* margin-top: 3px; */
+  margin-top: 3px;
 }
 
 div.delete {

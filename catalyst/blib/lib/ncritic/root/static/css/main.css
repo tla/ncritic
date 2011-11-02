@@ -14,25 +14,16 @@
 }
 #menu {
     font-weight: bold;
-    background-color: #f4448a;
+    background-color: #ddd;
 }
 #menu ul {
     list-style: none;
     float: left;
     margin: 0;
-    padding: 8px 10px 50% 12px;
+    padding: 0 0 50% 5px;
     font-weight: normal;
-    background-color: #f4448a;
+    background-color: #ddd;
     width: 100px;
-}
-#menu ul a {
-    color: #2c5183;
-}
-#menu ul a:hover {
-    color: #cadef8;
-}
-#menu ul li {
-    list-style-image:url("../images/arrow_002.gif");
 }
 #content {
     margin-left: 120px;

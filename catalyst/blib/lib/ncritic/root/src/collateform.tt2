@@ -1,0 +1,17 @@
+[% META title = 'Collation JSON Input' 
+				service = 'Collation' -%]
+				
+[% BLOCK extrastyle %][% END %]
+[% BLOCK extrajs %][% END %]
+
+  <form method="post" action="[% c.uri_for('run_collation') %]">
+      JSON witnesses to collate<br/>
+		<textarea rows="30" cols="100" name="witnesses">Enter some JSON here</textarea><br/>
+		<input type="radio" name="output" value="application/json" checked="yes"/>JSON output
+		<input type="radio" name="output" value="application/xml"/>TEI XML output
+		<input type="radio" name="output" value="text/html"/>HTML table display
+		<input type="radio" name="output" value="application/graphml"/>GraphML output
+		<input type="radio" name="output" value="image/svg"/>SVG graph display
+		<input type="hidden" name="interactive" value="true"/>
+		<input type="submit" name="submit" value="Collate!"/>
+	</form>
