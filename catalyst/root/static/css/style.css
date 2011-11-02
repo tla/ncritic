@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
   font-size:14px;
   color: #252e49; /* #666666; */
 }
@@ -77,8 +77,9 @@ li {
 
 .intro {
   padding: 40px 0px 0px 20px;
-  width:580px;
-  line-height:20px;  
+  width: 800px;
+  line-height: 20px;  
+  font-size: 14pt;
 }
 
 .usermgmt {
@@ -144,7 +145,7 @@ div.button {
   color: #fff;
   display: block;
   float: left;
-  font: normal 12px arial, sans-serif;
+  font: normal 12px Times, Times New Roman, Serif; /* arial, sans-serif; */
   height: 24px;
   margin-right: 6px;
   padding-right: 18px; /* sliding doors padding */
