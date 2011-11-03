@@ -11,6 +11,7 @@
 <script src="[% c.uri_for('/static/js/jquery.iframe-transport.js') %]"></script>
 <script src="[% c.uri_for('/static/js/jquery.fileupload.js') %]"></script>
 <script src="[% c.uri_for('/static/js/jquery.fileupload-ui.js') %]"></script>
+<script src="[% c.uri_for('/static/js/jquery.blockUI.js') %]"></script>
 <script src="[% c.uri_for('/static/js/collatex.js') %]"></script>
 [% END -%]
 
@@ -28,6 +29,7 @@
     </ul>
   </form>
   <br/>
+
   <h2><span class="nmr">1.2</span>&nbsp;Select files</h2>
   <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="show_help('select_files')"></span>
   <p>Select and upload the files on your local drive that contain the texts that you would like to collate.</p>
