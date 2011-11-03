@@ -513,58 +513,72 @@ sub align {
  	# object form that we will eventually return.
 
  	# The first file becomes the base, for now.
- 	# SOMEDAY: Work parsimony info into the choosing of a base
+ 	# SOMEDAY: Work neighbor-joining info into the choosing of a base
 	my @ms_texts = map { $_->words } @manuscripts;
 	my $base_text = shift @ms_texts;
+	my $collation_ran;
 
 	for ( 0 .. $#ms_texts ) {
 		my $text = $ms_texts[$_];
-		$self->debug( "Beginning run of build_array for text " . ($_+2) );
-		my( $result1, $result2 ) = $self->build_array( $base_text, $text );
-		
-		# Are the resulting arrays the same length?
-		if( scalar( @$result1 ) != scalar( @$result2 ) ) {
-            throw( ident => 'bad collation',
-                   message => "Result arrays for text $_ are not the same length!" );
-		}
-		
-		# Generate the new base by flattening result2 onto the back of result1,
-		# filling in all the gaps.
-		$base_text = $self->generate_base( $result1, $result2 );
+		if( $manuscripts[$_]->collated ) {
+		    # This manuscript has already been collated, so generate a new
+		    # base with it and be done.
+		    # TODO we need to check that collated and uncollated mss are
+		    # not interleaved.
+		    $base_text = $self->generate_base( $base_text, $text );
+		} else {
+            $self->debug( "Beginning run of build_array for text " . ($_+2) );
+            my( $result1, $result2 ) = $self->build_array( $base_text, $text );
+            
+            # Are the resulting arrays the same length?
+            if( scalar( @$result1 ) != scalar( @$result2 ) ) {
+                throw( ident => 'bad collation',
+                       message => "Result arrays for text $_ are not the same length!" );
+            }
+            
+            # Generate the new base by flattening result2 onto the back of result1,
+            # filling in all the gaps.
+            $base_text = $self->generate_base( $result1, $result2 );
+            $collation_ran = 1;
+        }
 	}
 
-	# $base_text now holds all the words, linked in one way or another.
-	# Make a result array from this.
-  	my @result_array = map { [] } @manuscripts;
-	my %ridx;
-	foreach( 0 .. $#manuscripts ) {
-  		$ridx{ $manuscripts[$_]->sigil } = $_;
-	}
-	foreach my $word ( @$base_text ) {
- 		my %unseen;
- 		map { $unseen{$_->sigil} = 1 } @manuscripts;
- 		my @row_words;
- 		push( @row_words, $word, $word->links );
- 		foreach ( $word->variants ) {
-			push( @row_words, $_, $_->links );
-		}
- 		foreach my $r ( @row_words ) {
-			push( @{$result_array[$ridx{$r->ms_sigil}]}, $r );
-			delete $unseen{$r->ms_sigil};
- 		}
- 		foreach my $s ( keys %unseen ) {
-			push( @{$result_array[$ridx{$s}]}, $self->empty_word );
- 		}
-	}
-
-	# Take the contents of @result_array and put them back into the
- 	# manuscripts.
-	foreach my $i ( 0 .. $#result_array ) {
-		$manuscripts[$i]->replace_words( $result_array[$i] );
-	}
-
-    # Top and tail each array.
-	$self->begin_end_mark( @manuscripts );
+    if( $collation_ran ) {
+        # $base_text now holds all the words, linked in one way or another.
+        # Make a result array from this.
+        my @result_array = map { [] } @manuscripts;
+        my %ridx;
+        foreach( 0 .. $#manuscripts ) {
+            $ridx{ $manuscripts[$_]->sigil } = $_;
+        }
+        foreach my $word ( @$base_text ) {
+            my %unseen;
+            map { $unseen{$_->sigil} = 1 } @manuscripts;
+            my @row_words;
+            push( @row_words, $word, $word->links );
+            foreach ( $word->variants ) {
+                push( @row_words, $_, $_->links );
+            }
+            foreach my $r ( @row_words ) {
+                push( @{$result_array[$ridx{$r->ms_sigil}]}, $r );
+                delete $unseen{$r->ms_sigil};
+            }
+            foreach my $s ( keys %unseen ) {
+                push( @{$result_array[$ridx{$s}]}, $self->empty_word );
+            }
+        }
+    
+        # Take the contents of @result_array and put them back into the
+        # manuscripts.
+        foreach my $i ( 0 .. $#result_array ) {
+            $manuscripts[$i]->replace_words( $result_array[$i] );
+            $manuscripts[$i]->collated( 1 );
+        }
+    
+        # Top and tail each array.
+        $self->begin_end_mark( @manuscripts );
+    }
+    
 	return @manuscripts;
 }
 

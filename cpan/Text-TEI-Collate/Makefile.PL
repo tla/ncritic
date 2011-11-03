@@ -13,6 +13,7 @@ requires( 'Module::Load' );
 requires( 'Moose' );
 requires( 'Moose::Util::TypeConstraints' );
 requires( 'Text::CSV_XS' );
+requires( 'Text::Ngram' );
 requires( 'Text::WagnerFischer' );
 requires( 'Text::WagnerFischer::Armenian' );
 requires( 'Throwable::X' );

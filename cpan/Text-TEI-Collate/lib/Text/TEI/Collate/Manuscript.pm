@@ -86,6 +86,12 @@ has '_xpc' => (
 	writer => '_set_xpc',
 );
 
+has 'collated' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => undef,
+    );
+
 no Moose::Util::TypeConstraints;
 
 =head1 NAME

@@ -55,9 +55,11 @@ Simple JSON call to set the language modules to use for the collation of this te
 
 =cut
 
-sub setLanguage :Local {
+sub setNameLang :Local {
     my ( $self, $c ) = @_;
     my $aligner = $c->model( 'Collate' );
+    $DB::single = 1;
+    $aligner->title( $c->req->params->{'name'} );
     try {
         $aligner->language( $c->req->params->{'language'} );
         $c->stash->{'result'} = { 'status' => 'ok' };
@@ -208,6 +210,23 @@ sub _create_file_key {
 
 # Internal function to run the collation and provide the output.
 
+sub do_collate :Private {
+    my( $self, $c ) = @_;
+    
+    # Get the manuscripts we are collating
+    my $manuscripts;
+    if( exists $c->stash->{texts} ) {
+        $manuscripts = $c->stash->{texts};
+    } elsif( exists $c->session->{texts} ) {
+        $manuscripts = $c->session->{texts};
+    } # else we have a problem, TODO throw it
+    
+	# Collate the manuscripts
+    my $collator = $c->model( 'Collate' );
+	$collator->align( @$manuscripts );
+    # ...and the result is written directly to the manuscripts.	
+}
+
 ## This is the list of output MIME types we recognize, and which 'as_*' 
 ## function we call in the collator for each one.
 
@@ -216,21 +235,27 @@ my %output_action = (
 	'application/json' => 'JSON',
 	'application/graphml+xml' => 'GraphML',
 	'image/svg+xml' => 'SVG',
+	'text/csv' => 'CSV',
 	'application/xhtml+xml' => 'HTML',
 	'text/html' => 'HTML'
 	);
 
-sub do_collate :Private {
-    my( $self, $c, $manuscripts ) = @_;
-    
+sub output_result :Local {
+	my( $self, $c ) = @_;
+	
+    # Get the manuscripts we are collating
+    my $manuscripts;
+    if( exists $c->stash->{texts} ) {
+        $manuscripts = $c->stash->{texts};
+    } elsif( exists $c->session->{texts} ) {
+        $manuscripts = $c->session->{texts};
+    } # else we have a problem, TODO throw it
+
     # Get the format    
     my $format = _restore_format( $c->request->params->{output} );
     $format = $c->request->header( 'Accept' ) unless $format;
 	$c->log->debug( "Requested format $format");
 	
-	# Collate the manuscripts
-    my $collator = $c->model( 'Collate' );
-	$collator->align( @$manuscripts );
 	
 	# Figure out how to render the manuscripts
 	if( $output_action{$format} eq 'HTML' ) {
@@ -244,15 +269,30 @@ sub do_collate :Private {
 		unless( $action ) {
 			$c->stash->{error_msg} = 'Format $format not supported';
 		}
-		$c->stash->{result} = $collator->$action( @$manuscripts );
-		$c->forward( $view );
+		my $collator = $c->model( 'Collate' );
+		try {
+		    $c->stash->{result} = $collator->$action( @$manuscripts );
+		} catch( Text::TEI::Collate::Error $e ) {
+		    $c->log->debug( "Caught error " . $e->message );
+		    $c->response->code( 500 );
+		}
+        $c->forward( $view );
 	}
+    # See if we need to coerce download
+	if( $c->request->params->{disposition} eq 'download' ) {
+	    my $ext = lc( $output_action{$format} );
+	    $ext = 'xml' if $ext =~ /^(graphml|tei)$/;
+	    # Set the Content-Disposition header
+	    my $cdisp = "attachment; file=ncritic_collation.$ext";
+        $c->response->headers->header( 'Content-Disposition' => $cdisp );
+	}
+
 }
 
 =head2 collate/collate_sources
 
-Do the collation and return the requested format. Parameters are text[], sigil_$ID
-for each given ID, output.
+Do the collation on the selected manuscript texts and return the requested
+format, as well as a set of actions that can be taken for that format.
 
 =cut
 
@@ -264,14 +304,29 @@ sub collate_sources :Local {
     foreach my $id ( @{$c->request->params->{text}} ) {
         # Set the sigil
         # TODO this assumes one text per ms
+        # TODO check on the ordering that gets passed to us
         my $sigkey = 'sigil_' . $id;
         my $realsig = $c->request->params->{$sigkey};
         my $ms = $c->session->{'sources'}->{$id}->{'mss'}->[0];
         $ms->sigil( $realsig );
         push( @$manuscripts, $ms );
     }
+    
+    # Record which manuscripts we are collating
+    $c->session->{'texts'} = $manuscripts;
+    
     # Run the collation
-    $c->forward( 'do_collate', [ $manuscripts ] );
+    my $answer = { 'status' => 'ok' };
+    try {
+        $c->forward( 'do_collate' );
+    } catch ( Text::TEI::Collate::Error $e ) {
+        $answer = { 'status' => 'error',
+                    'error' => $e->message };
+    }
+    
+    # Return the result, hopefully okay  
+    $c->stash->{result} = $answer;
+    $c->forward( 'View::JSON' );
 }
 
 =head1 MICROSERVICE INTERFACE
@@ -312,9 +367,12 @@ sub run_collation :Local {
 	my $collator = $c->model('Collate');
 	my @manuscripts = $collator->read_source( $json );
 	$c->log->debug( "Parsed " . scalar( @manuscripts ) . " mss from the JSON");
+	$c->stash->{'texts'} = \@manuscripts;
 	
 	# Forward to our collator
-	$c->forward( 'do_collate', [ \@manuscripts ] );
+	$c->forward( 'do_collate' );
+	# Render the view
+	$c->forward( 'output_result' );
 }
 
 sub _restore_format :Private {
