@@ -31,6 +31,9 @@ The root page (/collate)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     $c->delete_expired_sessions();
+    my $aligner = $c->model( 'Collate' );
+    $c->stash->{'textName'} = $aligner->title;
+    $c->stash->{'textLang'} = $aligner->language;
     $c->stash->{template} = 'collation_ui.tt2';	
 }
 
@@ -279,7 +282,7 @@ sub output_result :Local {
         $c->forward( $view );
 	}
     # See if we need to coerce download
-	if( $c->request->params->{disposition} eq 'download' ) {
+	if( $c->request->params->{disposition} eq 'Download' ) {
 	    my $ext = lc( $output_action{$format} );
 	    $ext = 'xml' if $ext =~ /^(graphml|tei)$/;
 	    # Set the Content-Disposition header
@@ -380,6 +383,7 @@ sub _restore_format :Private {
 	# contain a '+' character.
 	my $format = shift;
 	if( $format eq 'application/graphml'
+	    || $format eq 'application/xhtml'
 		|| $format eq 'image/svg' ) {
 			$format .= '+xml';
 	}

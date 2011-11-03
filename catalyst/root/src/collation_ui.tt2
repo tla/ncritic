@@ -18,13 +18,13 @@
   <h1><span class="nmr">1</span>&nbsp;Sources</h1>
   <h2><span class="nmr">1.1</span>&nbsp;Tell us about the text</h2>
   <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo" onsubmit="return false;">
-    Name: &nbsp;<input id="textName" name="textName" /><br/>
+    Name: &nbsp;<input id="textName" name="textName" value="[% textName %]"/><br/>
     <ul>
       <p>Language: </p>
-      <li><input type="radio" name="lang" value="Latin" /> Latin</li>
-      <li><input type="radio" name="lang" value="Greek" /> Greek</li>
-      <li><input type="radio" name="lang" value="Armenian" /> Armenian</li>
-      <li><input type="radio" name="lang" value="Default" checked="true" /> Other (standard regularization mode)</li>
+      <li><input type="radio" name="lang" value="Latin" [% IF textLang == 'Latin' %]checked="true" [% END %]/> Latin</li>
+      <li><input type="radio" name="lang" value="Greek" [% IF textLang == 'Greek' %]checked="true" [% END %]/> Greek</li>
+      <li><input type="radio" name="lang" value="Armenian" [% IF textLang == 'Armenian' %]checked="true" [% END %]/> Armenian</li>
+      <li><input type="radio" name="lang" value="Default" [% IF textLang == 'Default' %]checked="true" [% END %]/> Other (standard regularization mode)</li>
     </ul>
   </form>
   <br/>
