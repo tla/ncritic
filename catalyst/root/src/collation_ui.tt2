@@ -17,7 +17,7 @@
 <div class="col01 coll">
   <h1><span class="nmr">1</span>&nbsp;Sources</h1>
   <h2><span class="nmr">1.1</span>&nbsp;Tell us about the text</h2>
-  <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo">
+  <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo" onsubmit="return false;">
     Name: &nbsp;<input id="textName" onChange="sendName()" /><br/>
     <ul>
       <p>Language:</p>
