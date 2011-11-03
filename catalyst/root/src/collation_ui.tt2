@@ -21,7 +21,7 @@
   <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo" onsubmit="return false;">
     Name: &nbsp;<input id="textName" onChange="sendName()" /><br/>
     <ul>
-      <p>Language:</p>
+      <p>Language: </p>
       <li><input type="radio" name="lang" onclick="setLang('Latin')" /> Latin</li>
       <li><input type="radio" name="lang" onclick="setLang('Greek')" /> Greek</li>
       <li><input type="radio" name="lang" onclick="setLang('Armenian')" /> Armenian</li>
@@ -31,7 +31,7 @@
   <br/>
 
   <h2><span class="nmr">1.2</span>&nbsp;Select files</h2>
-  <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="show_help('select_files')"></span>
+  <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="showHelp('select_files')"></span>
   <p>Select and upload the files on your local drive that contain the texts that you would like to collate.</p>
 
   <div id="fileupload">

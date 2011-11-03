@@ -30,6 +30,7 @@ The root page (/collate)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
+    $c->delete_expired_sessions();
     $c->stash->{template} = 'collation_ui.tt2';	
 }
 
@@ -66,6 +67,44 @@ sub setLanguage :Local {
     }
     $c->forward( 'View::JSON' );
 }
+
+=head2 collate/return_texts
+
+Returns a JSON structure with the files and generated or recognized sigla.
+
+JSON structure is:
+[ { text: id, title: title, autosigil: sigil }, ... ]
+
+=cut
+
+sub return_texts :Local {
+    my( $self, $c ) = @_;
+    # TODO think about calling local method 'source' for this
+    my $answer = [];
+    foreach my $id ( sort { $a <=> $b } keys %{$c->session->{'sources'}} ) {
+        my $textdata = {};
+        # Get the manuscripts.   
+        my @mss = @{$c->session->{'sources'}->{$id}->{'mss'}};
+        if( @mss == 1 ) {
+            $textdata->{'text'} = $id;
+            $textdata->{'autosigil'} = $mss[0]->sigil;
+            my $title = $mss[0]->identifier;
+            if( $title =~ /unidentified ms/i ) {
+                # Use the filename.
+                $title = $c->session->{'sources'}->{$id}->{'data'}->{'name'};
+            }
+            $textdata->{'title'} = $title;
+        } else {
+            # we need to nest texts, hm.
+            next;
+        }
+        push( @$answer, $textdata );
+    }
+    $c->stash->{'result'} = $answer;
+    $c->forward( 'View::JSON' );
+}
+    
+    
 
 =head2 collate/source
 
@@ -159,12 +198,80 @@ sub source :Local {
 
 sub _create_file_key {
     my $session = shift;
-    return 0 unless exists $session->{'sources'};
-    my $highest = 0;
-    foreach my $k ( keys %{$session->{'sources'}} ) {
-        $highest = $k > $highest ? $k : $highest;
+    if( exists $session->{'keymax'} ) {
+        $session->{'keymax'} += 1;
+    } else {
+        $session->{'keymax'} = 0;
     }
-    return $highest + 1;
+    return $session->{'keymax'};
+}
+
+# Internal function to run the collation and provide the output.
+
+## This is the list of output MIME types we recognize, and which 'as_*' 
+## function we call in the collator for each one.
+
+my %output_action = (
+	'application/xml' => 'TEI',
+	'application/json' => 'JSON',
+	'application/graphml+xml' => 'GraphML',
+	'image/svg+xml' => 'SVG',
+	'application/xhtml+xml' => 'HTML',
+	'text/html' => 'HTML'
+	);
+
+sub do_collate :Private {
+    my( $self, $c, $manuscripts ) = @_;
+    
+    # Get the format    
+    my $format = _restore_format( $c->request->params->{output} );
+    $format = $c->request->header( 'Accept' ) unless $format;
+	$c->log->debug( "Requested format $format");
+	
+	# Collate the manuscripts
+    my $collator = $c->model( 'Collate' );
+	$collator->align( @$manuscripts );
+	
+	# Figure out how to render the manuscripts
+	if( $output_action{$format} eq 'HTML' ) {
+		$c->stash->{template} = 'collation_bare_html.tt2';
+		$c->stash->{mss} = $manuscripts;
+		$c->forward( 'View::HTML')
+			unless $c->request->params->{interactive};
+	} else {
+		my $action = "to_" . lc( $output_action{$format} );
+		my $view = "View::" . $output_action{$format};
+		unless( $action ) {
+			$c->stash->{error_msg} = 'Format $format not supported';
+		}
+		$c->stash->{result} = $collator->$action( @$manuscripts );
+		$c->forward( $view );
+	}
+}
+
+=head2 collate/collate_sources
+
+Do the collation and return the requested format. Parameters are text[], sigil_$ID
+for each given ID, output.
+
+=cut
+
+sub collate_sources :Local {
+    my( $self, $c ) = @_;
+
+    # Grab the mss
+    my $manuscripts;
+    foreach my $id ( @{$c->request->params->{text}} ) {
+        # Set the sigil
+        # TODO this assumes one text per ms
+        my $sigkey = 'sigil_' . $id;
+        my $realsig = $c->request->params->{$sigkey};
+        my $ms = $c->session->{'sources'}->{$id}->{'mss'}->[0];
+        $ms->sigil( $realsig );
+        push( @$manuscripts, $ms );
+    }
+    # Run the collation
+    $c->forward( 'do_collate', [ $manuscripts ] );
 }
 
 =head1 MICROSERVICE INTERFACE
@@ -180,18 +287,6 @@ sub collatejson :Local {
     $c->stash->{template} = 'collateform.tt2';	
 }
 
-## This is the list of output MIME types we recognize, and which 'as_*' 
-## function we call in the collator for each one.
-
-my %output_action = (
-	'application/xml' => 'TEI',
-	'application/json' => 'JSON',
-	'application/graphml+xml' => 'GraphML',
-	'image/svg+xml' => 'SVG',
-	'application/xhtml+xml' => 'HTML',
-	'text/html' => 'HTML'
-	);
-
 =head2 run_collation
 
 The microservice action to run the collation on JSON input (/collate/run_collation)
@@ -202,41 +297,24 @@ sub run_collation :Local {
 	my( $self, $c ) = @_;
 	# If called interactively, we have params 'display', 'output', 'witnesses'
 	# If called non-interactively, we look at headers and content.
-	my( $json, $format );
+	my $json;
 	if( $c->request->params->{interactive} ) {
 		$json = encode_utf8( $c->request->params->{witnesses} );
-		$format = _restore_format( $c->request->params->{output} );
 	} else {
 		# The body is actually a File::Temp object; this is undocumented but 
 		# so it seems to be.
 		my $fh = $c->request->body;
 		my @lines = <$fh>;
 		$json = join( '', @lines );
-		$format = $c->request->header( 'Accept' );
 	}
-	$c->log->debug( "Requested format $format");
-	# Run the collation from our JSON string.
-	# TODO exception handling!
+	
+	# Parse out manuscript objects from the JSON
 	my $collator = $c->model('Collate');
 	my @manuscripts = $collator->read_source( $json );
-	$c->log->debug( "Parsed " . scalar(@manuscripts) . " mss from the JSON");
-	$collator->align( @manuscripts );
-	# Now we have a list of Text::TEI::Manuscript objects.  Time to figure out 
-	# how to render them.
-	if( $output_action{$format} eq 'HTML' ) {
-		$c->stash->{template} = 'collation_bare_html.tt2';
-		$c->stash->{mss} = \@manuscripts;
-		$c->forward( 'View::HTML')
-			unless $c->request->params->{interactive};
-	} else {
-		my $action = "to_" . lc( $output_action{$format} );
-		my $view = "View::" . $output_action{$format};
-		unless( $action ) {
-			$c->stash->{error_msg} = 'Format $format not supported';
-		}
-		$c->stash->{result} = $collator->$action( @manuscripts );
-		$c->forward( $view );
-	}
+	$c->log->debug( "Parsed " . scalar( @manuscripts ) . " mss from the JSON");
+	
+	# Forward to our collator
+	$c->forward( 'do_collate', [ \@manuscripts ] );
 }
 
 sub _restore_format :Private {

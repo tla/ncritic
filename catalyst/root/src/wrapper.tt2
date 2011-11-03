@@ -12,9 +12,7 @@
   <div class="intro">Welcome to nCritic, a text collation program based on the diff algorithm and fuzzy matching.</div>
   <div class="header"><img src="[% c.uri_for('/static/images/ncritic_logo_147x52.png') %]" alt="nCritic logo" width="147" height="52" align="right" id="logoL"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
   <div id="error_console"><span class="error">[% error_msg %]</span></div>
-  <!-- div id="dialog" title="Help">
-        <p>Help coming, well, someday.</p>
-  </div -->
+  <div id="dialog" title="Help"></div>
   
   <div id="bodyblock">
 	<div id="menu">

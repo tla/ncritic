@@ -13,7 +13,7 @@ function setLang( lang ) {
 
 function submitForm() {
     urls = $('#choosefile').serialize();
-    $.getJSON('return_texts', urls,
+    $.getJSON('collate/return_texts', urls,
     function(data) {
         $('#submittedFileList').html('');
         if (data) {
@@ -49,7 +49,7 @@ function getTokens() {
     if( validateSigla()==true ) {
         query = $('#Configureform').serialize();
         $.ajax({
-          url: '/run_toolchain',
+          url: 'collate/collate_sources',
           data: query,
           type: 'POST',
           async: false,
@@ -81,6 +81,17 @@ function showErrorConsole( error_text ) {
     error_console.show();
     error_console.append('<div class="ajax_error">Uhoh, the service returned an error&hellip;<br/> ' + error_text + '</div>');
     error_console.delay(8000).fadeOut(1000);
+}
+
+var help_items = {
+    text_name: 'Set here the name (title) of the text you are going to collate.',
+    text_language: 'Set the language of the text.  This is used to optimize collation results.',
+    select_files: 'Use the "Add files" button to choose the files that contain your text; when you have selected the files, press the "Start upload" button.  These may be in plaintext format or in TEI XML format.  See the instructions for more information on TEI formatting guidelines.'
+    };
+
+function showHelp( help_subject ) {
+    $('#dialog').empty().append( "<p>" + help_items[help_subject] + "</p>" );
+    $('#dialog').dialog( 'open' );
 }
 
 $(document).ready(function(e) {

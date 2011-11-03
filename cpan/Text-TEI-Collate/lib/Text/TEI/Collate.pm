@@ -163,7 +163,12 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
-    my %args = @_;
+    my %args;
+    if( @_ == 1 ) {
+        %args = %{$_[0]};
+    } else {
+        %args = @_;
+    }
     # Support a single 'fuzziness' argument
     if( exists $args{'fuzziness'} && !ref( $args{'fuzziness'} ) ) {
         my $fuzz = $args{'fuzziness'};
