@@ -1,0 +1,5 @@
+* implement dispatch methods
+* implement clear/reset functionality
+* write all the help messages
+* add exception handling throughout
+* Block further file upload if collation has been run
