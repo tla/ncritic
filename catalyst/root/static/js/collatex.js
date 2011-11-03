@@ -13,7 +13,7 @@ function setLang( lang ) {
 
 function submitForm() {
     urls = $('#choosefile').serialize();
-    $.getJSON('return_texts', urls,
+    $.getJSON('collate/return_texts', urls,
     function(data) {
         $('#submittedFileList').html('');
         if (data) {
@@ -49,7 +49,7 @@ function getTokens() {
     if( validateSigla()==true ) {
         query = $('#Configureform').serialize();
         $.ajax({
-          url: '/run_toolchain',
+          url: 'collate/collate_sources',
           data: query,
           type: 'POST',
           async: false,
