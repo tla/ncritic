@@ -18,6 +18,10 @@ $(function () {
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload();
     
+    // Set our callback for file uploads:
+    $('#fileupload').bind('fileuploaddone', function( e, data ) { getFileTexts(); });
+    $('#fileupload').bind('fileuploaddestroy', function( e, data ) { getFileTexts(); });
+    
     // Load existing files:
     $.getJSON($('#fileupload form').prop('action'), function (files) {
         var fu = $('#fileupload').data('fileupload');
@@ -28,6 +32,13 @@ $(function () {
                 // Fix for IE7 and lower:
                 $(this).show();
             });
+        if( files.length == 0 ) {
+            // If there are no existing files, hide the div:
+            $('#column2').hide();
+        } else {
+            // If there are, load their texts.
+            getFileTexts();
+        }
     });
 
     // Open download dialogs via iframes,

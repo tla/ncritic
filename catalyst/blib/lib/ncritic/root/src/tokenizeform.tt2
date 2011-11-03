@@ -1,9 +1,0 @@
-[% META title = 'Interactive Tokenizer Input'
- 				service = 'Tokenizer' -%]
-
-    <form method="post" action="[% c.uri_for('run_tokenize') %]">
-      XML text to tokenize<br/>
-      <textarea rows="30" cols="100" name="xmltext">Enter some XML text here</textarea><br/>
-      <input type="hidden" name="display" value="true"/>
-      <input type="submit" name="submit" value="Tokenize!"/>
-    </form>

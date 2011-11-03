@@ -1,20 +1,22 @@
-function sendName() {
+
+// Set the name and language of the text, and display column 2 (file upload).
+function stepOne() {
     var data = {};
     data.name = $('#textName').val();
-    $.getJSON('collate/sendName', data, function(data) { return true; });
+    data.language = $('input:radio[name=lang]:checked').val();
+    $.getJSON('collate/setNameLang', data, 
+    function(response) {
+        // unhide section two
+        if( response.status == "ok" ) {
+            $('#column2').show();
+        }
+    });
 }
 
-function setLang( lang ) {
-    var data = {};
-    data.language = lang;
-    $.getJSON('collate/setLanguage', data, function(data) { return true; });
-}
-    
 
-function submitForm() {
-    urls = $('#choosefile').serialize();
-    $.getJSON('collate/return_texts', urls,
-    function(data) {
+
+function getFileTexts() {
+    $.getJSON('collate/return_texts', function(data) {
         $('#submittedFileList').html('');
         if (data) {
             $('#submitted_div').show();
@@ -55,12 +57,7 @@ function getTokens() {
           async: false,
           dataType: 'json',
           success: function(resp){
-            $('#collatedResult').val( resp.result );
-            $('#Resultform').attr( 'action', resp.formaction );
-            $('#resultButton').html('');
-            $.each( resp.buttons, function( index, value ) {
-              $('#resultButton').append( '<div class="button" onclick="submitresult(\'' + index + '\', \'' + value + '\');"><span>' + value + '</span></div>');
-            });
+            $('#column3').show();
           }
         });
     } else {
@@ -69,10 +66,13 @@ function getTokens() {
     $('#ajax-loader').css( 'visibility', 'hidden' );
 }
 
-function submitresult(name, value) {
-    $('#result_submit_button').attr('name', name);
-    $('#result_submit_button').attr('value', value);
-    $('#Resultform').submit();
+function getResult(type) {
+    formid = '#' + type + 'form';  // either Download or Display
+    $(formid).submit();
+}
+
+function sendResult() {
+
 }
 
 function showErrorConsole( error_text ) {
@@ -93,11 +93,12 @@ function showHelp( help_subject ) {
     $('#dialog').empty().append( "<p>" + help_items[help_subject] + "</p>" );
     $('#dialog').dialog( 'open' );
 }
-
+                    
 $(document).ready(function(e) {
     $('#collatedResult').val('');
     $("#error_console").ajaxError(function(event, request, settings){
         showErrorConsole( request.responseText );
     });
+    $('#column3').hide();
 });
 

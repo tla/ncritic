@@ -1,6 +1,0 @@
-[% META title = 'Documentation' -%]
-
-<p><b>Interactive mode:</b> Paste a TEI XML document into the box and click Submit to see some tokenization results as an HTML table.  This is probably not the most useful thing you might imagine..</p>
-
-<p><b>Web service mode:</b> Send a POST request to the url <i>[% c.uri_for( 'run_tokenize' ) %]</i> with your TEI XML snippet passed as a value for the form element 'xmltext'.  The results will be returned as a JSON array of dictionaries.</p>
-
