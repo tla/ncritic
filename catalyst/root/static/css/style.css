@@ -26,7 +26,7 @@ h1 {
   font-weight:100;  
   margin: 0px 0px 20px 0px;
   padding:0px 0px -0px 0px;
-  width:280px;
+  width: 90%;
   border-bottom:1px solid #f4448a; /* #488DD2; */
   color: #376fbd; /* #488DD2; */
 }
@@ -89,7 +89,7 @@ li {
 }
 
 .coll {
-  width:350px;
+  width:30%;
   float:left;
   margin: 0px 0px 0px 15px;
   padding:30px 0px 0px 15px;
@@ -221,5 +221,9 @@ div.button:hover span {
     top: 1em;
     right: 1em;
     width: 200px;
+}
+
+.greyed_out {
+    opacity: 0.2;
 }
 

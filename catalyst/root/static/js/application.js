@@ -34,7 +34,8 @@ $(function () {
             });
         if( files.length == 0 ) {
             // If there are no existing files, hide the div:
-            $('#column2').hide();
+            $('#column2').addClass( 'greyed_out' );
+            $('#column2').block( {message:null} );
         } else {
             // If there are, load their texts.
             getFileTexts();

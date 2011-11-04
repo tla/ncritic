@@ -8,7 +8,8 @@ function stepOne() {
     function(response) {
         // unhide section two
         if( response.status == "ok" ) {
-            $('#column2').show();
+            $('#column2').unblock();
+            $('#column2').removeClass( 'greyed_out' );
         }
     });
 }
@@ -57,7 +58,8 @@ function getTokens() {
           async: false,
           dataType: 'json',
           success: function(resp){
-            $('#column3').show();
+            $('#column3').unblock();
+            $('#column3').removeClass('greyed_out');
           }
         });
     } else {
@@ -95,10 +97,12 @@ function showHelp( help_subject ) {
 }
                     
 $(document).ready(function(e) {
+    $.blockUI.defaults.overlayCSS = {};
     $('#collatedResult').val('');
     $("#error_console").ajaxError(function(event, request, settings){
         showErrorConsole( request.responseText );
     });
-    $('#column3').hide();
+    $('#column3').addClass( 'greyed_out' );
+    $('#column3').block({message:null});
 });
 
