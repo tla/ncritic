@@ -16,7 +16,7 @@
   
   <div id="bodyblock">
 	<div id="menu">
-	<br/>
+	<div class="header_gutter"></div>
 	  <ul>
         <li><a href="[% c.uri_for('/') %]" title="ncritic Services">Home</a></li>
         <li><a href="[% c.uri_for('doc') %]" title="Instructions">Instructions for use</a></li>

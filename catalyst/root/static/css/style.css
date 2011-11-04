@@ -10,7 +10,7 @@ body {
   font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
   font-size:14px;
   color: #252e49; /* #666666; */
-  background: url('../images/ncritic_emblem_300.png') no-repeat scroll -164px -100px;
+  background: url('../images/ncritic_emblem_300.png') no-repeat scroll -168px -100px;
 }
 
 a {
@@ -68,6 +68,10 @@ li {
   font-weight:100;  
   border-bottom:1px solid #C6DCF1;
   margin: 0px 0px 8px 0px;
+}
+
+.header_gutter {
+     height: 5px;
 }
 
 #logoL {
