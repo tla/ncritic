@@ -63,7 +63,7 @@ function getTokens() {
           }
         });
     } else {
-        showErrorConsole( 'The sigla provide are not unique. Please correct and try again.')
+        showErrorConsole( 'Please make sure that each text you wish to collate has a unique sigil.  You may edit the sigla in the list.')
     }
     $('#ajax-loader').css( 'visibility', 'hidden' );
 }
@@ -86,14 +86,15 @@ function showErrorConsole( error_text ) {
 }
 
 var help_items = {
-    text_name: 'Set here the name (title) of the text you are going to collate.',
-    text_language: 'Set the language of the text.  This is used to optimize collation results.',
-    select_files: 'Use the "Add files" button to choose the files that contain your text; when you have selected the files, press the "Start upload" button.  These may be in plaintext format or in TEI XML format.  See the instructions for more information on TEI formatting guidelines.'
+    meta_text: 'Give the name and language of the text you will collate.  The language setting is used to optimize collation results; the name will be added to certain results such as TEI output.',
+    select_files: 'Use the "Add files" button to choose the files that contain your text; when you have selected the files, press the "Start upload" button.  These may be in plaintext format or in TEI XML format.  See the instructions for more information on TEI formatting guidelines.',
+    select_texts: 'You should ensure here that the sigil you wish to use for each text is correct.  You may also exclude texts from collation by unchecking them.'
     };
 
 function showHelp( help_subject ) {
     $('#dialog').empty().append( "<p>" + help_items[help_subject] + "</p>" );
     $('#dialog').dialog( 'open' );
+    $('#dialog').delay(15000).fadeOut(1000);
 }
                     
 $(document).ready(function(e) {

@@ -3,3 +3,7 @@
 * write all the help messages
 * add exception handling throughout
 * Block further file upload if collation has been run
+* there should be one aligner Model object per session
+* make separate help box rather than using top 'dialog' element
+* move top 'dialog' element (if we use it) so that it doesn't overlap
+  the background image

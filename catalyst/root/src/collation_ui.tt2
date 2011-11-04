@@ -17,7 +17,8 @@
 
 <div class="col01 coll">
   <h1><span class="nmr">1</span>&nbsp;Sources</h1>
-  <h2><span class="nmr">1.1</span>&nbsp;Tell us about the text</h2>
+  <h2>Tell us about the text</h2>
+  <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="showHelp('meta_text')"></span>
   <form action="" method="POST" enctype="multipart/form-data" name="textInfo" id="textInfo" onsubmit="return false;">
     Name: &nbsp;<input id="textName" name="textName" value="[% textName %]"/><br/>
     <ul>
@@ -30,7 +31,7 @@
   </form>
   <br/>
 
-  <h2><span class="nmr">1.2</span>&nbsp;Choose your texts</h2>
+  <h2>Choose your texts</h2>
   <p><div onclick="stepOne()" class="button"><span>Click here to proceed...</span></div></p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>    
@@ -38,7 +39,7 @@
 
 <div class="col02 coll" id="column2" >
   <h1><span class="nmr">2</span>&nbsp;Files and witnesses</h1>
-  <h2><span class="nmr">2.1</span>&nbsp;Select files</h2>    
+  <h2>Select files</h2>    
   <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="showHelp('select_files')"></span>
   <p>Select and upload the files on your local drive that contain the texts that you would like to collate.</p>
 
@@ -130,7 +131,7 @@
   <form action="" method="post" enctype="multipart/form-data" name="Configureform" id="Configureform" >
     <div id="submitted_div">
       <h2 id="submittedLabel">Submitted files</h2>
-      <p>Select the texts you want to include in the collation. You can overwrite the default sigla provided in the text boxes in front of the file names.</p>
+      <span class="help-button ui-button-icon-primary ui-icon ui-icon-help" onclick="showHelp('select_texts')"></span>
       <ul id="submittedFileList">
       </ul>
       <br/>
@@ -139,7 +140,7 @@
 	<div class="textfiledetails_1">
 	
 	<br/>
-	<div><h2><span class="nmr">2.2</span>&nbsp;Collate it!</h2></div>
+	<div><h2>Collate it!</h2></div>
 	<p><div onclick="getTokens()" class="button"><span>Go.</span></div></p>
 
 	<p>&nbsp;</p>
@@ -150,7 +151,7 @@
 
 <div class="col03 coll" id="column3" >
   <h1><span class="nmr">3</span>&nbsp;Result!</h1>
-  <div><h2><span class="nmr">3.1</span>&nbsp;Download results as:</h2></div>
+  <div><h2>Download results as:</h2></div>
   <form action="[% c.uri_for( 'output_result' ) %]" method="post" enctype="multipart/form-data" name="Downloadform" id="Downloadform">
     <input type="hidden" name="disposition" value="Download" />
 	<ul id="downloadUL">
@@ -162,7 +163,7 @@
   </form>
   <br/>
 
-  <div><h2><span class="nmr">3.2</span>&nbsp;Display results as:</h2></div>
+  <div><h2>Display results as:</h2></div>
     <form action="[% c.uri_for( 'output_result' ) %]" method="post" enctype="multipart/form-data" name="Displayform" id="Displayform">
     <input type="hidden" name="disposition" value="Display" />
 	<ul id="displayUL">
@@ -173,7 +174,7 @@
   </form>
   <br/>
 
-  <div><h2><span class="nmr">3.3</span>&nbsp;Send results to:</h2></div>
+  <div><h2>Send results to:</h2></div>
     <form action="" method="post" enctype="multipart/form-data" name="Processform" id="Processform">
 	<ul id="dispatchUL">
 		<li>Lemmatizer <input name="output" value="application/graphml" type="radio"></input></li>
