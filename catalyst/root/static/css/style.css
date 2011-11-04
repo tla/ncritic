@@ -10,6 +10,7 @@ body {
   font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
   font-size:14px;
   color: #252e49; /* #666666; */
+  background: url('../images/ncritic_emblem_300.png') no-repeat scroll -164px -100px;
 }
 
 a {
