@@ -1694,19 +1694,27 @@ of the variant graph, as described for the to_graphml method.
 
 sub to_svg {
 	my( $self, @mss ) = @_;
-        my $graph = $self->to_graph( @mss );
-        $graph->set_attribute( 'node', 'shape', 'ellipse' );
-        _combine_edges( $graph );
+    my $graph = $self->to_graph( @mss );
+    $graph->set_attribute( 'node', 'shape', 'ellipse' );
+	# Get around really idiotic Graph::Easy::As_graphviz bug
+	my @spacenodes = grep { $_->label =~ /^(node|edge|(di)?graph)$/ } $graph->nodes;
+	foreach ( @spacenodes ) {
+	    # Re-label the node to include a space, so that it gets quoted.
+	    my $l = $_->label . ' ';
+	    $_->set_attribute( 'label', $l );
+	}
+    _combine_edges( $graph );
+
 	my $dot = File::Temp->new();
 	binmode( $dot, ':utf8' );
-        print $dot $graph->as_graphviz();
+    print $dot $graph->as_graphviz();
 	close $dot;
-        my @cmd = qw/dot -Tsvg/;
+    my @cmd = qw/dot -Tsvg/;
 	push( @cmd, $dot->filename );
 	my( $svg, $err );
 	run( \@cmd, ">", binary(), \$svg, '2>', \$err );
 	throw( ident => 'output error',
-	       message => 'SVG output failed: $err' )
+	       message => "SVG output failed: $err" )
 	    if $err;
 	return $svg;    
 }
