@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
+  <head profile="http://www.w3.org/2005/10/profile">
     <title>[% template.title or "nCritic" %]</title>
+    <link rel="icon" type="image/png" href="[% c.uri_for('/static/images/ncritic_icon_004.png') %]" />
     <link rel="stylesheet" href="[% c.uri_for('/static/css/main.css') %]" />
     [% INCLUDE extrastyle %]
     [% INCLUDE extrajs %]
