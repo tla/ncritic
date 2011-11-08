@@ -10,7 +10,14 @@ body {
   font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
   font-size:14px;
   color: #252e49; /* #666666; */
-  background: url('../images/ncritic_emblem_300.png') no-repeat scroll -168px -100px;
+}
+
+#logo {
+    width: 200px;
+    height: 300px;
+    position: absolute;
+    background: url('../images/ncritic_emblem_300.png') no-repeat scroll -138px -110px;
+    z-index: -1;
 }
 
 a {
@@ -63,28 +70,27 @@ li {
 }
 
 .header {
-  padding: 0px 0px 0px 30px;
-  font-size:29px;
-  font-weight:100;  
+  margin: 0px 0px 8px 87px;
+  padding: 40px 0px 0px 89px;
+  font-size:14pt;
   border-bottom:1px solid #C6DCF1;
-  margin: 0px 0px 8px 0px;
+  height: 49px;
+  background: url('../images/ncritic_logo_147x52.png') no-repeat scroll right center;
 }
 
-.header_gutter {
-     height: 5px;
-}
-
-#logoL {
-  margin: 0px 30px 0px 0px;
+#menu_header {
+  height: 50px;
+  width: 122px;
+  background: blue;
   position: relative;
-  top: -35px;  
+  top: -5px;
+  background: url('../images/menu_header_002.png') no-repeat scroll left top;
 }
 
-.intro {
-  padding: 40px 0px 0px 20px;
-  width: 800px;
-  line-height: 20px;  
-  font-size: 14pt;
+#menu_header_gutter {
+  height: 5px;
+  background-color: #f4448a;
+  margin-left: 122px;
 }
 
 .usermgmt {
@@ -157,11 +163,19 @@ div.button {
   text-decoration: none;
 }
 
+div.button.reset {
+  background: transparent url('../images/c_button_a.png') no-repeat scroll top right;
+}
+
 div.button span {
   background: transparent url('../images/b_button_span.png') no-repeat;
   display: block;
   line-height: 14px;
   padding: 5px 0 5px 18px;
+}
+
+div.button.reset span {
+  background: transparent url('../images/c_button_span.png') no-repeat;
 }
 
 div.button:hover {
@@ -232,3 +246,11 @@ div.button:hover span {
     opacity: 0.2;
 }
 
+#container02 {
+    width: 95%;
+    position: relative;
+    top: 20px;
+}
+.button.reset {
+    float: right;
+}

@@ -96,7 +96,18 @@ function showHelp( help_subject ) {
     $('#dialog').dialog( 'open' );
     $('#dialog').delay(15000).fadeOut(1000);
 }
-                    
+
+function clearForms() {
+    $('form').each(function(index) {
+        $(this).clearForm();
+    });
+    $('#fileupload').find('.cancel').click();
+    $('#column2').addClass( 'greyed_out' );
+    $('#column2').block({message:null});
+    $('#column3').addClass( 'greyed_out' );
+    $('#column3').block({message:null});
+}
+
 $(document).ready(function(e) {
     $.blockUI.defaults.overlayCSS = {};
     $('#collatedResult').val('');
@@ -106,4 +117,20 @@ $(document).ready(function(e) {
     $('#column3').addClass( 'greyed_out' );
     $('#column3').block({message:null});
 });
+
+$.fn.clearForm = function() {
+  return this.each(function() {
+    var type = this.type, tag = this.tagName.toLowerCase();
+    if (tag == 'form')
+      return $(':input',this).clearForm();
+    if (type == 'text' || type == 'password' || tag == 'textarea')
+      this.value = '';
+    else if (type == 'checkbox' || type == 'radio')
+      this.checked = false;
+    else if (tag == 'select')
+      this.selectedIndex = -1;
+  });
+};
+
+
 

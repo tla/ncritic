@@ -15,6 +15,8 @@
 <script src="[% c.uri_for('/static/js/collatex.js') %]"></script>
 [% END -%]
 
+<div id="container01">
+
 <div class="col01 coll">
   <h1><span class="nmr">1</span>&nbsp;Sources</h1>
   <h2>Tell us about the text</h2>
@@ -149,8 +151,8 @@
   </form>
 </div>
 
-<div class="col03 coll" id="column3" >
-  <h1><span class="nmr">3</span>&nbsp;Result!</h1>
+<div class="col03 coll" id="column3">
+  <h1><span class="nmr">3</span>&nbsp;Result</h1>
   <div><h2>Download results as:</h2></div>
   <form action="[% c.uri_for( 'output_result' ) %]" method="post" enctype="multipart/form-data" name="Downloadform" id="Downloadform">
     <input type="hidden" name="disposition" value="Download" />
@@ -185,3 +187,8 @@
   <br/>
 
 </div>
+</div>
+<div id="container02">
+  <div onclick="clearForms()" class="button reset"><span>Clear Form</span></div>
+</div>
+

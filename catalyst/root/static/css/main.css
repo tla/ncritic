@@ -13,7 +13,8 @@
     padding-top: 20px;
 }
 #menu {
-    font-weight: bold;
+    position: relative;
+    top: -5px;
     background-color: #f4448a;
 }
 #menu ul {
@@ -36,6 +37,8 @@
 }
 #content {
     margin-left: 120px;
+    position: relative;
+    top: -50px;
 }
 .message {
     color: #390;
