@@ -19,7 +19,7 @@ requires 'namespace::autoclean';
 # Catalyst requirements
 requires 'Catalyst::Runtime' => '5.80032';
 requires 'Catalyst::Action::RenderView';
-requires 'Catalyst::Plugin::Adaptor';
+requires 'Catalyst::Model::Adaptor';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Session::Store::BerkeleyDB';
 requires 'Catalyst::Plugin::Static::Simple';
