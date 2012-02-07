@@ -15,7 +15,7 @@ $VERSION = "1.1";
 subtype 'SourceType',
 	as 'Str',
 	where { $_ =~ /^(xmldesc|plaintext|json)$/ },
-	message { 'Source type must be one of xmldes, plaintext, json' };
+	message { 'Source type must be one of xmldesc, plaintext, json' };
 	
 subtype 'Sigil',
 	as 'Str',
@@ -64,6 +64,7 @@ has 'language' => (
 has 'source' => (  # Can be XML obj, JSON data struct, or string.
 	is => 'ro',
 	required => 1,
+	writer => '_set_source',
 );
 
 has 'msdesc' => (  # if we started with a TEI doc
@@ -84,6 +85,7 @@ has '_xpc' => (
 	is => 'ro',
 	isa => 'XML::LibXML::XPathContext',
 	writer => '_set_xpc',
+	clearer => '_clear_xpc',
 );
 
 has 'collated' => (
@@ -102,11 +104,64 @@ Text::TEI::Collate::Manuscript - represent a manuscript text for collation
 
 Text::TEI::Collate::Manuscript is an object that describes a manuscript.
 
-=head1 METHODS
+=head1 CONSTRUCTOR
 
 =head2 new
 
-Creates a new manuscript object.  Right now this is just a container.
+Creates a new manuscript object.  This would normally be called via read_source in L<Text::TEI::Collate>; however, the following options (apart from those listed in
+ACCESSORS below) are usually sufficient:
+
+=over 4
+
+=item *
+
+B<sourcetype> - Can be one of xmldesc (that is, TEI parallel-segmentation), json (see L<http://gregor.middell.net/collatex/> for a description of the JSON format used), or plaintext.
+
+=item *
+
+B<source> - For sourcetype 'xmldesc', this should be an XML::LibXML object representing the document.  For sourcetype 'json', it should be the data object parsed from JSON.  For sourcetype 'plaintext', it should be the text as a string.
+
+=item *
+
+B<sigil> - The sigil for this manuscript. See description in ACCESSORS below.
+
+=back
+
+=head1 ACCESSORS
+
+=head2 sigil
+
+The sigil by which to identify this manuscript, which must conform to the specification for XML attribute strings (broadly speaking, it must begin with a letter and can have only a few sorts of punctuation characters in it.)
+
+=head2 identifier
+
+A freeform name by which to identify the manuscript, which may be longer than the sigil.  Defaults to 'Unidentified ms', but will be taken from the TEI msName attribute, or constructed from the settlement and idno if supplied.
+
+=head2 settlement
+
+The city, town, etc. where the manuscript is held. Will be read from the TEI msDesc element if supplied.
+
+=head2 repository
+
+The institution that holds the manuscript. Will be read from the TEI msDesc element if supplied.
+
+=head2 idno
+
+The identification or call number of the manuscript.  Will be read from the TEI msDesc element if supplied.
+
+=head2 sourcetype
+
+=head2 source
+
+See the documentation for 'new' above.
+
+=head2 language
+
+The name of the applicable L<Text::TEI::Collate::Lang> module for language handling. Usually inherited from the language set in the L<Text::TEI::Collate> object.
+
+=head2 words
+
+The array of L<Text::TEI::Collate::Word> objects that form the manuscript text.
 
 =cut
 
@@ -115,6 +170,9 @@ sub BUILD {
 	my $init_sub = '_init_from_' . $self->sourcetype;
 	$self->$init_sub( $self->source );
 	$assigned_sigla{$self->sigil} = 1;
+	# Remove our XML / source objects; we no longer need them.
+	$self->_clear_xpc;
+	$self->_set_source( 0 );
 	return $self;
 }
 
@@ -383,6 +441,8 @@ sub _init_from_json {
 	}
 	$self->replace_words( \@words );
 }
+
+=head1 OUTPUT METHODS
 
 =head2 tokenize_as_json
 

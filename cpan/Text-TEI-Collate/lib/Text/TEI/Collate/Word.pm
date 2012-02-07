@@ -142,7 +142,7 @@ Text::TEI::Collate::Word is an object that describes a word in a collated
 text.  This may be a useful way for editors of other things to plug in
 their own logic.
 
-=head1 METHODS
+=head1 CONSTRUCTOR
 
 =head2 new
 
@@ -337,7 +337,7 @@ sub _evaluate_word {
 
 # Accessors.
 
-=head1 Access methods
+=head1 ACCESSORS
 
 =head2 word
 

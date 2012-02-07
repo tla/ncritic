@@ -125,22 +125,34 @@ options are listed.
 
 =over 4
 
-=item B<debuglevel> - Default 0. The higher the number (between 0 and 3), the 
-more the debugging output.
+=item * 
 
-=item B<title> - Display title for the collation output results, should those
-results need a display title (e.g. TEI or JSON output).
+B<debuglevel> - Default 0. The higher the number (between 0 and 3), the more 
+the debugging output.
 
-=item B<language> - Specify the language module we should use from those
-available in Text::TEI::Collate::Lang.  Default is 'Default'.
+=item * 
 
-=item B<fuzziness> - The maximum allowable word distance for an approximate
+B<title> - Display title for the collation output results, should those results 
+need a display title (e.g. TEI or JSON output).
+
+=item *
+
+B<language> - Specify the language module we should use from those
+available in L<Text::TEI::Collate::Lang>.  Default is 'Default'.  At present, the
+only non-placeholder language defined is Armenian; Latin and Greek also exist
+but do very little outside of the default.
+
+=item *
+
+B<fuzziness> - The maximum allowable word distance for an approximate
 match, expressed as a percentage of word distance / word length. It can
 also be expressed as a hashref with keys 'val', 'short', and 'shortval', if
 you want to increase the tolerance for short words (defined as at or below the
 value of 'short').
 
-=item B<binmode> - If STDERR should be using something other than UTF-8, you 
+=item *
+
+B<binmode> - If STDERR should be using something other than UTF-8, you 
 can set it here. You are probably in for a world of hurt anyway though.
 
 =back
@@ -220,6 +232,7 @@ try {
 } catch {
     ok( 0, "FAILED to catch expected exception" );
 }
+
 =end testing
 
 =cut
@@ -258,14 +271,20 @@ collated.  Options include:
 
 =over
 
-=item B<encoding> - The encoding of the word source if we are reading from a file.  
+=item * 
+
+B<encoding> - The encoding of the word source if we are reading from a file.  
 Defaults to utf-8.
 
-=item B<sigil> - The sigil that should be assigned to this manuscript in the collation 
+=item *
+
+B<sigil> - The sigil that should be assigned to this manuscript in the collation 
 output.  Should be a valid XML attribute value.  This can also be read from a
 TEI XML source.
 
-=item B<identifier> - A string to identify this manuscript (e.g. library, MS number).
+=item *
+
+B<identifier> - A string to identify this manuscript (e.g. library, MS number).
 Can also be read from a TEI <msdesc/> element.
 
 =back
@@ -470,9 +489,11 @@ sub _get_xml_roots {
 
 =head2 align
 
-The meat of the program.  Takes a list of Text::TEI::Collate::Manuscript 
-objects (created by new_manuscript above.)  Returns the same objects with 
-their wordlists collated. 
+The meat of the program.  Takes a list of L<Text::TEI::Collate::Manuscript>
+objects (created by read_source above.)  Returns the same objects with 
+their wordlists collated.  
+
+WARNING: Once a set of texts has been aligned, further operations (e.g. output methods) assume that the array of Manuscript objects has *not* been re-ordered.
 
 =begin testing
 
