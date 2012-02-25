@@ -360,6 +360,7 @@ sub _get_text_from_node {
 	# whitespace (including \n) after the break becomes insignificant
 	# and we want to nuke it.
 	my $strip_leading_space = 0; 
+	my $word_excluded = 0;
 	foreach my $c ($node->childNodes() ) {
 		if( $c->nodeName eq 'num' 
 			&& defined $c->getAttribute( 'value' ) ) {
@@ -377,6 +378,7 @@ sub _get_text_from_node {
 				  || $c->nodeName eq 'note'	 #TODO: decide how to deal with notes
 				  || $c->textContent eq '' 
 				  || ref( $c ) eq 'XML::LibXML::Comment' ) {
+			$word_excluded = 1 if $c->nodeName =~ /^(del|fw|sic)$/;
 			next;
 		} else {
 			my $tagtxt;
@@ -403,7 +405,7 @@ sub _get_text_from_node {
 	throw( ident => "text not found",
 	       tags => [ $node->nodeName ],
 	       message => "No text found in node " . $node->nodeName )
-	    unless $text;
+	    unless $text || $word_excluded;
 	return $text;
 }
 
