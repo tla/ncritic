@@ -1,0 +1,9 @@
+Version 1.3
+===========
+commit aab075af1ba3a65229c4f9b3355511d7c3391e10
+Author: Tara L Andrews <tla\@mit.edu>
+Date:   Sun Apr 15 20:25:14 2012 +0200
+
+    Extend word_tag_wrap to take/modify an existing XML object; 
+    add a couple of parse tags; 
+    fix up docs and tests
