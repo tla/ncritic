@@ -1,9 +1,11 @@
 #!/usr/bin/perl;
 
 use strict;
-use Test::More tests => 91;
+use Encode;
+use Test::More;
 use Text::TEI::Markup qw( to_xml word_tag_wrap );
 use XML::LibXML;
+use XML::LibXML::XPathContext;
 
 binmode STDOUT, ":utf8";
 my $tb = Test::Builder->new;
@@ -124,6 +126,24 @@ is( $lb_ct, "4", "right number of lb tags" );
 is( $pb_ct, "1", "right number of pb tags" );
 is( $ex_ct, "5", "right number of ex tags" );
 is( $expan_ct, "14", "right number of expan tags" );
+
+## A separate test for word-tag-wrap, to make sure that we can pass in an XML
+## object and get an XML object back.
+
+my $unwrapped_obj = $parser->parse_file( 't/data/test_nowrap.xml' );
+my $xpc = XML::LibXML::XPathContext->new( $unwrapped_obj->documentElement );
+$xpc->registerNs( 'tei', 'http://www.tei-c.org/ns/1.0' );
+word_tag_wrap( $unwrapped_obj );
+my @words = $xpc->findnodes( '//tei:p/tei:w' );
+my @segs = $xpc->findnodes( '//tei:p/tei:seg' );
+is( scalar @words, 33, "Got correct number of words" );
+is( scalar @segs, 27, "Got correct number of segs" );
+foreach my $tag ( qw/ ex expan num abbr subst hi / ) {
+	my @wrapped = $xpc->findnodes( "//tei:seg/tei:$tag" );
+	my @all = $xpc->findnodes( "//tei:$tag" );
+	is( scalar @wrapped, scalar @all, "All $tag tags now inside segs" );
+}
+done_testing();
 
 # A helper sub for converting Armenian numbers.  More than you
 # bargained for eh?
