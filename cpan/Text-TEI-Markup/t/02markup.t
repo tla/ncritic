@@ -143,6 +143,15 @@ foreach my $tag ( qw/ ex expan num abbr subst hi / ) {
 	my @all = $xpc->findnodes( "//tei:$tag" );
 	is( scalar @wrapped, scalar @all, "All $tag tags now inside segs" );
 }
+
+## Make sure we can cope with nested text tags
+my $nested_obj = $parser->parse_file( 't/data/test_nest.xml' );
+word_tag_wrap( $nested_obj );
+my @words = $xpc->findnodes( '//tei:p/tei:w', $nested_obj->documentElement );
+my @nestwords = $xpc->findnodes( '//tei:seg/tei:w' );
+is( @words, 297, "Got all words wrapped" );
+is( @nestwords, 0, "Did not nest any words" );
+
 done_testing();
 
 # A helper sub for converting Armenian numbers.  More than you

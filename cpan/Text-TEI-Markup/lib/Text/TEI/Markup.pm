@@ -6,7 +6,7 @@ use Encode;
 use Exporter 'import';
 use XML::LibXML;
 
-$VERSION = '1.3';
+$VERSION = '1.4';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
@@ -504,11 +504,13 @@ sub word_tag_wrap {
 	}
 		
 	my @textnodes = $root->getElementsByTagName( 'text' );
+	my %paragraphs;  # Cope with the fact that text nodes can be recursive
 	foreach my $t ( @textnodes ) {
-		foreach my $p ( $t->getElementsByTagName( 'p' ) ) {
-			my $new_p = _wrap_children( $p );
-			$p->replaceNode( $new_p );
-		}
+		map { $paragraphs{$_} = $_ } $t->getElementsByTagName( 'p' );
+	}
+	foreach my $p ( values %paragraphs ) {
+		my $new_p = _wrap_children( $p );
+		$p->replaceNode( $new_p );
 	}
 	
 	# Annoyingly, we have to decode the encoding that takes place when

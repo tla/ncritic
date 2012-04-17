@@ -1,3 +1,11 @@
+Version 1.4
+===========
+commit d4ff41412bd19be668ad44ea06f961c974603229
+Author: Tara L Andrews <tla\@mit.edu>
+Date:   Tue Apr 17 09:52:04 2012 +0200
+
+    handle recursive text nodes in word wrapping
+
 Version 1.3
 ===========
 commit aab075af1ba3a65229c4f9b3355511d7c3391e10
