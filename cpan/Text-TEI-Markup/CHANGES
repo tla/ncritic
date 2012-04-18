@@ -1,3 +1,11 @@
+Version 1.6
+===========
+commit 977b337e64e866bebd7dc1cdb7c492b8bdbc3e6a
+Author: Tara L Andrews <tla@mit.edu>
+Date:   Wed Apr 18 07:26:16 2012 -0700
+
+    fix tests failing on stringification differences
+
 Version 1.5
 ===========
 commit 3da264c89146758385dd8fab5eab4655089ede43
