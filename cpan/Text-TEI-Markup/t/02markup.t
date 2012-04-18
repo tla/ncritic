@@ -134,7 +134,7 @@ my $unwrapped_obj = $parser->parse_file( 't/data/test_nowrap.xml' );
 my $xpc = XML::LibXML::XPathContext->new( $unwrapped_obj->documentElement );
 $xpc->registerNs( 'tei', 'http://www.tei-c.org/ns/1.0' );
 word_tag_wrap( $unwrapped_obj );
-my @words = $xpc->findnodes( '//tei:p/tei:w' );
+@words = $xpc->findnodes( '//tei:p/tei:w' );
 my @segs = $xpc->findnodes( '//tei:p/tei:seg' );
 is( scalar @words, 33, "Got correct number of words" );
 is( scalar @segs, 27, "Got correct number of segs" );
@@ -147,7 +147,7 @@ foreach my $tag ( qw/ ex expan num abbr subst hi / ) {
 ## Make sure we can cope with nested text tags
 my $nested_obj = $parser->parse_file( 't/data/test_nest.xml' );
 word_tag_wrap( $nested_obj );
-my @words = $xpc->findnodes( '//tei:p/tei:w', $nested_obj->documentElement );
+@words = $xpc->findnodes( '//tei:p/tei:w', $nested_obj->documentElement );
 my @nestwords = $xpc->findnodes( '//tei:seg/tei:w' );
 is( @words, 297, "Got all words wrapped" );
 is( @nestwords, 0, "Did not nest any words" );

@@ -1,3 +1,11 @@
+Version 1.5
+===========
+commit 3da264c89146758385dd8fab5eab4655089ede43
+Author: Tara L Andrews <tla\@mit.edu>
+Date:   Wed Apr 18 11:23:54 2012 +0200
+
+    remove redundant "my" declarations in test script
+
 Version 1.4
 ===========
 commit d4ff41412bd19be668ad44ea06f961c974603229
