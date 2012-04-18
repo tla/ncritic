@@ -7,7 +7,7 @@ use Exporter 'import';
 use Scalar::Util;
 use XML::LibXML;
 
-$VERSION = '1.6';
+$VERSION = '1.7';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
@@ -495,10 +495,10 @@ sub word_tag_wrap {
 		$doc = $parser->parse_string( $xml );
 		$root = $doc->getDocumentElement();
 	} elsif( ref( $xml ) eq 'XML::LibXML::Document' ) {
-		$ret = $xml;
+		$ret = 'xml';
 		$root = $xml->getDocumentElement();
 	} elsif( ref( $xml ) eq 'XML::LibXML::Element' ) {
-		$ret = $xml;
+		$ret = 'xml';
 		$root = $xml;
 	} else {
 		die "Passed argument is neither string, Document, or Element";
