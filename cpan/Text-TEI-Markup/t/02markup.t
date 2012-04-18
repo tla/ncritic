@@ -8,6 +8,7 @@ use XML::LibXML;
 use XML::LibXML::XPathContext;
 
 binmode STDOUT, ":utf8";
+eval { no warnings; binmode $DB::OUT, ':utf8' };
 my $tb = Test::Builder->new;
 binmode $tb->output,         ':encoding(UTF-8)';
 binmode $tb->failure_output, ':encoding(UTF-8)';
@@ -15,7 +16,7 @@ binmode $tb->todo_output,    ':encoding(UTF-8)';
 
 my %opts = (
     file => "t/data/test.txt",
-    wrap_words => 1,
+    wrap_words => 0,
     number_conversion => \&number_value,
     # Using the default template
     # Using the default ( utf8 ) file encoding
@@ -76,6 +77,7 @@ is( $supplied[0]->textContent, "\x{545}", "pass-through content preserved" );
 # Pretty well satisfied with non-word-wrapped text.  Go for word wrapping.
 my $word_xml;
 ok( $word_xml = word_tag_wrap( $xml ), "word-wrap what we have" );
+$root = $parser->parse_string( $word_xml )->documentElement;
 @body = $root->getElementsByTagName( 'body' );
 $body = $body[0];
 ok( $body, "found text body" );
