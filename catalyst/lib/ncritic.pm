@@ -21,7 +21,7 @@ use Catalyst qw/
     Static::Simple
 	Unicode::Encoding
 	Session
-    Session::Store::FastMmap
+    Session::Store::File
     Session::State::Cookie
 /;
 
@@ -44,8 +44,8 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback => 1,
 	default_view => 'TT',
 	'View::JSON' => {
-		expose_stash => 'result',
-	}
+		expose_stash => 'result'
+	},
 );
 
 # Start the application

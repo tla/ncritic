@@ -10,7 +10,8 @@ name 'ncritic';
 all_from 'lib/ncritic.pm';
 
 # Outside requirements
-requires 'Text::TEI::Collate';
+requires 'JSON::XS';
+requires 'Text::Tradition' => '1.1';
 
 # Moose requirements
 requires 'Moose';
@@ -19,9 +20,11 @@ requires 'namespace::autoclean';
 # Catalyst requirements
 requires 'Catalyst::Runtime' => '5.80032';
 requires 'Catalyst::Action::RenderView';
-requires 'Catalyst::Model::Adaptor';
+requires 'Catalyst::Model::KiokuDB';
+requires 'Catalyst::Model::WebService::CRUST';
 requires 'Catalyst::Plugin::ConfigLoader';
-requires 'Catalyst::Plugin::Session::Store::BerkeleyDB';
+requires 'Catalyst::Plugin::Session::State::Cookie';
+requires 'Catalyst::Plugin::Session::Store::File';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Plugin::Unicode::Encoding';
 requires 'Catalyst::View::JSON';

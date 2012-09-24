@@ -12,11 +12,10 @@ use Graph::Easy;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Module::Load;
-use Text::CSV_XS;
+use Text::CSV;
 use Text::TEI::Collate::Diff;
 use Text::TEI::Collate::Error;
-use Text::TEI::Collate::Word;
-use Text::TEI::Collate::Manuscript;
+use Text::Tradition;
 use TryCatch;
 use XML::LibXML;
 
@@ -67,6 +66,16 @@ has 'fuzziness_sub' => (
     isa => 'CodeRef',
     predicate => 'has_fuzziness_sub',
     );
+    
+has 'tradition' => (
+	is => 'ro',
+	isa => 'Text::Tradition',
+	default => sub { Text::Tradition->new() };
+	handles => {
+		'ms' => 'witness',
+		'mss' => 'witnesses',
+		},
+	);
 
 =head1 NAME
 
@@ -80,19 +89,19 @@ Text::TEI::Collate - a collation program for variant manuscript texts
   # Read from strings.
   my @manuscripts;
   foreach my $str ( @strings_to_collate ) {
-    push( @manuscripts, $aligner->read_source( $str ) );
+    push( @manuscripts, $aligner->add_source( $str ) );
   }
   $aligner->align( @manuscripts; );
 
   # Read from files.  Also works for XML::LibXML::Document objects.
   @manuscripts = ();
   foreach my $xml_file ( @TEI_files_to_collate ) {
-    push( @manuscripts, $aligner->read_source( $xml_file ) )
+    push( @manuscripts, $aligner->add_source( $xml_file ) )
   }
   $aligner->align( @manuscripts );
 
   # Read from a JSON input.
-  @manuscripts = $aligner->read_source( $JSON_string );
+  @manuscripts = $aligner->add_source( $JSON_string );
   $aligner->align( @manuscripts );
   
 =head1 DESCRIPTION
@@ -120,40 +129,40 @@ word objects.
 
 =head2 new
 
-Creates a new aligner object.  Takes a hash of options; available
-options are listed.
+Creates a new aligner object.  Takes a hash of options; available options
+are listed.
 
 =over 4
 
-=item * 
+=item *
 
-B<debuglevel> - Default 0. The higher the number (between 0 and 3), the more 
-the debugging output.
+B<debuglevel> - Default 0. The higher the number (between 0 and 3), the
+more the debugging output.
 
-=item * 
+=item *
 
-B<title> - Display title for the collation output results, should those results 
-need a display title (e.g. TEI or JSON output).
+B<title> - Display title for the collation output results, should those
+results need a display title (e.g. TEI or JSON output).
 
 =item *
 
 B<language> - Specify the language module we should use from those
-available in L<Text::TEI::Collate::Lang>.  Default is 'Default'.  At present, the
-only non-placeholder language defined is Armenian; Latin and Greek also exist
-but do very little outside of the default.
+available in L<Text::TEI::Collate::Lang>.  Default is 'Default'.  At
+present, the only non-placeholder language defined is Armenian; Latin and
+Greek also exist but do very little outside of the default.
 
 =item *
 
 B<fuzziness> - The maximum allowable word distance for an approximate
 match, expressed as a percentage of word distance / word length. It can
 also be expressed as a hashref with keys 'val', 'short', and 'shortval', if
-you want to increase the tolerance for short words (defined as at or below the
-value of 'short').
+you want to increase the tolerance for short words (defined as at or below
+the value of 'short').
 
 =item *
 
-B<binmode> - If STDERR should be using something other than UTF-8, you 
-can set it here. You are probably in for a world of hurt anyway though.
+B<binmode> - If STDERR should be using something other than UTF-8, you can
+set it here. You are probably in for a world of hurt anyway though.
 
 =back
 
@@ -175,12 +184,8 @@ is( ref( $aligner ), 'Text::TEI::Collate', "Got a Collate object from new()" );
 around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
-    my %args;
-    if( @_ == 1 ) {
-        %args = %{$_[0]};
-    } else {
-        %args = @_;
-    }
+    my %args = @_ == 1 ? %{$_[0]} : @_;
+
     # Support a single 'fuzziness' argument
     if( exists $args{'fuzziness'} && !ref( $args{'fuzziness'} ) ) {
         my $fuzz = $args{'fuzziness'};
@@ -194,6 +199,11 @@ sub BUILD {
 	if( $self->has_binmode ) {
 	    my $b = $self->binmode;
 		binmode STDERR, ":$b";
+	}
+	unless( $self->tradition->witnesses ) {
+		# If the tradition has no witnesses yet, it's probably new.
+		# Set it to use our specified language.
+		$self->tradition->language( $self->language );
 	}
 	
 	$self->_use_language( $self->language );
@@ -216,19 +226,23 @@ use Text::TEI::Collate;
 use TryCatch;
 
 my $aligner = Text::TEI::Collate->new();
-is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Have correct default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, 
+	"Have correct default distance sub" );
 my $ok = eval { $aligner->language( 'Armenian' ); };
 ok( $ok, "Used existing language module" );
-is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, "Set correct distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Armenian::distance, 
+	"Set correct distance sub" );
 
 $aligner->language( 'default' );
-is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, "Back to default distance sub" );
+is( $aligner->distance_sub, \&Text::TEI::Collate::Lang::Default::distance, 
+	"Back to default distance sub" );
 
 # TODO test Throwable object
 try {
     $aligner->language( 'Klingon' );
 } catch( Text::TEI::Collate::Error $e ) {
-    is( $e->ident, 'bad language module', "Caught the lang module error we expected" );
+    is( $e->ident, 'bad language module', 
+    	"Caught the lang module error we expected" );
 } catch {
     ok( 0, "FAILED to catch expected exception" );
 }
@@ -263,11 +277,11 @@ sub _use_language {
     $self->distance_sub( $mod->can( 'distance' ) );
 }
 
-=head2 read_source
+=head2 add_source
 
 Pass in a word source (a plaintext file, a TEI XML file, or a JSON structure) 
-and a set of options, and get back one or more manuscript objects that can be 
-collated.  Options include:
+and a set of options; the witness(es) within the word source will be added
+to the aligner for later alignment.
 
 =over
 
@@ -293,32 +307,33 @@ Can also be read from a TEI <msdesc/> element.
 
 use XML::LibXML;
 
-my $aligner = Text::TEI::Collate->new();
-$aligner->language( 'Armenian' );
-
+my $aligner = Text::TEI::Collate->new( 'language' => 'Armenian' );
+my @mss;
 # Test a manuscript with a plaintext source, filename
 
-my @mss = $aligner->read_source( 't/data/plaintext/test1.txt',
+$aligner->add_source( 't/data/plaintext/test1.txt',
 	'identifier' => 'plaintext 1',
 	);
+@mss = $aligner->mss;
 is( scalar @mss, 1, "Got a single object for a plaintext file");
 my $ms = pop @mss;
 	
-is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( ref( $ms ), 'Text::Tradition::Witness', "Got manuscript object back" );
 is( $ms->sigil, 'A', "Got correct sigil A");
-is( scalar( @{$ms->words}), 181, "Got correct number of words in A");
+is( scalar( @{$ms->text}), 181, "Got correct number of words in A");
 
 # Test a manuscript with a plaintext source, string
 open( T2, "t/data/plaintext/test2.txt" ) or die "Could not open test file";
 my @lines = <T2>;
 close T2;
-@mss = $aligner->read_source( join( '', @lines ),
+$aligner->add_source( join( '', @lines ),
 	'identifier' => 'plaintext 2',
 	);
-is( scalar @mss, 1, "Got a single object for a plaintext string");
+@mss = $aligner->mss;
+is( scalar @mss, 2, "Got a single object for a plaintext string");
 $ms = pop @mss;
 
-is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( ref( $ms ), 'Text::Tradition::Manuscript', "Got manuscript object back" );
 is( $ms->sigil, 'B', "Got correct sigil B");
 is( scalar( @{$ms->words}), 183, "Got correct number of words in B");
 is( $ms->identifier, 'plaintext 2', "Got correct identifier for B");
@@ -401,17 +416,17 @@ foreach( @mss ) {
 
 =cut 
 
-sub read_source {
+sub add_source {
 	my( $self, $wordsource, %options ) = @_;
 	my @docroots;  # Holds an array of { sigil, source }
-	my $format;
+	my $sourcetype;
 	
 	if( !ref( $wordsource ) ) {  # Assume it's a filename.
 		my $parser = XML::LibXML->new();
 		my $doc;
 		eval { local $SIG{__WARN__} = sub { 1 }; $doc = $parser->parse_file( $wordsource ); };
 		if( $doc ) {
-			( $format, @docroots) = _get_xml_roots( $doc );
+			( $sourcetype, @docroots) = _get_xml_roots( $doc );
 			return unless @docroots;
 		} else {
 			# It's not an XML document filename.  Determine plaintext
@@ -420,27 +435,28 @@ sub read_source {
 			$encoding ||= 'utf8';
 			my $binmode = "<:" . $encoding;
 			my $rc = open( INFILE, $binmode, $wordsource );
-			$format = 'plaintext';
 			if( $rc ) {
 				# It is a filename, thus plaintext.
+				$sourcetype = 'plaintext';
 				my @lines = <INFILE>;
 				close INFILE;
-				@docroots = ( { source => join( '', @lines ) } );
+				@docroots = ( { 'string' => join( '', @lines ) } );
 			} else {
 				my $json;
 				eval { $json = decode_json( $wordsource ) };
 				if( $json ) {
 					# It is a JSON string.
-					$format = 'json';
-					push( @docroots, map { { source => $_ } } @{$json->{'witnesses'}} );
+					$sourcetype = 'json';
+					push( @docroots, map { { 'object' => $_ } } @{$json->{'witnesses'}} );
 				} else {
 					# Assume plain old string input.
-					@docroots = ( { source => $wordsource } );
+					$sourcetype = 'plaintext';
+					@docroots = ( { 'string' => $wordsource } );
 				}
 			}
 		}
 	} elsif ( ref( $wordsource ) eq 'XML::LibXML::Document' ) { # A LibXML object
-		( $format, @docroots ) = _get_xml_roots( $wordsource );
+		( $sourcetype, @docroots ) = _get_xml_roots( $wordsource );
 	} else {
 	    throw( ident => 'bad source',
 	           message => "Unrecognized object $wordsource; reading no words" );
@@ -450,15 +466,15 @@ sub read_source {
 	$options{'language'} = $self->language;
 
 	# We have the representations of the manuscript(s).  Initialize our object(s).
-	my @ms_objects;
+	my @new_mss;
 	foreach my $doc ( @docroots ) {
-		push( @ms_objects, Text::TEI::Collate::Manuscript->new( 
-			'sourcetype' => $format,
+		push( @new_mss, $self->tradition->add_witness( 
+			'sourcetype' => $sourcetype,
 			%options,
 			%$doc,
 			) );
 	}
-	return @ms_objects;
+	return @new_mss;
 }
 
 sub _get_xml_roots {
@@ -473,7 +489,7 @@ sub _get_xml_roots {
 			# collation runs on different texts.
 			my @witnesses = $collationtexts[0]->getChildrenByTagName( 'witness' );
 			@docroots = map { { sigil => $_->getAttribute( 'id' ),
-								source => $_->textContent } } @witnesses;
+								'string' => $_->textContent } } @witnesses;
 			$format = 'plaintext';
 		} else {
             throw( ident => 'bad source',
@@ -481,7 +497,7 @@ sub _get_xml_roots {
 		}
 	} else {
 		# Assume that it is TEI format.  We will throw an error later if not.
-		@docroots = ( { source => $xmldoc->documentElement } );
+		@docroots = ( { 'object' => $xmldoc->documentElement } );
 		$format = 'xmldesc';
 	}
 	return( $format, @docroots );  
@@ -489,21 +505,20 @@ sub _get_xml_roots {
 
 =head2 align
 
-The meat of the program.  Takes a list of L<Text::TEI::Collate::Manuscript>
-objects (created by read_source above.)  Returns the same objects with 
-their wordlists collated.  
-
-WARNING: Once a set of texts has been aligned, further operations (e.g. output methods) assume that the array of Manuscript objects has *not* been re-ordered.
+The meat of the program.  Collates the manuscript witnesses given to the aligner
+via add_source into a L<Text::Tradition::Collation> graph.  Returns the tradition,
+which is also accessible as $self->tradition.
 
 =begin testing
 
 my $aligner = Text::TEI::Collate->new();
-my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
-my @orig_wordlists = map { $_->words } @mss;
-$aligner->align( @mss );
+my @mss = $aligner->add_source( 't/data/cx/john18-2.xml' );
+my %orig_wordlists;
+map { $orig_wordlists{$_->sigil} = $_->text } @mss;
+my $tradition = $aligner->align();
 my $cols = 75;
-foreach( @mss ) {
-	is( scalar @{$_->words}, $cols, "Got correct collated columns for " . $_->sigil);
+foreach( $tradition->witnesses ) {
+	is( scalar @{$_->text}, $cols, "Got correct collated columns for " . $_->sigil);
 }
 foreach my $i ( 0 .. $#mss ) {
     my $ms = $mss[$i];
@@ -521,7 +536,7 @@ foreach my $i ( 0 .. $#mss ) {
 =cut
 
 sub align {
-	my( $self, @manuscripts ) = @_;
+	my( $self ) = @_;
 
  	if( scalar( @manuscripts ) == 1 ) {
 		# That was easy then.
@@ -1321,22 +1336,10 @@ foreach ( @wits ) {
 =cut
 
 sub to_json {
-	my( $self, @mss ) = @_;
-	my $result = { 'title' => $self->title, 'alignment' => [] };
-	my @invisible_row;
-
-    # Leave out the rows with no actual word tokens.
-	foreach my $i ( 0 .. $#{$mss[0]->words} ) {
-	    my @rowitems = map { $_->words->[$i] } @mss;
-	    push( @invisible_row, $i ) 
-	        unless grep { $_ && !$_->invisible } @rowitems;
-	}
-	foreach my $ms ( @mss ) {
-		push( @{$result->{'alignment'}},
-			  { 'witness' => $ms->sigil,
-				'tokens' => $ms->tokenize_as_json( @invisible_row )->{'tokens'}, } );
-	}
-	return $result;
+	my( $self ) = @_;
+	my $table = $self->tradition->collation->alignment_table;
+	# TODO think about whether to split out punctuation etc.
+	return $table;
 }
 
 =head2 to_csv
@@ -1348,7 +1351,7 @@ subsequent rows contain the aligned text.
 =begin testing
 
 use IO::String;
-use Text::CSV_XS;
+use Text::CSV;
 use Test::More::UTF8;
 
 my $aligner = Text::TEI::Collate->new();
@@ -1358,7 +1361,7 @@ my $csvstring = $aligner->to_csv( @mss );
 ok( $csvstring, "Got a CSV string returned" );
 # Parse the CSV data and test that it parsed
 my $io = IO::String->new( $csvstring );
-my $csv = Text::CSV_XS->new( { binary => 1 } );
+my $csv = Text::CSV->new( { binary => 1 } );
 
 # Test the number of columns in the first row
 my $sigilrow = $csv->getline( $io );
@@ -1382,27 +1385,9 @@ is( $rowctr, 73, "Got expected number of rows in CSV" );
 =cut
 
 sub to_csv {
-    my( $self, @mss ) = @_;
-    my @out;
-    my $csv = Text::CSV_XS->new( { binary => 1, quote_null => 0 } );
-    
-    # First get the witness sigla.
-    my @sigla = map { $_->sigil } @mss;  
-    $csv->combine( @sigla );
-    push( @out, decode_utf8( $csv->string ) );
-    
-    # Now go through the aligned text, leaving out invisible-only rows.
-    my $length = scalar @{$mss[0]->words};
-    foreach my $i ( 0 .. $length-1 ) {
-        my @words = map { $_->words->[$i] } @mss;
-        next unless grep { $_ && !$_->invisible } @words;
-        my $status = $csv->combine( map { $_ ? $_->word : undef } @words );
-        throw( ident => 'output error',
-	           message => "Could not convert " . $csv->error_input . " to CSV" ) 
-	        unless $status;
-        push( @out, decode_utf8( $csv->string ) );
-    }
-    return join( "\n", @out );
+    my( $self, $opts ) = @_;
+    # TODO specify whether to used canonized forms etc.
+    return $self->tradition->collation->as_csv;
 }
 
 =head2 to_tei

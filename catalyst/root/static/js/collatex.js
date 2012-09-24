@@ -3,8 +3,7 @@
 function stepOne() {
     var data = {};
     data.name = $('#textName').val();
-    data.language = $('input:radio[name=lang]:checked').val();
-    $.getJSON('collate/setNameLang', data, 
+    $.getJSON( baseurl + '/setName', data, 
     function(response) {
         // unhide section two
         if( response.status == "ok" ) {
@@ -17,7 +16,7 @@ function stepOne() {
 
 
 function getFileTexts() {
-    $.getJSON('collate/return_texts', function(data) {
+    $.getJSON( baseurl + '/return_texts', function(data) {
         $('#submittedFileList').html('');
         if (data) {
             $('#submitted_div').show();
@@ -52,7 +51,7 @@ function getTokens() {
     if( validateSigla()==true ) {
         query = $('#Configureform').serialize();
         $.ajax({
-          url: 'collate/collate_sources',
+          url: baseurl + '/collate_sources',
           data: query,
           type: 'POST',
           async: false,
