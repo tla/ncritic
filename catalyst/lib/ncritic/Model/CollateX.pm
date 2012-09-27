@@ -1,20 +1,46 @@
 package ncritic::Model::CollateX;
 
 use strict;
-use base 'Catalyst::Model::WebService::CRUST';
+use warnings;
+use Moose;
 use JSON::XS qw/ encode_json /;
+use LWP::UserAgent;
+use Text::Tradition::Parser::CollateX;
+use TryCatch;
+
+extends 'Catalyst::Model';
 
 # Create a user agent with the correct headers
+has 'ua' => (
+	is => 'ro',
+	isa => 'LWP::UserAgent',
+	default => sub { LWP::UserAgent->new( timeout => 600 ); },
+	);
+	
+has 'url' => (
+	is => 'ro',
+	isa => 'Str',
+	default => 'http://collatex.huygens.knaw.nl/service/collate',
+	);
+	
+=head2 collate( $witnesses, $return_format )
+
+Send the given witnesses out to the CollateX engine, and request results
+in the format specified. $witnesses may be either a Text::Tradition object
+or an encoded JSON string containing the witnesses. $return_format should
+be a MIME type recognized by CollateX.
+
+Returns an array of ( success, message ).
+
+=cut
 
 sub collate {
 	my( $self, $tradition, $return ) = @_;
 	
-	## Set any UserAgent options that are necessary
-	$self->ua->default_header( 'Accept' => $return );
-	# TODO timeout?
-	
 	my $witnessjson;
+	my $have_object;
 	if( ref( $tradition ) ) {
+		$have_object = 1;
 		## Extract the witnesses in $tradition into JSON format
 		my $witlist = [];
 		my $layerlabel = $tradition->collation->ac_label;
@@ -27,27 +53,42 @@ sub collate {
 					id => $wit->sigil . $layerlabel,
 					tokens => $layertext } );
 			}
+			delete $struct->{name}; # TODO restore
 			push( @$witlist, $struct );
 		}
-		$witnessjson = encode_json( { 'witnesses' => $witlist } );
+		# TODO expose collation options on UI page
+		$witnessjson = encode_json( { 
+			'witnesses' => $witlist, 
+			'algorithm' => 'dekker', 
+			'joined' => JSON::XS::false } );
 	} else { # We were passed a JSON string, not a tradition object.
 		$witnessjson = $tradition;
 	}
 	
 	## Post the request and return the result
-	$self->post( '/', { -content => $witnessjson } );
-	my $result = $self->response;
-	if( $result->is_success ) {	
-		return $result->content;
+	my $result = $self->ua->post( $self->url, 
+		'Accept' => $return,
+		'Content-Type' => 'application/json',
+		'Content' => $witnessjson );
+	if( $result->is_success ) {
+		if( $have_object ) {
+			try {
+				# Save the collation; this will throw on failure
+				Text::Tradition::Parser::CollateX::parse( $tradition, 
+					{ string => $result->content } );
+				return( 1, 'OK' );
+			} catch ( Text::Tradition::Error $e ) {
+				return( 0, $e->message );
+			} catch {
+				return( 0, 'Unexpected CollateX result parse error' );
+			}
+		} else {
+			return( 1, $result->content );
+		}
 	} else {
-		# We catch this 'die' in the controller!
-		die $result->status_line;
+		return( 0, $result->status_line );
 	}
 }
-
-__PACKAGE__->config(
-	base => 'http://collatex.huygens.knaw.nl',
-);
 
 =head1 NAME
 

@@ -11,7 +11,9 @@ all_from 'lib/ncritic.pm';
 
 # Outside requirements
 requires 'JSON::XS';
-requires 'Text::Tradition' => '1.1';
+requires 'LWP::UserAgent';
+requires 'Text::Tradition' => '1.2';
+requires 'Text::Tradition::Parser::CollateX';
 
 # Moose requirements
 requires 'Moose';
