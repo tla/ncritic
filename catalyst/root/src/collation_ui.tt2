@@ -16,6 +16,8 @@
 <script type="text/javascript">
 // Set our base URL
 var baseurl = '[% c.uri_for("/collate") %]';
+var collation_done = '[% all_collated %]';
+var error_on_load = '[% error_msg %]';
 </script>
 [% END -%]
 
@@ -146,7 +148,7 @@ var baseurl = '[% c.uri_for("/collate") %]';
 	<div class="textfiledetails_1">
 	
 	<br/>
-	<div><h2>Collate it!</h2></div>
+	<div><h2>[% IF all_collated %]Re-c[% ELSE %]C[% END %]ollate it!</h2></div>
 	<p><div onclick="getTokens()" class="button"><span>Go.</span></div></p>
 
 	<p>&nbsp;</p>
@@ -174,7 +176,8 @@ var baseurl = '[% c.uri_for("/collate") %]';
     <input type="hidden" name="disposition" value="Display" />
 	<ul id="displayUL">
 		<li>HTML <input name="output" value="application/xhtml" type="radio"></input></li>
-		<li>SVG <input name="output" value="image/svg" type="radio"></input></li>
+		<li>SVG <input name="output" value="image/svg" type="radio"></input><br/>
+			<input name="showrels" type="checkbox"></input>Show relationships</li>
 	</ul>
     <p><div onclick="$('#Displayform').submit()" class="button"><span>Display</span></div></p>
   </form>

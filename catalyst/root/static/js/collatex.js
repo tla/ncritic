@@ -3,7 +3,8 @@
 function stepOne() {
     var data = {};
     data.name = $('#textName').val();
-    $.getJSON( baseurl + '/setName', data, 
+    data.language = $('input:radio[name=lang]:checked').val();
+    $.getJSON(baseurl + '/setNameLang', data, 
     function(response) {
         // unhide section two
         if( response.status == "ok" ) {
@@ -111,10 +112,45 @@ $(document).ready(function(e) {
     $.blockUI.defaults.overlayCSS = {};
     $('#collatedResult').val('');
     $("#error_console").ajaxError(function(event, request, settings){
-        showErrorConsole( request.responseText );
+    	// If it is a redirect to index, then force the refresh
+    	if( request.status == '401' ) {
+    		// Make a form so that we can post the session_expired tag to the 
+    		// index page and avoid its appearance in the URL
+    		var expired = $('<input>').attr('type', 'hidden').attr(
+    			'name','session_expired').val( true );
+    		var refreshform = $('<form>').attr('method','POST').attr(
+    			'action', baseurl ).append( expired );
+    		$('#container02').append( refreshform );
+    		refreshform.submit();
+    	} else {
+			// Else display the error
+			var errmsg;
+			if( request.responseText == "" ) {
+				errmsg = "perhaps the server went down?";
+			} else {
+				var errobj;
+				try {
+					errobj = jQuery.parseJSON( request.responseText );
+					errmsg = errobj.error;
+				} catch ( parse_err ) {
+					errmsg = "something went wrong on the server.";
+				}
+			}
+			showErrorConsole( errmsg );
+		}
     });
-    $('#column3').addClass( 'greyed_out' );
-    $('#column3').block({message:null});
+    
+    // If we loaded with an error message, display it
+    if( error_on_load != '' ) {
+    	showErrorConsole( error_on_load );
+    }
+    
+    // If there isn't a currently loaded collation, block out the result
+    // display column
+    if( collation_done === '' ) {
+		$('#column3').addClass( 'greyed_out' );
+		$('#column3').block({message:null});
+	}
 });
 
 $.fn.clearForm = function() {

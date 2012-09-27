@@ -1,12 +1,14 @@
 [% META title = 'Collation HTML Result'
         service = 'Collation' -%]
 	<table>
-[% FOREACH ms = mss -%]
+[% FOREACH witrow IN alignment -%]
 		<tr>
-			<th>[% ms.sigil %] ([% ms.identifier %])</th>
-[%   FOREACH word = ms.words -%]
-[%     IF word.word -%]
-    	<td>[% word.word %]</td>
+			<th>[% witrow.witness %] ([% witrow.identifier %])</th>
+[%   FOREACH word IN witrow.tokens -%]
+[%     IF word.t.is_lacuna -%]
+		<td>*</td>
+[%     ELSIF word.t -%]
+    	<td>[% word.t.text %]</td>
 [%     ELSE -%]
 			<td/>
 [%     END -%]

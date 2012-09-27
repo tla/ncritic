@@ -4,8 +4,6 @@ use JSON::XS qw/ encode_json /;
 use Moose;
 use namespace::autoclean;
 use Text::Tradition;
-use Text::Tradition::Collation;
-use Text::Tradition::Parser::CollateX;
 use TryCatch;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -30,26 +28,41 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     $c->delete_expired_sessions();
     # Set up a new tradition for the session if one doesn't exist
-    unless( exists $c->session->{'tradition'} ) {
-    	my $t = Text::Tradition->new();
+    if( $c->request->param('session_expired') && !exists $c->session->{'tradition'} ) {
+    	$c->stash->{'error_msg'} = 
+    		'Your session expired after two hours; your uploaded texts were removed. Starting over';
+    }
+    my $t = $c->session->{'tradition'};
+	if( $t ) {
+		my @collated = grep { $_->is_collated } $t->witnesses;
+		if( @collated && @collated == $t->witnesses ) {
+			$c->stash->{all_collated} = 1;
+		}
+	} else {
+    	$t = Text::Tradition->new();
     	$c->session->{'tradition'} = $t;
     }
     # Render the front page
     $c->stash->{template} = 'collation_ui.tt2';	
 }
 
-=head2 collate/sendName 
+=head2 collate/setNameLang 
 
-Simple JSON call to set the name of the text we are collating.
+Simple JSON call to set the name and language of the text we are collating.
 
 =cut
 
-sub setName :Local {
+sub setNameLang :Local {
     my ( $self, $c ) = @_;
-    # TODO catch a failure
-	my $t = $c->session->{'tradition'};
-	$t->name( $c->req->params->{'name'} );
-    $c->stash->{'result'} = { 'status' => 'ok' };
+	my $t = $self->get_session_tradition( $c );
+    $t->name( $c->req->params->{'name'} );
+    try {
+        $t->language( $c->req->params->{'language'} );
+        $c->stash->{'result'} = { 'status' => 'ok' };
+    } catch ( Text::Tradition::Error $e ) {
+        $self->error( $c, 500, $e->message );
+        return;
+    }
     $c->forward( 'View::JSON' );
 }
 
@@ -65,7 +78,7 @@ JSON structure is:
 sub return_texts :Local {
     my( $self, $c ) = @_;
     # TODO think about calling local method 'source' for this
-	my $t = $c->session->{'tradition'};
+	my $t = $self->get_session_tradition( $c );
     my $answer = [];
     foreach my $sig ( sort keys %{$c->session->{'sources'}} ) {
         my $textdata = {};
@@ -111,11 +124,13 @@ specified file that was uploaded.  Returns a JSON status/error message.
 
 =cut
 
+# Errors have to be handled with 'errormsg' within an answer array in order
+# for the frontend file uploader to understand
 sub source :Local {
     my( $self, $c, $arg ) = @_;
     # Files to upload are in param 'files[]'
     my @answer;
-	my $t = $c->session->{'tradition'};
+	my $t = $self->get_session_tradition( $c );
     if( $c->request->method eq 'POST' ) {
         foreach my $field ( $c->request->upload ) {
             my $u = $c->request->upload( $field );
@@ -214,7 +229,8 @@ my %output_action = (
 	'image/svg+xml' => 'SVG',
 	'text/csv' => 'CSV',
 	'application/xhtml+xml' => 'HTML',
-	'text/html' => 'HTML'
+	'text/html' => 'HTML',
+	'text/plain' => 'Dot'
 	);
 
 sub output_result :Local {
@@ -225,30 +241,34 @@ sub output_result :Local {
     $format = $c->request->header( 'Accept' ) unless $format;
 	$c->log->debug( "Requested format $format");
 	
-	## TODO error message for expired session
-	my $t = $c->session->{tradition};
-	
+	my $t = $self->get_session_tradition( $c );	
 	# Figure out how to render the manuscripts
 	if( $output_action{$format} eq 'HTML' ) {
 		# TODO fix this
 		$c->stash->{template} = 'collation_bare_html.tt2';
-		$c->stash->{mss} = $t->collation->alignment_table;
+		$c->stash->{alignment} = $t->collation->alignment_table->{'alignment'};
 		$c->forward( 'View::HTML')
 			unless $c->request->params->{interactive};
 	} else {
 		my $action = "as_" . lc( $output_action{$format} );
 		my $view = "View::" . $output_action{$format};
+		# Code in some display options
+		# HACK - this is only relevant for dot/svg
+		my $display_opts = {};
+		if( $c->request->param('showrels') ) {
+			$display_opts->{show_relations} = 'transposition';
+		}
 		if( $t->collation->can( $action ) ) {
 			try {
-				$c->stash->{result} = $t->collation->$action();
+				$c->stash->{result} = $t->collation->$action( $display_opts );
 			} catch( Text::Tradition::Error $e ) {
-				$c->log->debug( "Caught error " . $e->message );
-				$c->response->code( 500 );
+				$self->error( $c, 500, "Caught error " . $e->message );
+				return;
 			}
 			$c->forward( $view );
 		} else {
-			$c->stash->{result} = { error => 'Format $format not supported' };
-			$c->forward('View::JSON');
+			$self->error( $c, 500, 'Format $format not supported' );
+			return;
 		}
 	}
     # See if we need to coerce download
@@ -272,32 +292,35 @@ format, as well as a set of actions that can be taken for that format.
 sub collate_sources :Local {
     my( $self, $c ) = @_;
 
-    # Grab the tradition with its mss
-    my $answer;
-	my $t = $c->session->{tradition};    
-    my $collator = $c->model( 'CollateX' );
-	my $cxml;
-	try {
-		# Collate the manuscripts
-		$cxml = $collator->collate( $t, 'application/graphml+xml' );
-	} catch ( $e ) {
-		$answer = { status => 'error', error => $e };
-	}
-	
-	if( $cxml ) {
-		try {
-			# Save the collation; this will throw on failure
-			# $t->_save_collation( Text::Tradition::Collation->new() );
-			Text::Tradition::Parser::CollateX::parse( $t, { string => $cxml } );
-			$answer = { status => 'OK' };
-		} catch ( Text::Tradition::Error $e ) {
-			$answer = { 'status' => 'error',
-						'error' => $e->message };
+    # Grab the tradition with its mss and clear out any existing collation
+	my $t = $self->get_session_tradition( $c );
+	$t->clear_collation;
+
+	# Change any witness sigla before we collate the lot
+	foreach my $id ( @{$c->request->params->{text}} ) {
+        # Update the sigil if necessary
+        my $sigkey = 'sigil_' . $id;
+        my $realsig = $c->request->params->{$sigkey};
+        if( $id ne $realsig ) {
+			try {
+				$t->rename_witness( $id, $realsig );
+			} catch ( Text::Tradition::Error $e ) {
+				$self->error( $c, 500, $e->message );
+				return;
+			}
 		}
-	}
+    }
     
-    # Return the result, hopefully okay  
-    $c->stash->{result} = $answer;
+    # Call out for the collation
+    my $collator = $c->model( 'CollateX' );
+	my( $ok, $msg ) = $collator->collate( $t, 'application/graphml+xml' );
+	unless ( $ok ) {
+		$self->error( $c, 500, $msg );
+		return;
+	}
+	    
+    # Return an acknowledgment
+    $c->stash->{result} = { status => $msg };
     $c->forward( 'View::JSON' );
 }
 
@@ -341,7 +364,13 @@ sub run_collation :Local {
 	$c->log->debug( "Requested format $format");
 
 	# Run the collation on the provided JSON string
-	$c->stash->{result} = $c->model('CollateX')->collate( $json, $format );
+	my( $ok, $result ) = $c->model('CollateX')->collate( $json, $format );
+	if( $ok ) {
+		$c->stash->{result} = $result;
+	} else {
+		$self->error( $c, 500, $result );
+		return;
+	}
 	# Render the view
 	$c->forward( 'View::' . $output_action{$format} );
 }
@@ -369,6 +398,24 @@ Usage information for the tokenization microservice.
 sub doc :Local {
     my( $self, $c ) = @_;
     $c->stash->{template} = 'collatedoc.tt2';
+}
+
+sub get_session_tradition {
+	my( $self, $c ) = @_;
+	my $t;
+	if( exists $c->session->{'tradition'} ) {
+		$t = $c->session->{'tradition'};
+	} else {
+		$self->error( $c, 401, "Session expired" );
+		$c->detach();
+	}
+}
+
+sub error :Private {
+	my( $self, $c, $code, $message ) = @_;
+	$c->response->code( $code );
+	$c->stash->{result} = { error => $message };
+	$c->forward('View::JSON');
 }
 
 =head1 AUTHOR
