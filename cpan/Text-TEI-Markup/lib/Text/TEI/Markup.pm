@@ -83,6 +83,7 @@ the content between the <body></body> tags - that is, all the content that
 will be generated after the '=BODY' tag.
 
 A very simple template looks like this:
+
  <?xml version="1.0" encoding="UTF-8">
  <TEI>
    <teiHeader>
@@ -123,9 +124,9 @@ list is:
 	'comment' => '##',
 	'add' => '+',
 	'del' => '-',
-	'subst' => "\x{b1}",   # Unicode PLUS-MINUS SIGN
-	'div' => "\x{a7}",	   # Unicode SECTION SIGN
-	'p' => "\x{b6}",	   # Unicode PILCROW SIGN
+	'subst' => "\x{b1}",	# Unicode PLUS-MINUS SIGN
+	'div' => "\x{a7}",		# Unicode SECTION SIGN
+	'p' => "\x{b6}",		# Unicode PILCROW SIGN
 	'ex' => '\\',
 	'expan' => '^',
 	'supplied' => '@',
@@ -135,27 +136,11 @@ list is:
 	'cb' => '|',
 	'hi' => '*',
 	'unclear' => '?',
-	'q' => "\x{2020}",	   # Unicode DAGGER
+	'q' => "\x{2020}",		# Unicode DAGGER
 	);
 
 Non-identical matched sets of sigla (e.g. '{}' for abbreviations) should be
 specified in a listref, as seen here.
-
-The "add" and "del" sigils have an extra convenience feature - anything
-that appears in parentheses immediately after the add/del opening sigil ( +
-or - in the examples above) will get added as an attribute. If the string
-in parentheses has no '=' sign in it, the attribute for the "add" tag will
-be "place", and the attribute for the "del" tag will be "type". Ergo:
-
- +(margin)This is an addition+-(overwrite)and a deletion- to the sentence.
-
-will get translated to
-
- <add place="margin">This is an addition</add> 
- <del type="overwrite">and a deletion</del> to the sentence.
-
-This behavior ought to be more configurable and/or flexible; make it worth
-my while.
 
 Whitespace is only significant at the end of lines. If a line which
 contains non-tag text (i.e. words) ends in whitespace, it is assumed that
@@ -167,6 +152,60 @@ All the sigils must be balanced, and they must nest properly. Remember that
 this is a shorthand for XML. I could be convinced to try to autocorrect
 some unbalanced sigils, but it would be worth at least a few pints of cider
 (or, of course, a patch.)
+
+=head2 Tag arguments
+
+Certain of the tags can be passed extra arguments:
+
+=over 4 
+
+=item C<add / del>
+
+Anything that appears in parentheses immediately after the add/del opening
+sigil ( + or - in the examples above) will get added as an attribute. If
+the string in parentheses has no '=' sign in it, the attribute for the
+"add" tag will be "place", and the attribute for the "del" tag will be
+"type". Ergo:
+
+ +(margin)This is an addition+
+ -(overwrite)and a deletion- to the sentence.
+
+will get translated to
+
+ <add place="margin">This is an addition</add> 
+ <del type="overwrite">and a deletion</del> to the sentence.
+
+This behavior ought to be more configurable and/or flexible; make it worth
+my while.
+
+=item C<num>
+
+A number value can calculated using a number_conversion function, or it can
+simply be specified. It is also possible to specify the type of number being 
+represented (B<card>inal, B<ord>inal, B<frac>tion, B<perc>entage). The arguments 
+are separated with a comma, and in the order "value", "type". So for example:
+
+ The lead was taken by the Exeter %(8)VIII%. This was their 
+ %(13,ord)thirteenth% straight win.
+
+will become:
+
+ The lead was taken by the Exeter <num value="8">VIII</num>. This was their 
+ <num value="13" type="ordinal">thirteenth</num> straight win.
+
+=item C<hi>
+
+When text highlighting is encoded, it is almost always a good idea to say 
+something about how the highlight was rendered. This information can be passed 
+as an argument:
+
+ *(red)IN the beginning* was the word
+ 
+will become
+
+ <hi rend="red">IN the beginning</hi> was the word
+ 
+=back
 
 =head1 SUBROUTINES
 
@@ -194,7 +233,9 @@ Useful for, e.g., Latin numerals. This is optional - if nothing is passed,
 no number value calculation will be attempted. =item C<sigils>
 
 a hashref containing the preferred sigil representations of TEI tags.
-Defaults to the list above. =item C<wrap_words>
+Defaults to the list above. 
+
+=item C<wrap_words>
 
 Defaults to "true". If you pass a false value, the word wrapping will be
 skipped. 
@@ -293,6 +334,7 @@ sub to_xml {
 			# Make the header template substitution.
 			warn "Warning: header line $_ in body section" if $inbody;
 			my( $key, $val ) = ( lc( $1 ), $2 );
+			$val =~ s/^\s+//;
 			if( $key eq 'main' ) {
 				warn "Illegal key $key; not substituting";
 			} else {
@@ -455,13 +497,44 @@ sub _open_tag {
 		$opened_tag = '<q type="biblical">' . $text;
 	} elsif ( $tag eq 'num' ) {
 		# Derive the number's value if requested.
-		my $numconvert = $opts->{'number_conversion'};
-		if( defined $numconvert ) {
-			my $nv = &$numconvert( $text );
-			$opened_tag = "<num value=\"$nv\">$text" if defined $nv;
+		my $nv;
+		if( $arg ) {
+			my $nt;
+			my %ntabbr = ( 
+				'ord' => 'ordinal', 
+				'card' => 'cardinal', 
+				'frac' => 'fraction', 
+				'perc' => 'percentage' );
+			( $nv, $nt ) = split( /,/, $arg );
+			$nt = $ntabbr{$nt} || $nt;
+			if( $nt ) {
+				$opened_tag = sprintf( '<num value="%s" type="%s">%s', 
+					$nv, $nt, $text );
+			} else {
+				$opened_tag = sprintf( '<num value="%s">%s', $nv, $text );
+		} 
+		unless( defined $nv ) {
+			my $numconvert = $opts->{'number_conversion'};
+			if( defined $numconvert ) {
+				# Strip any XML markup from the element contents.
+				my $parser = XML::LibXML->new();
+				my $fragment;
+				my $ok = eval{ $fragment = $parser->parse_balanced_chunk( $text ); };
+				if( $ok ) {
+					$nv = &$numconvert( uc( $fragment->textContent() ) );
+				} else {
+					warn "Unbalanced chunk in number tag: $text";
+				}
+				$opened_tag = sprintf( '<num value="%s">%s', $nv, $text ) 
+					if defined $nv;
+			}
 		}
 	} elsif ( $tag eq 'hi' ) {
-		warn "Empty argument passed to $tag tag" unless $arg;
+		unless( $arg ) {
+			warn "Empty argument passed to $tag tag";
+			$arg = 'DEFAULT';
+		}
+		$arg =~ s/\s+/_/g;
 		$opened_tag = sprintf( '<%s rend="%s">%s', $tag, $arg, $text );
 	}
 
