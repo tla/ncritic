@@ -276,7 +276,7 @@ my $k1 = "een vier quam daer uten steene dat";
 my $k2 = "een vier quam daer vten steene diet";
 my $k3 = "ende vier quam dar vten stene diet";
 
-$aligner = Text::TEI::Collate->new( 'debuglevel' => 3 );
+$aligner = Text::TEI::Collate->new();
 $aligner->distance_sub( sub { $_[0] eq $_[1] ? 0 : 50 } ); # exact matches only
 my @mss;
 foreach( ( $k1, $k2, $k3 ) ) {
@@ -421,7 +421,7 @@ foreach ( @wits ) {
 # =begin testing
 {
 use IO::String;
-use Text::CSV_XS;
+use Text::CSV;
 use Test::More::UTF8;
 
 my $aligner = Text::TEI::Collate->new();

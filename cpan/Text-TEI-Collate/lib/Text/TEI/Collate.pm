@@ -12,7 +12,7 @@ use Graph::Easy;
 use IPC::Run qw( run binary );
 use JSON qw( decode_json );
 use Module::Load;
-use Text::CSV_XS;
+use Text::CSV;
 use Text::TEI::Collate::Diff;
 use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
@@ -1348,7 +1348,7 @@ subsequent rows contain the aligned text.
 =begin testing
 
 use IO::String;
-use Text::CSV_XS;
+use Text::CSV;
 use Test::More::UTF8;
 
 my $aligner = Text::TEI::Collate->new();
@@ -1389,7 +1389,7 @@ sub to_csv {
     # First get the witness sigla.
     my @sigla = map { $_->sigil } @mss;  
     $csv->combine( @sigla );
-    push( @out, decode_utf8( $csv->string ) );
+    push( @out, $csv->string );
     
     # Now go through the aligned text, leaving out invisible-only rows.
     my $length = scalar @{$mss[0]->words};
@@ -1400,7 +1400,7 @@ sub to_csv {
         throw( ident => 'output error',
 	           message => "Could not convert " . $csv->error_input . " to CSV" ) 
 	        unless $status;
-        push( @out, decode_utf8( $csv->string ) );
+        push( @out, $csv->string );
     }
     return join( "\n", @out );
 }
