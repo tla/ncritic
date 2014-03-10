@@ -11,6 +11,15 @@ all_from 'lib/ncritic.pm';
 
 # Outside requirements
 requires 'Text::TEI::Collate';
+requires 'Text::TEI::Markup';
+requires 'Convert::Number::Armenian';
+requires 'Convert::Number::Coptic';
+requires 'Convert::Number::Greek';
+requires 'Text::Roman';
+requires 'TryCatch';
+requires 'XML::LibXML';
+requires 'XML::LibXML::XPathContext';
+
 
 # Moose requirements
 requires 'Moose';

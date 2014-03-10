@@ -14,8 +14,12 @@
 	margin-left: 150px;
 	margin-top: 40px;
 }
-#xmlform {
-	display: none;
+#transcriptionform {
+	width: 600px;
+}
+.ui-accordion .ui-accordion-header {
+	padding-left: 22px;
+	font-size: 16px;
 }
 .section {
 	float: left;
@@ -50,8 +54,11 @@ table.pagecolumn td.right {
 .textauthor {
 	font-style: italic;
 }
-.number {
+.number, .expansion {
 	text-decoration: overline;
+}
+.expansion {
+	font-style: italic;
 }
 .pagenum {
 	border-top: 1px solid #111111;
@@ -60,9 +67,6 @@ table.pagecolumn td.right {
 	margin: 10px;
 	padding: 10px;
 	width: 400px;
-}
-.expansion {
-	font-style: italic;
 }
 .highlight {
 	color: #dd0000;

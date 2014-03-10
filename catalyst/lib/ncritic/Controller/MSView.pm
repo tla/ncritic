@@ -6,7 +6,6 @@ use Convert::Number::Coptic;
 # use Convert::Number::Ethiopic; # module is broken
 use Convert::Number::Greek qw/ greek2num /;
 use File::Temp ();
-use MIME::Base64;
 use Text::Roman qw/ roman2int /;
 use Text::TEI::Markup qw/ to_xml /;
 use TryCatch;
@@ -78,12 +77,13 @@ sub index :Path :Args(0) {
   	xmltemplate: <XML template string>,
   	language:	 <Language for number conversion> }
   	
-URL to request for the conversion to XML. Expects a POST request with the marked-up 
-text to convert, a template by which to convert it, and a 'language' for any automatic
-calculation of number values. Recognized number systems are Greek, Roman, and Armenian.
+URL to request for the conversion to XML. Expects a POST request with the
+marked-up text to convert, a template by which to convert it, and a
+'language' for any automatic calculation of number values. Recognized
+number systems are Greek, Roman, and Armenian.
 
-Returns a JSON response with the original XML, an HTML snippet for display (both 
-base64-encoded), the witness sigil, the witness identifier, and any extra witness 
+Returns a JSON response with the original XML, an HTML snippet for display,
+the witness sigil, the witness identifier, and any extra witness
 information that should be passed through.
 
 =cut

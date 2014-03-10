@@ -70,8 +70,8 @@ sub _html_transform {
 		'damage' => 'damage',
 		);
 	my @return_words;
+
 	## NONRECURSING ELEMENTS
-	$DB::single = 1 if $element->nodeName eq 'num';
 	if( $element->nodeType == XML_TEXT_NODE ) {
 		my $text = $element->data;
 		$text =~ s/^\s+//gs;
