@@ -1,0 +1,191 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+  font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
+  font-size:14px;
+  color: #252e49; /* #666666; */
+}
+
+#logo {
+    width: 200px;
+    height: 300px;
+    position: absolute;
+    background: url('../images/ncritic_emblem_300.png') no-repeat scroll -138px -110px;
+    z-index: -1;
+}
+
+a {
+  color:#0099FF;
+  text-decoration:none
+}
+
+a:hover {
+  color: #F4448A; /* #FF66CC; */
+}
+
+h1 {
+  font-size:24px;
+  font-weight:100;  
+  margin: 0px 0px 20px 0px;
+  padding:0px 0px -0px 0px;
+  width: 90%;
+  border-bottom:1px solid #f4448a; /* #488DD2; */
+  color: #376fbd; /* #488DD2; */
+}
+
+h2 {
+  float: left;
+  font-size:18px;
+  font-weight:100;  
+  margin: 0px 0px 5px 0px;
+}
+
+p {
+  clear: left;
+  margin: 0px 0px 10px 0px;  
+}
+
+ul {
+  clear: left;
+  margin: 20px 0px 10px 0px;
+}
+
+#textInfo {
+    clear: left;
+}
+
+li {
+  margin: 0px 0px 5px 15px;
+  list-style-image:url("../images/arrow.gif");
+}
+
+#submitted_div{
+  display: none;
+}
+
+.header {
+  margin: 0px 0px 8px 87px;
+  padding: 40px 0px 0px 89px;
+  font-size:14pt;
+  border-bottom:1px solid #C6DCF1;
+  height: 49px;
+  background: url('../images/ncritic_logo_147x52.png') no-repeat scroll right center;
+}
+
+#menu_header {
+  height: 50px;
+  width: 122px;
+  background: blue;
+  position: relative;
+  top: -5px;
+  background: url('../images/menu_header_002.png') no-repeat scroll left top;
+}
+
+#menu_header_gutter {
+  height: 5px;
+  background-color: #f4448a;
+  margin-left: 122px;
+}
+
+.usermgmt {
+  float:right;
+  padding: 30px 0px 30px 30px;
+  width: 260px;
+}
+
+.coll {
+  width:30%;
+  float:left;
+  margin: 0px 0px 0px 15px;
+  padding:30px 0px 0px 15px;
+  border-right:1px solid #C6DCF1;
+  min-height:440px;
+}
+
+.nmr {
+  font-size:40px;
+}
+
+h2 .nmr {
+  font-size:25px;
+}
+
+.filefieldX {
+  padding:3px 3px 3px 3px;
+  border:1px solid #488DD2;
+  width:275px;
+}
+
+.textfieldX {
+  padding:3px 3px 3px 3px;
+  border:1px solid #dddddd;
+  margin-bottom: 3px;
+  width:256px;  
+}
+
+.sigil {
+    width: 25px;
+    font-size: 8pt;
+    position: absolute;
+    padding: 1px;
+    margin-left: 5px;
+}
+
+.text_name {
+    padding-left: 40px;
+}
+
+.divLink {
+  color:#0099FF;
+  cursor: pointer;
+}
+
+.divLink:hover {
+  color:#FF66CC;
+  cursor: pointer;
+}
+
+div.button {
+  background: transparent url('../images/b_button_a.png') no-repeat scroll top right;
+  color: #fff;
+  display: block;
+  float: left;
+  font: normal 12px Times, Times New Roman, Serif; /* arial, sans-serif; */
+  height: 24px;
+  margin-right: 6px;
+  padding-right: 18px; /* sliding doors padding */
+  text-decoration: none;
+}
+
+div.button.reset {
+  background: transparent url('../images/c_button_a.png') no-repeat scroll top right;
+}
+
+div.button span {
+  background: transparent url('../images/b_button_span.png') no-repeat;
+  display: block;
+  line-height: 14px;
+  padding: 5px 0 5px 18px;
+}
+
+div.button.reset span {
+  background: transparent url('../images/c_button_span.png') no-repeat;
+}
+
+div.button:hover {
+  background-position: bottom right;
+  color: #444;
+  outline: none; /* hide dotted outline in Firefox */
+}
+
+div.button:hover span {
+  background-position: bottom left;
+}
+
+#allUrls{
+  margin-bottom: 8px;
+}
+
+
+

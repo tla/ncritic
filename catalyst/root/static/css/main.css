@@ -1,21 +1,95 @@
-#header {
-    text-align: center;
+@charset "utf-8";
+/* CSS Document */
+
+* {
+  margin:0px;
+  padding:0px;
 }
-#header h1 {
-    margin: 0;
+
+body {
+  font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
+  font-size:14px;
+  color: #252e49; /* #666666; */
 }
-#header img {
-    float: right;
+
+a {
+  color:#0099FF;
+  text-decoration:none
 }
-#footer {
-    text-align: center;
-    font-style: italic;
-    padding-top: 20px;
+
+a:hover {
+  color: #F4448A; /* #FF66CC; */
 }
+
+h1 {
+  font-size:24px;
+  font-weight:100;  
+  margin: 0px 0px 20px 0px;
+  padding:0px 0px -0px 0px;
+  width: 90%;
+  border-bottom:1px solid #f4448a; /* #488DD2; */
+  color: #376fbd; /* #488DD2; */
+}
+
+h2 {
+  float: left;
+  font-size:18px;
+  font-weight:100;  
+  margin: 0px 0px 5px 0px;
+}
+
+p {
+  clear: left;
+  margin: 0px 0px 10px 0px;  
+}
+
+ul {
+  clear: left;
+  margin: 20px 0px 10px 0px;
+}
+
+li {
+  margin: 0px 0px 5px 15px;
+  list-style-image:url("../images/arrow.gif");
+}
+
+
+/* Header and logo */
+.header {
+  margin: 0px 0px 8px 87px;
+  padding: 40px 0px 0px 89px;
+  font-size:14pt;
+  border-bottom:1px solid #C6DCF1;
+  height: 49px;
+  background: url('../images/ncritic_logo_147x52.png') no-repeat scroll right center;
+}
+#logo {
+    width: 200px;
+    height: 300px;
+    position: absolute;
+    background: url('../images/ncritic_emblem_300.png') no-repeat scroll -138px -110px;
+    z-index: -1;
+}
+
+
+/* Sidebar menu */
 #menu {
     position: relative;
     top: -5px;
     background-color: #f4448a;
+}
+#menu_header {
+  height: 50px;
+  width: 122px;
+  background: blue;
+  position: relative;
+  top: -5px;
+  background: url('../images/menu_header_002.png') no-repeat scroll left top;
+}
+#menu_header_gutter {
+  height: 5px;
+  background-color: #f4448a;
+  margin-left: 122px;
 }
 #menu ul {
     list-style: none;
@@ -35,8 +109,20 @@
 #menu ul li {
     list-style-image:url("../images/arrow_002.gif");
 }
+
+/* Page footer */
+#footer {
+	clear: both;
+    text-align: left;
+    font-style: italic;
+    padding-top: 20px;
+}
+
+/* General body content */
 #content {
     margin-left: 120px;
+    float: left;
+    padding-top: 50px;
     position: relative;
     top: -50px;
 }
@@ -50,3 +136,14 @@
     height: 30;
     width: 100;
 }
+.clearfix:after { 
+        content: "\00A0"; 
+        display: block; 
+        clear: both; 
+        visibility: hidden; 
+        line-height: 0; 
+        height: 0;
+}  
+.clearfix{ 
+        display: inline-block;
+}  

@@ -1,0 +1,18 @@
+[% BLOCK extrastyle -%]
+<link rel="stylesheet" href="[% c.uri_for('/static/css/index.css') %]" />
+[% END -%]
+
+[% BLOCK extrajs -%]
+<script src="[% c.uri_for('/static/js/jquery-1.6.js') %]"></script>
+<script src="[% c.uri_for('/static/js/collatex.js') %]"></script>
+[% END -%]
+
+<div id="container01">
+	<p>Welcome to nCritic, a set of online tools for manuscript text transcription, word tokenization, and online collation. The tools are based on those written for a 2009 D.Phil. thesis at the University of Oxford. Each of the tools is also available as an independent microservice, accessible through a REST-like API, and documented alongside the tool.</p>
+	<p>The following tools are currently available:</p>
+	<!-- ul>
+		<li><a href="[% c.uri_for('/msview') %]">TEI transcription checker</a></li>
+		<li><a href="[% c.uri_for('/tokenizetei') %]">TEI manuscript tokenizer</a></li>
+		<li><a href="[% c.uri_for('/collate') %]">Collation tool</a></li>
+	</ul -->
+</div>

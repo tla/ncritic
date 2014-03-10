@@ -1,96 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
 
-* {
-  margin:0px;
-  padding:0px;
-}
-
-body {
-  font-family: Times, Times New Roman, Serif; /* Arial, Helvetica, sans-serif; */
-  font-size:14px;
-  color: #252e49; /* #666666; */
-}
-
-#logo {
-    width: 200px;
-    height: 300px;
-    position: absolute;
-    background: url('../images/ncritic_emblem_300.png') no-repeat scroll -138px -110px;
-    z-index: -1;
-}
-
-a {
-  color:#0099FF;
-  text-decoration:none
-}
-
-a:hover {
-  color: #F4448A; /* #FF66CC; */
-}
-
-h1 {
-  font-size:24px;
-  font-weight:100;  
-  margin: 0px 0px 20px 0px;
-  padding:0px 0px -0px 0px;
-  width: 90%;
-  border-bottom:1px solid #f4448a; /* #488DD2; */
-  color: #376fbd; /* #488DD2; */
-}
-
-h2 {
-  float: left;
-  font-size:18px;
-  font-weight:100;  
-  margin: 0px 0px 5px 0px;
-}
-
-p {
-  clear: left;
-  margin: 0px 0px 10px 0px;  
-}
-
-ul {
-  clear: left;
-  margin: 20px 0px 10px 0px;
-}
-
-#textInfo {
-    clear: left;
-}
-
-li {
-  margin: 0px 0px 5px 15px;
-  list-style-image:url("../images/arrow.gif");
-}
-
 #submitted_div{
   display: none;
 }
 
-.header {
-  margin: 0px 0px 8px 87px;
-  padding: 40px 0px 0px 89px;
-  font-size:14pt;
-  border-bottom:1px solid #C6DCF1;
-  height: 49px;
-  background: url('../images/ncritic_logo_147x52.png') no-repeat scroll right center;
-}
-
-#menu_header {
-  height: 50px;
-  width: 122px;
-  background: blue;
-  position: relative;
-  top: -5px;
-  background: url('../images/menu_header_002.png') no-repeat scroll left top;
-}
-
-#menu_header_gutter {
-  height: 5px;
-  background-color: #f4448a;
-  margin-left: 122px;
+#textInfo {
+    clear: left;
 }
 
 .usermgmt {
