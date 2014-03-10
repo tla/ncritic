@@ -61,11 +61,11 @@ sub _html_transform {
 	my %span_map = (
 		'add' => 'addition',
 		'del' => 'deletion',
-		'abbr' => 'number',
+		'abbr' => 'abbr',
 		'hi' => 'highlight',
-		'ex' => 'expansion',
+		# 'ex' => 'expansion', 
 		'expan' => 'expansion',
-		'num' => 'number',
+		'num' => 'abbr',
 		'supplied' => 'supplied',
 		'damage' => 'damage',
 		);
@@ -90,11 +90,39 @@ sub _html_transform {
 
 
 	## RECURSING ELEMENTS
-	} elsif( $element->nodeName =~ /^(body|seg|subst|num)$/ ) {
+	} elsif( $element->nodeName =~ /^(body|subst|num)$/ ) {
 		# No wrapping, just pass-through
 		@return_words = map { _html_transform( $_, $usecolumns ) } $element->childNodes;
 		# but if it's a segword, put in a space.
-		push( @return_words, ' ' ) if $element->nodeName eq 'seg';
+	} elsif( $element->nodeName eq 'seg' ) {
+		@return_words = map { _html_transform( $_, $usecolumns ) } $element->childNodes;
+		foreach my $i ( 0 .. $#return_words ) {
+			next unless $return_words[$i] eq '__EX__';
+			# Break it down letter by letter to put an abbreviation marker over the
+			# surrounding two letters if possible.
+			# Beginning tag
+			my $begintag = '<span class="abbr">';
+			if( $i > 0 && $return_words[$i-1] !~ /\>$/ ) {
+				substr( $return_words[$i-1], -1, 0, $begintag );
+				$return_words[$i] = '';
+			} else {
+				$return_words[$i] = $begintag;
+			}
+			# Ending tag
+			my $endtag = '</span>';
+			if( $i < $#return_words && $return_words[$i+1] !~ /\</ ) {
+				substr( $return_words[$i+1], 1, 0, $endtag );
+			} elsif ( !$return_words[$i] ) {
+				$return_words[$i] = $endtag;
+			} else {
+				# The opening span tag is here. Rather than appending the close here
+				# too, we just clear it out.
+				$return_words[$i] = '';
+			}
+		}
+		push( @return_words, ' ' );
+	} elsif( $element->nodeName eq 'ex' ) {
+		push( @return_words, '__EX__' );
 	} elsif( $element->nodeName eq 'div' ) {
 		# Section marker, then recurse
 		my $secnum = $element->hasAttribute('n') ? $element->getAttribute('n') : '';
@@ -148,7 +176,7 @@ sub _html_transform {
 		my $spantype = $span_map{$element->nodeName};
 		my $attrs;
 		my $formatstr = '<span class="%s">';
-		if( $element->hasAttributes() ) {
+		if( $element->hasAttributes() && $element->nodeName ne 'seg' ) {
 			# Add the attributes as a popup tooltip
 			$spantype .= ' tooltip';
 			$attrs = join( ', ', $element->attributes() );

@@ -54,7 +54,7 @@ table.pagecolumn td.right {
 .textauthor {
 	font-style: italic;
 }
-.number, .expansion {
+.abbr {
 	text-decoration: overline;
 }
 .expansion {
