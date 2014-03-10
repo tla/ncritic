@@ -31,11 +31,11 @@
 	      listed numeric systems, then the values of the numbers can be converted 
 	      automatically. If this applies to you, please choose a system:</p>
 	      
-	      <input type="radio" name="language" value="Armenian">Armenian</input><br>
-	      <input type="radio" name="language" value="Coptic">Coptic</input><br>
-	      <!-- input type="radio" name="language" value="Ethiopic">Ethiopic</input><br -->
-	      <input type="radio" name="language" value="Greek">Greek</input><br>
-	      <input type="radio" name="language" value="Roman">Roman</input><br>
+	      <input type="radio" name="language" value="Armenian">&nbsp;Armenian</input><br>
+	      <input type="radio" name="language" value="Coptic">&nbsp;Coptic</input><br>
+	      <!-- input type="radio" name="language" value="Ethiopic">&nbsp;Ethiopic</input><br -->
+	      <input type="radio" name="language" value="Greek">&nbsp;Greek</input><br>
+	      <input type="radio" name="language" value="Roman">&nbsp;Roman</input><br>
 	    </div>
 	    <h3>XML template for transcription</h3>
 	    <div>
