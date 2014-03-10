@@ -13,6 +13,9 @@
 <script src="[% c.uri_for('/static/js/jquery.fileupload-ui.js') %]"></script>
 <script src="[% c.uri_for('/static/js/jquery.blockUI.js') %]"></script>
 <script src="[% c.uri_for('/static/js/collatex.js') %]"></script>
+<script>
+	collatepath = "[% c.uri_for('/collate') %]";
+</script>
 [% END -%]
 
 <div id="container01">

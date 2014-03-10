@@ -7,11 +7,6 @@ use TryCatch;
 
 BEGIN { extends 'Catalyst::Controller' }
 
-## Service constants
-my $TR_LOC = 'http://gregor.middell.net';
-my $TR_BASE = '/text-repo/text';
-
-
 =head1 NAME
 
 ncritic::Controller::Root - Controller for ncritic text collation
@@ -61,7 +56,6 @@ Simple JSON call to set the language modules to use for the collation of this te
 sub setNameLang :Local {
     my ( $self, $c ) = @_;
     my $aligner = $c->model( 'Collate' );
-    $DB::single = 1;
     $aligner->title( $c->req->params->{'name'} );
     try {
         $aligner->language( $c->req->params->{'language'} );

@@ -11,6 +11,7 @@ __PACKAGE__->config(
         ncritic->path_to( 'root', 'src' ),
     ],
     WRAPPER => 'wrapper.tt2',
+    ENCODING => 'utf-8',
     render_die => 1,
 );
 
