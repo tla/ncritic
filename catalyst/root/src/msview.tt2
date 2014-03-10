@@ -8,7 +8,7 @@
   // Set variable values that have to be passed from the server
   var markuptext = '[% markuptext %]';
   var language = '[% language %]';
-  var service = '[% c.uri_for("/msview/convert_transcription") %]';
+  var baseurl = '[% c.uri_for("/msview/") %]';
 </script>
 <script src="[% c.uri_for('/static/js/jquery-1.6.js') %]"></script>
 <script src="[% c.uri_for('/static/js/jquery-ui-1.8.16.custom.min.js') %]"></script>
@@ -55,8 +55,3 @@
 	  <div id="sourcetext"></div>
 	</div>
 	
-	<!-- XML download function -->
-	<form id="xmlform" method="post" action="[% c.uri_for('/msview/echo_xml') %]"
-		download="transcription.xml">
-		<textarea id="currentXML"></textarea>
-	</form>

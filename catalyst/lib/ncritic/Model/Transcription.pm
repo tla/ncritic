@@ -61,13 +61,17 @@ sub _html_transform {
 	my %span_map = (
 		'add' => 'addition',
 		'del' => 'deletion',
-		'abbr|num' => 'number',
+		'abbr' => 'number',
 		'hi' => 'highlight',
 		'ex' => 'expansion',
 		'expan' => 'expansion',
+		'num' => 'number',
+		'supplied' => 'supplied',
+		'damage' => 'damage',
 		);
 	my @return_words;
 	## NONRECURSING ELEMENTS
+	$DB::single = 1 if $element->nodeName eq 'num';
 	if( $element->nodeType == XML_TEXT_NODE ) {
 		my $text = $element->data;
 		$text =~ s/^\s+//gs;
@@ -81,6 +85,8 @@ sub _html_transform {
 	} elsif( $element->nodeName eq 'damage' ) {
 		my $len = $element->getAttribute('extent');
 		push( @return_words, 'X' x $len );
+	} elsif( $element->nodeName eq 'supplied' ) {
+		push( @return_words, '[' . $element->textContent . ']' );
 
 
 	## RECURSING ELEMENTS
@@ -95,25 +101,19 @@ sub _html_transform {
 		push( @return_words, sprintf( "<div class=\"section\">\x{A7} %s</div>", $secnum ) );
 		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
 
-	} elsif( exists $span_map{$element->nodeName} ) {
-		# Span wrapping
-		my $spantype = $span_map{$element->nodeName};
-		push( @return_words, "<span class=\"$spantype\">" );
-		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
-		push( @return_words, '</span>' );
-
 	} elsif( $element->nodeName eq 'p' ) {
 		# Paragraph wrapping
 		push( @return_words, '<p>' );
 		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
 		push( @return_words, '</p>' );
 
-	} elsif( $element->nodeName eq 'abbr' 
-		&& $element->parentNode->nodeName eq 'num' ) {
-		# A special case
-		push( @return_words, "<span class=\"number\">" );
-		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
-		push( @return_words, '</span>' );
+# Not sure this is a case we encounter per se.
+# 	} elsif( $element->nodeName eq 'abbr' 
+# 		&& $element->parentNode->nodeName eq 'num' ) {
+# 		# A special case
+# 		push( @return_words, "<span class=\"number\">" );
+# 		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
+# 		push( @return_words, '</span>' );
 
 
 	## OTHER ELEMENTS
@@ -138,6 +138,25 @@ sub _html_transform {
 		push( @return_words, '</p>' ) if $midpg;
 		push( @return_words, '</td><td class="right">' );
 		push( @return_words, '<p class="followpg">' ) if $midpg;
+	} elsif( exists $span_map{$element->nodeName} ) {
+		# Get any other elements we need to record that aren't special cases
+		push( @return_words, map { _html_transform( $_, $usecolumns ) } $element->childNodes );
+	}
+	
+	if( exists $span_map{$element->nodeName} ) {
+		# Span wrapping
+		my $spantype = $span_map{$element->nodeName};
+		my $attrs;
+		my $formatstr = '<span class="%s">';
+		if( $element->hasAttributes() ) {
+			# Add the attributes as a popup tooltip
+			$spantype .= ' tooltip';
+			$attrs = join( ', ', $element->attributes() );
+			$attrs =~ s/\"//g;
+			$formatstr = '<span class="%s" title="%s">'
+		}
+		unshift( @return_words, sprintf( $formatstr, $spantype, $attrs ) );
+		push( @return_words, '</span>' );
 	}
 
 	return join( '', @return_words );

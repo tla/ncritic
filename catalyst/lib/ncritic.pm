@@ -20,7 +20,7 @@ use Catalyst qw/
     ConfigLoader
     Static::Simple
 	Session
-    Session::Store::BerkeleyDB
+    Session::Store::DBI
     Session::State::Cookie
 /;
 
@@ -45,6 +45,11 @@ __PACKAGE__->config(
 	default_view => 'TT',
 	'View::JSON' => {
 		expose_stash => 'result',
+	},
+	'Plugin::Session' => {
+        expires   => 3600,
+        dbi_dsn   => 'dbi:SQLite:dbname=db/sessions.db',
+        dbi_table => 'sessions',
 	}
 );
 

@@ -91,7 +91,6 @@ information that should be passed through.
 sub convert_transcription :Local {
     my( $self, $c ) = @_;
     
-    $DB::single = 1;
 	my $tmpl = $c->request->param('xmltemplate'); # TODO b64?
 	my $txpn = File::Temp->new();
 	my %opts = (
@@ -119,16 +118,27 @@ sub convert_transcription :Local {
     # We have an XML document, so parse and display it.
 	# Display whatever result we got.
 	if( $teitext ) {
+		# Store the XML itself
+		$c->session->{'xmldata'} = $teitext;
 		my $ms = $c->model('Transcription');
 		$ms->set_xml( $teitext );
 		my $textdata = $ms->as_html();
 		# Add the XML result back in
-		$textdata->{'origxml'} = $teitext;
 		$textdata->{'textcontent'} = $textdata->{'textcontent'};
 		$c->stash->{'result'} = $textdata;
 	}
 	
 	$c->forward('View::JSON');
+}
+
+sub session_xml :Local {
+	my( $self, $c ) = @_;
+	my $parser = XML::LibXML->new();
+	my $doc = $parser->parse_string( $c->session->{'xmldata'} );
+	$c->stash->{'result'} = $doc;
+	$c->stash->{'name'} = 'transcription';
+	$c->stash->{'download'} = 1;
+	$c->forward('View::TEI');
 }
 
 =head2 tokenizetei/doc
