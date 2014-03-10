@@ -1,0 +1,62 @@
+[% BLOCK extrastyle -%]
+<link rel="stylesheet" href="[% c.uri_for('/static/css/ncritic/jquery-ui-1.8.16.custom.css') %]" />
+<link rel="stylesheet" href="[% c.uri_for('/static/css/msview.css') %]" />
+[% END -%]
+
+[% BLOCK extrajs -%]
+<script>
+  // Set variable values that have to be passed from the server
+  var markuptext = '[% markuptext %]';
+  var language = '[% language %]';
+  var service = '[% c.uri_for("/msview/convert_transcription") %]';
+</script>
+<script src="[% c.uri_for('/static/js/jquery-1.6.js') %]"></script>
+<script src="[% c.uri_for('/static/js/jquery-ui-1.8.16.custom.min.js') %]"></script>
+<script src="[% c.uri_for('/static/js/msview.js') %]"></script>
+[% END -%]
+
+[% META title = 'Text::TEI::Markup Transcription Checker'
+ 				service = 'Transcription View' -%]
+
+	<!-- Transcription input -->
+    <form id="transcriptionform" method="post">
+      <div id="transcription_input">
+      	<h3>Transcribed text to convert to XML</h3>
+      	<div>
+	      <textarea rows="30" cols="100" name="markuptext" id="markuptext"></textarea>
+	    </div>
+	    <h3>Number conversion</h3>
+	    <div>
+	      <p> If your document has numbers set off with the %% tags, in one of the
+	      listed numeric systems, then the values of the numbers can be converted 
+	      automatically. If this applies to you, please choose a system:</p>
+	      
+	      <input type="radio" name="language" value="Armenian">Armenian</input><br>
+	      <input type="radio" name="language" value="Coptic">Coptic</input><br>
+	      <!-- input type="radio" name="language" value="Ethiopic">Ethiopic</input><br -->
+	      <input type="radio" name="language" value="Greek">Greek</input><br>
+	      <input type="radio" name="language" value="Roman">Roman</input><br>
+	    </div>
+	    <h3>XML template for transcription</h3>
+	    <div>
+	      <textarea rows="30" cols="100" name="xmltemplate" id="xmltemplate">[% xmltemplate %]</textarea>
+		</div>
+	  </div>
+      <button id="do_convert">Convert and view</button>
+    </form>
+
+	<!-- Result pane -->
+	<div id="witness_container">
+	  <div id="witdescription">
+		<span class="displaysigil" id="witsigil"></span>
+		<span class="displaywitid" id="witid"></span><br/>
+		<p id="textdescription"></p>
+	  </div>
+	  <div id="sourcetext"></div>
+	</div>
+	
+	<!-- XML download function -->
+	<form id="xmlform" method="post" action="[% c.uri_for('/msview/echo_xml') %]"
+		download="transcription.xml">
+		<textarea id="currentXML"></textarea>
+	</form>

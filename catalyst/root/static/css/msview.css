@@ -1,0 +1,76 @@
+@charset "utf-8";
+/* CSS Document */
+
+#witness_container {
+	background-color: #fafafa;
+	overflow: scroll;
+}
+#witdescription {
+	margin-top: 40px;
+	margin-left: 40px;
+	margin-right: 20px;
+}
+#sourcetext {
+	margin-left: 150px;
+	margin-top: 40px;
+}
+#xmlform {
+	display: none;
+}
+.section {
+	float: left;
+	position: relative; left: -30px;
+}
+p {
+	line-height: 150%;
+	text-indent: 15px;
+}
+p.followpg {
+	text-indent: 0px;
+}
+table.pagecolumn td.left {
+	vertical-align: bottom;
+	width: 350px;
+}
+table.pagecolumn td.right {
+	vertical-align: top;
+	width: 350px;
+}
+.displaysigil {
+	font-style: italic;
+	font-size: 40px;
+}
+.displaywitid {
+	font-size: 30px;
+	padding-left: 80px;
+}
+.texttitle {
+	font-style: italic;
+}
+.textauthor {
+	font-style: italic;
+}
+.number {
+	text-decoration: overline;
+}
+.pagenum {
+	border-top: 1px solid #111111;
+	border-left: 1px solid #111111;
+	border-style: solid;
+	margin: 10px;
+	padding: 10px;
+	width: 400px;
+}
+.expansion {
+	font-style: italic;
+}
+.highlight {
+	color: #dd0000;
+	font-size: 150%;
+}
+.addition {
+	color: #00dd00;
+}
+.deletion {
+	text-decoration: line-through;
+}
