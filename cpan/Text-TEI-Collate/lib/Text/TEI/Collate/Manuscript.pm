@@ -362,13 +362,7 @@ sub _get_text_from_node {
 	my $strip_leading_space = 0; 
 	my $word_excluded = 0;
 	foreach my $c ($node->childNodes() ) {
-		if( $c->nodeName eq 'num' 
-			&& defined $c->getAttribute( 'value' ) ) {
-			# Push the number.
-			$text .= $c->getAttribute( 'value' );
-			# If this is just after a line/page break, return to normal behavior.
-			$strip_leading_space = 0;
-		} elsif ( $c->nodeName =~ /^[lp]b$/ ) {
+		if ( $c->nodeName =~ /^[lp]b$/ ) {
 			# Set a flag that strips leading whitespace until we
 			# get to the next bit of non-whitespace.
 			$strip_leading_space = 1;

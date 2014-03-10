@@ -432,7 +432,6 @@ sub _process_line {
 		} else {
 			$tag_open = $tag_close = $tag_sig;
 		}
-		
 		$line =~ s|\Q$tag_open\E(.*?)\Q$tag_close\E|_open_tag( $tag, $1, \%opts ) . "</$tag>"|ge;
 	} 
 
@@ -512,6 +511,7 @@ sub _open_tag {
 					$nv, $nt, $text );
 			} else {
 				$opened_tag = sprintf( '<num value="%s">%s', $nv, $text );
+			}
 		} 
 		unless( defined $nv ) {
 			my $numconvert = $opts->{'number_conversion'};
@@ -599,10 +599,17 @@ sub _wrap_children {
 	my $node = shift;
 	my @children = $node->childNodes;
 
+	# Make a new version of the element in question, with its name & attributes
 	my $new_node = XML::LibXML::Element->new( $node->nodeName );
 	# Set the namespace
 	my $docns = $node->namespaceURI;
 	$new_node->setNamespace( $docns );
+	foreach my $attr ( $node->attributes ) {
+		my( $aname, $aval ) = split( /=/, $attr );
+		$aname =~ s/\s+//g;
+		$aval =~ s/\"//g;
+		$new_node->setAttribute( $aname, $aval );
+	}
 	my $open_word_node = undef;
 	foreach my $c ( @children ) {
 		# Is it a text node?
