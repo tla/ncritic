@@ -5,7 +5,6 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Text::TEI::Collate::Error;
 use Text::TEI::Collate::Word;
-use TryCatch;
 use XML::LibXML;
 use XML::Easy::Syntax qw( $xml10_name_rx );
 
@@ -311,17 +310,7 @@ sub _read_paragraphs_or_lines {
 			foreach my $c ( $pg->childNodes() ) {
 				# Trickier.  Need to parse the component tags.
 				my $text;
-				try {
-    				$text = _get_text_from_node( $c );
-    			} catch( Text::TEI::Collate::Error $e 
-    			            where { $_->has_tag( 'lb' ) } ) {
-    			    next;
-    			}
-				unless( defined $text ) {
-					print STDERR "WARNING: no text in node " . $c->nodeName 
-						. "\n" unless $c->nodeName eq 'lb';
-					next;
-				}
+				$text = _get_text_from_node( $c );
 				# Some of the nodes might come back with multiple words.
 				# TODO: make a better check for this
 				my @textwords = split( /\s+/, $text );
@@ -360,7 +349,7 @@ sub _get_text_from_node {
 	# whitespace (including \n) after the break becomes insignificant
 	# and we want to nuke it.
 	my $strip_leading_space = 0; 
-	my $word_excluded = 0;
+	my $word_excluded = $node->nodeName =~ /^(lb|pb|#comment)$/;
 	foreach my $c ($node->childNodes() ) {
 		if ( $c->nodeName =~ /^[lp]b$/ ) {
 			# Set a flag that strips leading whitespace until we
@@ -372,7 +361,7 @@ sub _get_text_from_node {
 				  || $c->nodeName eq 'note'	 #TODO: decide how to deal with notes
 				  || $c->textContent eq '' 
 				  || ref( $c ) eq 'XML::LibXML::Comment' ) {
-			$word_excluded = 1 if $c->nodeName =~ /^(del|fw|sic)$/;
+			$word_excluded = 1;
 			next;
 		} else {
 			my $tagtxt;
