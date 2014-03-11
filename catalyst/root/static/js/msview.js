@@ -27,8 +27,11 @@ $(document).ready(function() {
         width: 900,
         modal: true,
         buttons: {
-        	"Download XML": function (evt) {
+        	"Download XML": function () {
 				window.location = baseurl + 'session_xml';
+        	},
+        	"Download JSON": function () {
+        		window.location = baseurl + 'session_json';
         	},
         	"Close": function () {
         		$( this ).dialog( 'close' );

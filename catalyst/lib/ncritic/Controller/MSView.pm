@@ -12,6 +12,8 @@ use TryCatch;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
+=encoding utf8
+
 =head1 NAME
 
 ncritic::Controller::MSView - Catalyst Controller
@@ -22,10 +24,11 @@ Catalyst Controller.
 
 =head1 METHODS
 
-=cut
+=head2 msview/index
 
-
-=head2 index
+  GET /msview
+  
+Returns the index page for this service.
 
 =cut
 
@@ -65,14 +68,15 @@ __MAIN__
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
+    $c->delete_expired_sessions();
 
 	$c->stash->{xmltemplate} ||= $DEFAULT_TEMPLATE;
     $c->stash->{template} = 'msview.tt2';
 }
 
-=head2 msview/convert_transcriptions
+=head2 msview/convert_transcription
 
-  POST msview/convert_transcriptions,
+  POST msview/convert_transcription,
   { markuptext:	 <Text string to convert to XML>
   	xmltemplate: <XML template string>,
   	language:	 <Language for number conversion> }
@@ -82,9 +86,10 @@ marked-up text to convert, a template by which to convert it, and a
 'language' for any automatic calculation of number values. Recognized
 number systems are Greek, Roman, and Armenian.
 
-Returns a JSON response with the original XML, an HTML snippet for display,
-the witness sigil, the witness identifier, and any extra witness
-information that should be passed through.
+Returns a JSON response with an HTML snippet for display, the witness sigil, 
+the witness identifier, and any extra witness information that should be passed 
+through. The XML itself is stored in the local session for up to an hour and
+can be retrieved with a call to C<msview/session_xml> (see below).
 
 =cut
 
@@ -106,7 +111,7 @@ sub convert_transcription :Local {
 		my $conv_function = sprintf( '_%s_number_value', lc( $lang ) );
 		$opts{number_conversion} = \&{$conv_function};
 	}
-			
+
 	my $teitext;
     try {
         $teitext = to_xml( %opts );
@@ -114,12 +119,11 @@ sub convert_transcription :Local {
         $c->stash->{'result'} = { 
         	error_msg => "Could not translate transcription to XML: $@\n" };
     }
-    
     # We have an XML document, so parse and display it.
 	# Display whatever result we got.
 	if( $teitext ) {
 		# Store the XML itself
-		$c->session->{'xmldata'} = $teitext;
+		$c->session->{'msview:xmldata'} = $teitext;
 		my $ms = $c->model('Transcription');
 		$ms->set_xml( $teitext );
 		my $textdata = $ms->as_html();
@@ -131,19 +135,69 @@ sub convert_transcription :Local {
 	$c->forward('View::JSON');
 }
 
+=head2 msview/session_xml
+
+  GET msview/session_xml
+  
+Returns the TEI XML file that was created during the conversion.
+
+=head2 msview/session_json
+
+  GET msview/session_json
+  
+Returns a tokenized JSON representation of the text that was converted, suitable
+for passing to a collation engine such as CollateX or Text::TEI::Collate.
+
+=cut
+
 sub session_xml :Local {
 	my( $self, $c ) = @_;
-	my $parser = XML::LibXML->new();
-	my $doc = $parser->parse_string( $c->session->{'xmldata'} );
-	$c->stash->{'result'} = $doc;
-	$c->stash->{'name'} = 'transcription';
-	$c->stash->{'download'} = 1;
-	$c->forward('View::TEI');
+	$self->_parse_session_xml( $c );
+	if( $c->stash->{'xmlobj'} ) {
+		$c->stash->{'result'} = delete $c->stash->{'xmlobj'};
+		$c->stash->{'name'} = 'transcription';
+		$c->stash->{'download'} = 1;
+		$c->forward('View::TEI');
+	} else {
+		$c->res->code( 404 );
+		$c->stash->{'error_msg'} = 'No transcription found in session';
+		$c->stash->{'template'} = 'bareproblem.tt2';
+		$c->forward('View::HTML');
+	}
 }
 
-=head2 tokenizetei/doc
+sub session_json :Local {
+	my( $self, $c ) = @_;
+	$self->_parse_session_xml( $c );
+	if( $c->stash->{'xmlobj'} ) {
+		# Tokenize the XML using Collate::Manuscript
+		my $m = $c->model('Collate');
+		my @mss = $m->read_source( $c->stash->{'xmlobj'} );
+		if( @mss == 1 ) {
+			$c->stash->{'result'} = $mss[0]->tokenize_as_json;
+		} else {
+			my @wits;
+			map { push( @wits, $_->tokenize_as_json ) } @mss;
+			$c->stash->{'result'} = { witnesses => \@wits };
+		}
+	} else {
+		$c->res->code( 404 );
+		$c->stash->{'result'} = { error => 'No transcription found in session' };
+	}
+	$c->forward('View::JSON');
+}
 
-Usage information for the tokenization microservice.
+sub _parse_session_xml :Private {
+	my( $self, $c ) = @_;
+	my $parser = XML::LibXML->new();
+	return unless exists $c->session->{'msview:xmldata'};
+	my $doc = $parser->parse_string( $c->session->{'msview:xmldata'} );
+	$c->stash->{'xmlobj'} = $doc;
+}
+
+=head2 msview/doc
+
+Usage information for the XML conversion / tokenization microservice.
 
 =cut
 
@@ -178,8 +232,6 @@ sub _coptic_number_value {
 # 	my $num = Convert::Number::Ethiopic->new( $str );
 # 	return $num->convert;
 # }
-
-=encoding utf8
 
 =head1 AUTHOR
 

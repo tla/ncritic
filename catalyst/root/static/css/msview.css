@@ -54,8 +54,11 @@ table.pagecolumn td.right {
 .textauthor {
 	font-style: italic;
 }
-.abbr {
+.abbr, .number {
 	text-decoration: overline;
+}
+.number {
+	color: blue;
 }
 .expansion {
 	font-style: italic;
@@ -108,4 +111,8 @@ table.pagecolumn td.right {
     left: 50%;
     position: absolute;
     z-index: 99;
+}
+.dubious {
+	background-color: red;
+	font-size: 200%;
 }

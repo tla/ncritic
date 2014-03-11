@@ -34,6 +34,7 @@ sub as_html {
 	my $xpc = _xpc_for_el( $textroot );
 	# Sigil and name, that's easy
 	my $sigil = $xpc->findvalue( '//tei:msDesc/attribute::xml:id' );
+	$sigil =~ s/^\s*(\S+)\s*$/$1/; # get rid of spaces
 	my @msid = ( 
 		$xpc->findvalue( '//tei:msIdentifier/tei:settlement' ),
 		$xpc->findvalue( '//tei:msIdentifier/tei:repository' ),
@@ -65,7 +66,7 @@ sub _html_transform {
 		'hi' => 'highlight',
 		# 'ex' => 'expansion', 
 		'expan' => 'expansion',
-		'num' => 'abbr',
+		'num' => 'number',
 		'supplied' => 'supplied',
 		'damage' => 'damage',
 		);
@@ -76,10 +77,9 @@ sub _html_transform {
 		my $text = $element->data;
 		$text =~ s/^\s+//gs;
 		$text =~ s/\s+$//gs;
+		# HACK: scan for likely mistakes e.g. a \ or # left in
+		$text =~ s/([\\#]+)/<span class="dubious">$1<\/span>/g;
 		push( @return_words, $text );
-	} elsif( $element->nodeName eq 'w' ) {
-		# Simple word, just the text content.
-		push( @return_words, $element->textContent . ' ' );
 	} elsif( $element->nodeName eq 'lb' ) {
 		push( @return_words, '<br/>' );
 	} elsif( $element->nodeName eq 'damage' ) {
@@ -93,33 +93,9 @@ sub _html_transform {
 	} elsif( $element->nodeName =~ /^(body|subst|num)$/ ) {
 		# No wrapping, just pass-through
 		@return_words = map { _html_transform( $_, $usecolumns ) } $element->childNodes;
+	} elsif( $element->nodeName =~ /^(seg|w)$/ ) {
 		# but if it's a segword, put in a space.
-	} elsif( $element->nodeName eq 'seg' ) {
 		@return_words = map { _html_transform( $_, $usecolumns ) } $element->childNodes;
-		foreach my $i ( 0 .. $#return_words ) {
-			next unless $return_words[$i] eq '__EX__';
-			# Break it down letter by letter to put an abbreviation marker over the
-			# surrounding two letters if possible.
-			# Beginning tag
-			my $begintag = '<span class="abbr">';
-			if( $i > 0 && $return_words[$i-1] !~ /\>$/ ) {
-				substr( $return_words[$i-1], -1, 0, $begintag );
-				$return_words[$i] = '';
-			} else {
-				$return_words[$i] = $begintag;
-			}
-			# Ending tag
-			my $endtag = '</span>';
-			if( $i < $#return_words && $return_words[$i+1] !~ /\</ ) {
-				substr( $return_words[$i+1], 1, 0, $endtag );
-			} elsif ( !$return_words[$i] ) {
-				$return_words[$i] = $endtag;
-			} else {
-				# The opening span tag is here. Rather than appending the close here
-				# too, we just clear it out.
-				$return_words[$i] = '';
-			}
-		}
 		push( @return_words, ' ' );
 	} elsif( $element->nodeName eq 'ex' ) {
 		push( @return_words, '__EX__' );
@@ -186,6 +162,33 @@ sub _html_transform {
 		unshift( @return_words, sprintf( $formatstr, $spantype, $attrs ) );
 		push( @return_words, '</span>' );
 	}
+	
+	foreach my $i ( 0 .. $#return_words ) {
+		next unless $return_words[$i] eq '__EX__';
+		# Check for and remove EX tag in an element with a span terminator
+		# Break it down letter by letter to put an abbreviation marker over the
+		# surrounding two letters if possible.
+		# Beginning tag
+		my $begintag = '<span class="abbr">';
+		if( $i > 0 && $return_words[$i-1] !~ /\>$/ ) {
+			substr( $return_words[$i-1], -1, 0, $begintag );
+			$return_words[$i] = '';
+		} else {
+			$return_words[$i] = $begintag;
+		}
+		# Ending tag
+		my $endtag = '</span>';
+		if( $i < $#return_words && $return_words[$i+1] !~ /\</ ) {
+			substr( $return_words[$i+1], 1, 0, $endtag );
+		} elsif ( !$return_words[$i] ) {
+			$return_words[$i] = $endtag;
+		} else {
+			# The opening span tag is here. Rather than appending the close here
+			# too, we just clear it out.
+			$return_words[$i] = '';
+		}
+	}
+
 
 	return join( '', @return_words );
 }
