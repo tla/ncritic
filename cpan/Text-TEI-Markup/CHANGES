@@ -1,9 +1,10 @@
-Version 1.8
+Version 1.8.1
 ==========
-commit 74f2997c869029c0d492013ad2a1cc693ebf7ffd
+commit 0c70d0ec3f5a3bd06d324a34b5ed07acdc94c048
 Author: tla <tla@mit.edu>
-Date:   Tue Mar 11 12:09:12 2014 +0100
+Date:   Tue Mar 11 13:33:17 2014 +0100
 
+    deal with CRLF files too...
     retain template on multiple runs
     things needed to run DBI session storage
     better markup number handling 
