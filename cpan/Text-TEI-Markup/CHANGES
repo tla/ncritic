@@ -1,3 +1,23 @@
+Version 1.8
+==========
+commit 74f2997c869029c0d492013ad2a1cc693ebf7ffd
+Author: tla <tla@mit.edu>
+Date:   Tue Mar 11 12:09:12 2014 +0100
+
+    retain template on multiple runs
+    things needed to run DBI session storage
+    better markup number handling 
+    refrain from having empty hilight 'rend' attributes
+    doc fixes
+
+Version 1.7
+===========
+commit ff6d17a6254b23e4e02b57a58f59693a22c0ca65
+Author: Tara L Andrews <tla@mit.edu>
+Date:   Wed Apr 18 16:41:37 2012 +0200
+
+    zap xmlobj string comparison bug
+
 Version 1.6
 ===========
 commit 977b337e64e866bebd7dc1cdb7c492b8bdbc3e6a

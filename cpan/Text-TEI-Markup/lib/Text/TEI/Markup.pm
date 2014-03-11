@@ -7,7 +7,7 @@ use Exporter 'import';
 use Scalar::Util;
 use XML::LibXML;
 
-$VERSION = '1.7';
+$VERSION = '1.8';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
