@@ -2,22 +2,20 @@
 
 use strict;
 use Encode;
+use Convert::Number::Armenian qw/ arm2int /;
 use Test::More;
+use Test::More::UTF8;
+use Test::Warn;
 use Text::TEI::Markup qw( to_xml word_tag_wrap );
 use XML::LibXML;
 use XML::LibXML::XPathContext;
 
-binmode STDOUT, ":utf8";
 eval { no warnings; binmode $DB::OUT, ':utf8' };
-my $tb = Test::Builder->new;
-binmode $tb->output,         ':encoding(UTF-8)';
-binmode $tb->failure_output, ':encoding(UTF-8)';
-binmode $tb->todo_output,    ':encoding(UTF-8)';
 
 my %opts = (
     file => "t/data/test.txt",
     wrap_words => 0,
-    number_conversion => \&number_value,
+    number_conversion => \&arm2int,
     # Using the default template
     # Using the default ( utf8 ) file encoding
 );    
@@ -118,7 +116,7 @@ foreach my $sw ( @segwords ) {
     foreach my $n ( @num ) {
 	my $rep = $n->textContent();
 	my $val = $n->getAttribute( 'value' );
-	is( $val, number_value( $rep ), "number value sub passthrough works" );
+	is( $val, arm2int( $rep ), "number value sub passthrough works" );
     }
     foreach my $exn ( @ex ) {
 	is( $exn->getAttribute( 'resp' ), '#tla', "ex has right resp set" );
@@ -154,43 +152,73 @@ my @nestwords = $xpc->findnodes( '//tei:seg/tei:w' );
 is( @words, 297, "Got all words wrapped" );
 is( @nestwords, 0, "Did not nest any words" );
 
+# Test a file with spaces in the HEAD tags
+my $xml2;
+my @NT = <DATA>;
+warnings_exist {
+	$xml2 = to_xml( file => "t/data/test2.txt", 
+					template => join( '', @NT ),
+					number_conversion => \&arm2int )
+} [qr/Empty argument passed to hi tag/], 
+	"Got a parse warning on second markup";
+ok( $xml2, "Parse of second markup succeeded" );
+my $xmlobj2 = $parser->parse_string( $xml2 );
+my $xpc2 = XML::LibXML::XPathContext->new( $xmlobj2->documentElement );
+$xpc2->registerNs( 'tei', 'http://www.tei-c.org/ns/1.0' );
+# The sigil should be 'Q' with no spaces.
+my $sigil = $xpc2->findvalue( '//tei:msDesc/attribute::xml:id' );
+is( $sigil, 'Q', "Spaces in HEAD were disregarded" );
+
+# Test number generation with meta tags
+my @numbers = $xpc2->findnodes( '//tei:num' );
+is( $numbers[0]->getAttribute('value'), 3, "Got correct value for number" );
+is( $numbers[0]->getAttribute('type'), 'ordinal', "Got correct type for number" );
+is( $numbers[1]->getAttribute('value'), 100, "Got correct value for number" );
+is( $numbers[2]->getAttribute('value'), 1, "Got correct value for number" );
+
+# Test empty hilight field
+my @hilights = $xpc2->findnodes( '//tei:hi' );
+is( $hilights[0]->getAttribute('rend'), 'DEFAULT', 
+	"Default tag got added to empty hilight" );
+
 done_testing();
 
-# A helper sub for converting Armenian numbers.  More than you
-# bargained for eh?
-
-sub number_value {
-    my $str = shift;
-    my @codepoints = unpack( "U*", $str );
-    my $total;
-    foreach my $digit ( @codepoints ) {
-        # Error check.
-        if( $digit < 1328 || $digit > 1364 ) {
-            warn "string $str appears not to be a number\n";
-            return 0;
-        }
-
-        # Convert into a number.
-        my $val;
-        if( $digit < 1338 ) {
-            $val = $digit - 1328;
-        } elsif( $digit < 1347 ) {
-            $val = ( $digit - 1337 ) * 10;
-        } elsif( $digit < 1356 ) {
-            $val = ( $digit - 1346 ) * 100;
-        } else {
-            $val = ( $digit - 1355 ) * 1000;
-        }
-
-        # Figure out if we are adding or multiplying.
-        if( $total && $total < $val ) {
-            $total = $total * $val;
-        } else {
-            $total += $val;
-        }
-    }
-
-    return $total;
-    }
-
-
+__DATA__
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+	<fileDesc>
+	  <titleStmt>
+		<title>__TITLE__</title>
+		<author>__AUTHOR__</author>
+		<respStmt xml:id="__TRANSCRIBERID__">
+		  <resp>Transcription by</resp>
+		  <name>__TRANSCRIBER__</name>
+		</respStmt>
+	  </titleStmt>
+	  <publicationStmt>
+		<p>__PUBLICATIONSTMT__</p>
+	  </publicationStmt>
+	  <sourceDesc>
+		<msDesc xml:id="__SIGIL__">
+		  <msIdentifier>
+			<settlement>__SETTLEMENT__</settlement>
+			<repository>__REPOSITORY__</repository>
+			<idno>__IDNO__</idno>
+		  </msIdentifier>
+		  <p>__PAGES__</p>
+		</msDesc>
+	  </sourceDesc>
+	</fileDesc>
+	<encodingDesc>
+	  <appInfo>
+		<application version="1.0" ident="Text::TEI::Collate"/>
+	  </appInfo>
+	</encodingDesc>
+  </teiHeader>
+  <text>
+	<body>
+__MAIN__
+	</body>
+  </text>
+</TEI>

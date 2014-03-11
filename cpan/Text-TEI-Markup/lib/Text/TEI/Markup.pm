@@ -275,6 +275,9 @@ my %SIGILS = (
 	'unclear' => '?',
 	'q' => "\x{2020}",
 	);
+	
+my @DTL = <DATA>;
+my $DEFAULT_TEMPLATE = join( '', @DTL );
 
 sub to_xml {
 	my %opts = (
@@ -309,8 +312,7 @@ sub to_xml {
 	if( defined $opts{'template'} ) {
 		$tmpl = $opts{'template'};
 	} else {
-		my @tmpl_lines = <DATA>;
-		$tmpl = join( '', @tmpl_lines );
+		$tmpl = $DEFAULT_TEMPLATE;
 	}
 
 	my $main_xml;
