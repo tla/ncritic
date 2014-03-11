@@ -7,7 +7,7 @@ use Exporter 'import';
 use Scalar::Util;
 use XML::LibXML;
 
-$VERSION = '1.8';
+$VERSION = '1.8.1';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
@@ -319,9 +319,9 @@ sub to_xml {
 
 	my( $in_p, $in_div ) = ( undef, undef );
 	while(<FILE>) {
-		chomp;
+		s/\R+$//g; # chomp, no matter the newline char
 		next if /^\s*$/;
-		s/^\s*//;
+		s/^\s*//; # but keep trailing spaces - they're significant!
 		
 		if( /^=BODY/ ) {
 			$inbody = 1;
@@ -332,11 +332,11 @@ sub to_xml {
 			next;
 		}
 		
-		if( /^(\w+):(.*)$/ ) {
+		if( /^(\w+)\s*:\s*(.*)$/ ) {
 			# Make the header template substitution.
 			warn "Warning: header line $_ in body section" if $inbody;
 			my( $key, $val ) = ( lc( $1 ), $2 );
-			$val =~ s/^\s+//;
+			$val =~ s/\s+$//;
 			if( $key eq 'main' ) {
 				warn "Illegal key $key; not substituting";
 			} else {

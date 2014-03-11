@@ -168,6 +168,9 @@ $xpc2->registerNs( 'tei', 'http://www.tei-c.org/ns/1.0' );
 # The sigil should be 'Q' with no spaces.
 my $sigil = $xpc2->findvalue( '//tei:msDesc/attribute::xml:id' );
 is( $sigil, 'Q', "Spaces in HEAD were disregarded" );
+# The repository should be 'Mekhitarist Library' with no spaces.
+my $repo = $xpc2->findvalue( '//tei:repository' );
+is( $repo, 'Mekhitarist Library', "Repository got set correctly" );
 
 # Test number generation with meta tags
 my @numbers = $xpc2->findnodes( '//tei:num' );

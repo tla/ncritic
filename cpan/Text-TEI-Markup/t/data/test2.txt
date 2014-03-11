@@ -1,10 +1,10 @@
 =HEAD
 Author:Մատթէոս Ուռհայեցի
-Title:Ժամանակագրութիւն
+ Title:Ժամանակագրութիւն
 Settlement:Venice
-Repository:Mekhitarist Library
+Repository : Mekhitarist Library 
 Idno:917
-Sigil:Q
+Sigil: Q
 Pages:pp. 152-173
 Transcriber:Tara L Andrews
 TranscriberID:tla
