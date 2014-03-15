@@ -7,7 +7,9 @@ use Exporter 'import';
 use Scalar::Util;
 use XML::LibXML;
 
-$VERSION = '1.8.1';
+use utf8;
+
+$VERSION = '1.9';
 @EXPORT_OK = qw( &to_xml &word_tag_wrap );
 
 =head1 NAME
@@ -295,7 +297,8 @@ sub to_xml {
 		return undef;
 	}
 
-	if( ref( $opts{'number_conversion'} ) ne 'CODE' ) {
+	if( defined $opts{'number_conversion'} 
+		&& ref( $opts{'number_conversion'} ) ne 'CODE' ) {
 		warn "number_conversion argument must be a subroutine ref";
 		$opts{'number_conversion'} = undef;
 	}
@@ -322,6 +325,7 @@ sub to_xml {
 		s/\R+$//g; # chomp, no matter the newline char
 		next if /^\s*$/;
 		s/^\s*//; # but keep trailing spaces - they're significant!
+		_current_context( $_ );
 		
 		if( /^=BODY/ ) {
 			$inbody = 1;
@@ -334,11 +338,12 @@ sub to_xml {
 		
 		if( /^(\w+)\s*:\s*(.*)$/ ) {
 			# Make the header template substitution.
-			warn "Warning: header line $_ in body section" if $inbody;
+			_make_warning( "We are in the BODY section but this looks like a header" )
+				if $inbody;
 			my( $key, $val ) = ( lc( $1 ), $2 );
 			$val =~ s/\s+$//;
 			if( $key eq 'main' ) {
-				warn "Illegal key $key; not substituting";
+				warn "You cannot use '$key' as a substitution key!";
 			} else {
 				$tmpl =~ s/__${key}__/$val/gi;
 			}
@@ -366,7 +371,7 @@ sub to_xml {
 		my $doc;
 		my $ok = eval{ $doc = $parser->parse_string( $tmpl ); };
 		unless( $ok ) {
-		   warn "Parsing of new XML doc failed: $@";
+		   warn "Parsing of the new XML doc failed: $@";
 		   return undef;
 		}
 		$tmpl = decode( $doc->encoding, $doc->serialize( $opts{'format'} ) );
@@ -376,9 +381,12 @@ sub to_xml {
 
 sub _process_line {
 	my( $line, $in_div, $in_p, %opts ) = @_;
-	chomp $line;
+	chomp $line;	
+	my $checkline = $line; # This should be well-formed by the end
+	my $clopts = { %opts, 'nowarn' => 1 };
 	
-	# Look for paragraph and div markers.  
+	# Look for paragraph and div markers, i.e. our tags that can span multiple lines
+	# and that should be disregarded in the checkline. 
 	my $sigils = $opts{'sigils'};
 	my( $divsig, $pgsig ) = ( $sigils->{'div'}, $sigils->{'p'} );
 	while( $line =~ /\Q$divsig\E(\d*)/g ) {	  
@@ -388,7 +396,7 @@ sub _process_line {
 		$pos -= length( $divno ) if $divno;
 		
 		if( $in_div ) {
-			warn "Nonsensical division number at end-division tag"
+			_make_warning( "Nonsensical division number at end-division tag; are your '$divsig' tags balanced?" )
 				if $divno;
 			substr( $line, $pos, 1, '</div>' );
 		} else {
@@ -397,12 +405,14 @@ sub _process_line {
 		}
 		$in_div = !$in_div;
 	}
+	$checkline =~ s/\Q$divsig\E//g;
 			
 	while( $line =~ /\Q$pgsig\E/g ) {
 		my $p_str = '<' . ( $in_p ? '/' : '' ) . 'p>';
 		substr( $line, pos( $line ) - 1, 1, $p_str );
 		$in_p = !$in_p;
 	}
+	$checkline =~ s/\Q$pgsig\E//g;
 	
 	# Add and delete tags.	Do this first so that we do not stomp later
 	# instances of the dash (e.g. in XML comments).
@@ -410,7 +420,9 @@ sub _process_line {
 		my( $op, $attr, $word ) = ( $1, $3, $4 );
 		#  Calculate starting position.
 		my $pos = pos( $line ) - ( length( $word ) + 2 );
+		my $cpos = pos( $checkline ) - ( length( $word ) + 2 );
 		$pos -= ( length( $attr ) + 2 ) if $attr;
+		$cpos -= ( length( $attr ) + 2 ) if $attr;
 		# Figure out what the attribute string, if any, should be.
 		my $attr_str;
 		if( $attr && $attr =~ /\=/ ) {
@@ -423,6 +435,7 @@ sub _process_line {
 			. ( $attr_str ? " $attr_str" : '' )
 			. ">$word</" . ( $op eq '+' ? 'add' : 'del' ) . '>';
 		substr( $line, $pos, pos( $line ) - $pos, $interp_str );
+		substr( $checkline, $cpos, pos( $checkline ) - $cpos, $interp_str );
 	}
 
 	# All the tags that are not very special cases.
@@ -435,12 +448,14 @@ sub _process_line {
 			$tag_open = $tag_close = $tag_sig;
 		}
 		$line =~ s|\Q$tag_open\E(.*?)\Q$tag_close\E|_open_tag( $tag, $1, \%opts ) . "</$tag>"|ge;
+		$checkline =~ s|\Q$tag_open\E(.*?)\Q$tag_close\E|_open_tag( $tag, $1, $clopts ) . "</$tag>"|ge;
 	} 
 
 	# Standalone tags that aren't special cases.  Currently only cb.
 	foreach my $tag ( qw( cb ) ) {
 		my $tag_sig = $sigils->{$tag};	
 		$line =~ s|\Q$tag_sig\E|"<$tag/>"|ge;
+		$checkline =~ s|\Q$tag_sig\E|"<$tag/>"|ge;
 	} 
 	
 	
@@ -457,6 +472,7 @@ sub _process_line {
 		$pb_close = $pb_sig;
 	}
 	$line =~ s|^\Q$pb_open\E(\d+(.)?)\Q$pb_close\E\s*$|<pb n=\"$1\"/>|;
+	$checkline =~ s|^\Q$pb_open\E(\d+(.)?)\Q$pb_close\E\s*$|<pb n=\"$1\"/>|;
 	
 	# XML comments.	 Convert ## text ## to <!-- text -->
 	my $com_sig = $sigils->{'comment'};
@@ -467,6 +483,15 @@ sub _process_line {
 		$com_open = $com_close = $com_sig;
 	}
 	$line =~ s|\Q$com_open\E(.*?)\Q$com_close\E|<!--$1-->|g;
+	$checkline =~ s|\Q$com_open\E(.*?)\Q$com_close\E|<!--$1-->|g;
+	
+	# At this point our check-line should be well-balance. Send a warning if not.
+	my $parser = XML::LibXML->new();
+	my $fragment;
+	my $ok = eval{ $fragment = $parser->parse_balanced_chunk( "<TAG>$checkline</TAG>" ); };
+	unless( $ok ) {
+		_make_warning( "Sigils are not properly nested." );
+	}
 
 	# Finally, every line with text outside an XML tag must have a line
 	# break.  Any lb tag should be inside a cb, p, or div tag.
@@ -525,7 +550,8 @@ sub _open_tag {
 				if( $ok ) {
 					$nv = &$numconvert( uc( $fragment->textContent() ) );
 				} else {
-					warn "Unbalanced chunk in number tag: $text";
+					_make_warning( "Unbalanced chunk in number tag: $text" )
+						unless $opts->{nowarn};
 				}
 				$opened_tag = sprintf( '<num value="%s">%s', $nv, $text ) 
 					if defined $nv;
@@ -533,7 +559,8 @@ sub _open_tag {
 		}
 	} elsif ( $tag eq 'hi' ) {
 		unless( $arg ) {
-			warn "Empty argument passed to $tag tag";
+			_make_warning( "What kind of highlighting is this?" )
+				unless $opts->{nowarn};
 			$arg = 'DEFAULT';
 		}
 		$arg =~ s/\s+/_/g;
@@ -543,6 +570,26 @@ sub _open_tag {
 	# The default
 	$opened_tag = "<$tag>$text" unless $opened_tag;
 	return $opened_tag;
+}
+
+sub _make_warning {
+	my $message = shift;
+	my $context = _current_context();
+	my $warning = "($.) $context\n\tPossible problem! $message";
+	warn $warning;
+}
+
+
+## Utility to keep track of where we are
+{
+	my $curr_line;
+	
+	sub _current_context {
+		if( @_ ) {
+			$curr_line = shift;
+		}
+		return $curr_line;	
+	}
 }
 
 =item B<word_tag_wrap>( $xml_string )
@@ -586,6 +633,11 @@ sub word_tag_wrap {
 	}
 	foreach my $p ( values %paragraphs ) {
 		my $new_p = _wrap_children( $p );
+		# Remove the final whitespace from the paragraphs
+		my $lc = $new_p->lastChild;
+		if( ref( $lc ) eq 'XML::LibXML::Text' && $lc->data =~ /^\s+$/ ) {
+			$new_p->removeChild( $lc );
+		}
 		$p->replaceNode( $new_p );
 	}
 	
@@ -655,6 +707,7 @@ sub _wrap_children {
 				$word_node->setNamespace( $docns );
 				$word_node->appendText( $_ );
 				$new_node->appendChild( $word_node );
+				$new_node->appendText(' ');
 				# ...and keep it open until we find a new word or a space
 				$open_word_node = $word_node;
 			}
@@ -690,6 +743,7 @@ sub _wrap_children {
 				$segment_node->setAttribute( 'type', 'word' );
 				$segment_node->appendChild( $c );
 				$new_node->appendChild( $segment_node );
+				$new_node->appendText(' ');
 				# Keep it open in case there is not a leading space on the next
 				# text node.
 				$open_word_node = $segment_node;
@@ -699,6 +753,8 @@ sub _wrap_children {
 
 	return $new_node;	 
 }
+
+1;
 
 =back
 
