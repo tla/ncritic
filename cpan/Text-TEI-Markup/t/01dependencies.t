@@ -6,7 +6,8 @@ use strict;
 =head1 DESCRIPTION
 
 Makes sure that all of the modules that are 'use'd are listed in the
-Makefile.PL as dependencies.
+Makefile.PL as dependencies. Also make sure we are clear of debugging
+statements.
 
 =cut
 
@@ -14,8 +15,6 @@ use Test::More;
 use File::Find;
 eval 'use Module::CoreList';
 if ($@) { plan skip_all => 'Module::CoreList not installed' }
-
-plan 'no_plan';
 
 my %used;
 find( \&wanted, qw/ lib t / );
@@ -40,6 +39,10 @@ sub wanted {
     $used{$1}{$File::Find::name}++ while $data =~ /^\s*use\s+([\w:]+)/gm;
     while ( $data =~ m|^\s*use base qw.([\w\s:]+)|gm ) {
         $used{$_}{$File::Find::name}++ for split ' ', $1;
+    }
+    # look for DB statements while we are here
+    while( $data =~ /^\s*\$DB::single/gm ) {
+        fail( "DB::single statement present in source " . $File::Find::name );
     }
 }
 
@@ -75,5 +78,5 @@ for ( sort keys %required ) {
         if defined $first_in and $first_in <= 5.008003;
 }
 
-1;
+done_testing();
 

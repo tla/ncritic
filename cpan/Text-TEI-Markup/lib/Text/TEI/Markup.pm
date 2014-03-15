@@ -384,7 +384,6 @@ sub _process_line {
 	chomp $line;	
 	my $checkline = $line; # This should be well-formed by the end
 	my $clopts = { %opts, 'nowarn' => 1 };
-	
 	# Look for paragraph and div markers, i.e. our tags that can span multiple lines
 	# and that should be disregarded in the checkline. 
 	my $sigils = $opts{'sigils'};
@@ -416,10 +415,13 @@ sub _process_line {
 	
 	# Add and delete tags.	Do this first so that we do not stomp later
 	# instances of the dash (e.g. in XML comments).
-	while( $line =~ m|([-+])(\(([^\)]+)\))?(.*?)\1|g ) {
+	my $add_del_re = qr/([-+])(\(([^\)]+)\))?(.*?)\1/;
+	while( $line =~ /$add_del_re/g ) {
 		my( $op, $attr, $word ) = ( $1, $3, $4 );
 		#  Calculate starting position.
 		my $pos = pos( $line ) - ( length( $word ) + 2 );
+		#  Also for the checkline.
+		$checkline =~ /$add_del_re/g;
 		my $cpos = pos( $checkline ) - ( length( $word ) + 2 );
 		$pos -= ( length( $attr ) + 2 ) if $attr;
 		$cpos -= ( length( $attr ) + 2 ) if $attr;
