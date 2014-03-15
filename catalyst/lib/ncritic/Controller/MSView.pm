@@ -5,6 +5,7 @@ use Convert::Number::Armenian qw/ arm2int /;
 use Convert::Number::Coptic;
 # use Convert::Number::Ethiopic; # module is broken
 use Convert::Number::Greek qw/ greek2num /;
+use Encode qw/ decode /;
 use File::Temp ();
 use Text::Roman qw/ roman2int /;
 use Text::TEI::Markup qw/ to_xml /;
@@ -185,6 +186,43 @@ sub session_xml :Local {
 sub session_json :Local {
 	my( $self, $c ) = @_;
 	$self->_parse_session_xml( $c );
+	$c->stash->{'caller'} = 'session_json';
+	$c->forward('_tokenize_xml');
+}
+
+=head2 msview/xml_to_json
+
+  POST msview/xml_to_json,
+  	(XML file to transform)
+  	
+Expects an XML document as the body of the request, and returns a JSON-tokenized 
+version of a TEI-transcribed manuscript file.
+  	
+=cut
+
+sub xml_to_json :Local {
+	my( $self, $c ) = @_;
+	if( $c->req->method eq 'POST' ) {
+		$c->session->{'msview:xmldata'} = $self->_get_body_content( $c );
+		$self->_parse_session_xml( $c );
+		$c->stash->{'caller'} = 'xml_to_json';
+		$c->forward('_tokenize_xml');
+	} else {
+		$c->stash->{'result'} = { error => "Please use POST." };
+		$c->forward('View::JSON');
+	}
+}
+
+sub _parse_session_xml :Private {
+	my( $self, $c ) = @_;
+	my $parser = XML::LibXML->new();
+	return unless exists $c->session->{'msview:xmldata'};
+	my $doc = $parser->parse_string( $c->session->{'msview:xmldata'} );
+	$c->stash->{'xmlobj'} = $doc;
+}
+
+sub _tokenize_xml :Private {
+	my( $self, $c ) = @_;
 	if( $c->stash->{'xmlobj'} ) {
 		# Tokenize the XML using Collate::Manuscript
 		my $m = $c->model('Collate');
@@ -198,17 +236,33 @@ sub session_json :Local {
 		}
 	} else {
 		$c->res->code( 404 );
-		$c->stash->{'result'} = { error => 'No transcription found in session' };
+		my $error = sprintf( 'No XML found in %s', 
+			$c->stash->{'caller'} eq 'session_json' ? 'session' : 'request' );
+		$c->stash->{'result'} = { error => $error };
 	}
 	$c->forward('View::JSON');
 }
 
-sub _parse_session_xml :Private {
+sub _get_body_content :Private {
 	my( $self, $c ) = @_;
-	my $parser = XML::LibXML->new();
-	return unless exists $c->session->{'msview:xmldata'};
-	my $doc = $parser->parse_string( $c->session->{'msview:xmldata'} );
-	$c->stash->{'xmlobj'} = $doc;
+	# First, snag the text encoding. Default to UTF-8.
+	my $enc = $c->req->content_encoding;
+	unless( $enc ) {
+		foreach ( $c->req->content_type ) {
+			if( $_ =~ /^charset=(\S+)/ ) {
+				$enc = $1;
+			}
+		}
+	}
+	$enc ||= 'UTF-8';
+	# Second, deal with the case of a File::Temp.
+	if( ref( $c->req->body ) eq 'File::Temp' ) {
+		my $fh = $c->req->body;
+		my @lines = <$fh>;
+		return( join( '', @lines ) );
+	} else {
+		return decode( $enc, $c->req->body );
+	}
 }
 
 =head2 msview/doc
