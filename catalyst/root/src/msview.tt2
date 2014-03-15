@@ -6,8 +6,6 @@
 [% BLOCK extrajs -%]
 <script>
   // Set variable values that have to be passed from the server
-  var markuptext = '[% markuptext %]';
-  var language = '[% language %]';
   var baseurl = '[% c.uri_for("/msview/") %]';
 </script>
 <script src="[% c.uri_for('/static/js/jquery-1.6.js') %]"></script>
@@ -42,7 +40,10 @@
 	      <textarea rows="30" cols="100" name="xmltemplate" id="xmltemplate">[% xmltemplate %]</textarea>
 		</div>
 	  </div>
-      <button id="do_convert">Convert and view</button>
+	  <div id="form_buttons">
+        <button id="do_convert">Convert and view</button>
+        <button id="clear_form">Clear form</button>
+      </div>
     </form>
 
 	<!-- Result pane -->
@@ -52,6 +53,7 @@
 		<span class="displaywitid" id="witid"></span><br/>
 		<p id="textdescription"></p>
 	  </div>
+	  <div id="problemreport"></div>
 	  <div id="sourcetext"></div>
 	</div>
-	
+		

@@ -17,6 +17,9 @@
 #transcriptionform {
 	width: 600px;
 }
+#form_buttons {
+	margin-top: 10px;
+}
 .ui-accordion .ui-accordion-header {
 	padding-left: 22px;
 	font-size: 16px;
@@ -39,6 +42,9 @@ table.pagecolumn td.left {
 table.pagecolumn td.right {
 	vertical-align: top;
 	width: 350px;
+}
+.problem {
+	background-color: #ff9933;
 }
 .displaysigil {
 	font-style: italic;

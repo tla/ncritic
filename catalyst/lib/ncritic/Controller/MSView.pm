@@ -74,6 +74,13 @@ sub index :Path :Args(0) {
     $c->stash->{template} = 'msview.tt2';
 }
 
+sub reset_all :Local {
+	my( $self, $c ) = @_;
+	$c->delete_session('user reset request');
+	$c->stash->{result} = { xmltemplate => $DEFAULT_TEMPLATE };
+	$c->forward('View::JSON');
+}
+
 =head2 msview/convert_transcription
 
   POST msview/convert_transcription,
@@ -112,12 +119,20 @@ sub convert_transcription :Local {
 		$opts{number_conversion} = \&{$conv_function};
 	}
 
+	# Trap and indicate warnings
+	my @warnings;
+	local $SIG{__WARN__} = sub {
+		my $msg = shift;
+		$msg =~ s/at (\S+)Markup\.pm.*$//;
+		$msg =~ s/\n/ : /g;
+		push( @warnings, $msg );
+	};
 	my $teitext;
     try {
         $teitext = to_xml( %opts );
-    } catch {
+    } catch( XML::LibXML::Error $e ) {
         $c->stash->{'result'} = { 
-        	error_msg => "Could not translate transcription to XML: $@\n" };
+        	error_msg => "Could not translate transcription to XML: " . $e->message };
     }
     # We have an XML document, so parse and display it.
 	# Display whatever result we got.
@@ -129,6 +144,7 @@ sub convert_transcription :Local {
 		my $textdata = $ms->as_html();
 		# Add the XML result back in
 		$textdata->{'textcontent'} = $textdata->{'textcontent'};
+		$textdata->{'warnings'} = \@warnings;
 		$c->stash->{'result'} = $textdata;
 	}
 	

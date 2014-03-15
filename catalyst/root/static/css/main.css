@@ -118,6 +118,11 @@ li {
     padding-top: 20px;
 }
 
+/* Page template HTML */
+.template {
+	display: none;
+}
+
 /* General body content */
 #content {
     margin-left: 120px;
@@ -128,6 +133,9 @@ li {
 }
 .message {
     color: #390;
+}
+#error_console {
+	margin-left: 180px;
 }
 .error {
     color: #f00;
