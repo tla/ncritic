@@ -1,4 +1,4 @@
 *~
 .DS_Store
 *.bbprojectd
-catalyst/lib/Text
+catalyst/db/sessions.db
