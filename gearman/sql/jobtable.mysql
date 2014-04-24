@@ -1,0 +1,14 @@
+-- MySQL schema for collation table
+
+CREATE TABLE witness_set (
+	jobid 		INTEGER NOT NULL AUTO_INCREMENT,
+	request_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_time TIMESTAMP,
+	witnesses	LONGBLOB NOT NULL,
+	algorithm	VARCHAR(50) NOT NULL,
+	result_format VARCHAR(50) NOT NULL,
+	status		VARCHAR(50) NOT NULL,
+	process		INTEGER,
+	result		LONGBLOB,
+	PRIMARY KEY( jobid )
+	);

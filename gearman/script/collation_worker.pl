@@ -3,64 +3,18 @@
 use strict;
 use warnings;
 use feature qw/ say unicode_strings /;
-use DBI;
 use Encode qw/ decode_utf8 /;
 use Gearman::Worker;
 use IPC::Run qw/ run /;
 use JSON;
 use Text::TEI::Collate;
+use Text::Tradition::Collate::Util qw/ get_dbhandle get_collatex_path get_gearman_server /;
 use TryCatch;
 
-# Database record will be:
-# - jobid
-# - witnesses
-# - algorithm
-# - result_format
-# - status
-# - process
-# - result
-
-my %VARS = (
-	DBTYPE => 'SQLite',
-	DBHOST => undef,
-	DBPORT => undef,
-	DBNAME => '/tmp/collations.db',
-	DSN => undef,
-	DBUSER => undef,
-	DBPASS => undef,
-	GEARMAN_SERVER => '127.0.0.1:4730',
-	COLLATEXPATH => undef,
-);
-
-if( -f "/etc/collation.conf" ) {
-	# Read the variables in from here.
-	open( GCCONF, "/etc/collation.conf" ) 
-		or die "Could not open configuration file /etc/collation.conf";
-	while(<GCCONF>) {
-		chomp;
-		s/^\s+//;
-		my( $name, $val ) = split( /\s*\=\s*/, $_ );
-		if( exists $VARS{$name} ) {
-			$VARS{$name} = $val;
-		}
-	}
-	close GCCONF;
-}
-unless( $VARS{DSN} ) {
-	$VARS{DSN} = sprintf( 'dbi:%s:dbname=%s',
-		$VARS{DBTYPE}, $VARS{DBNAME} );
-	$VARS{DSN} .= sprintf( ';host=%s', $VARS{DBHOST} ) if $VARS{DBHOST};
-	$VARS{DSN} .= sprintf( ';port=%s', $VARS{DBPORT} ) if $VARS{DBPORT};
-}
-
-my @dbargs = ( $VARS{DSN} );
-push( @dbargs, $VARS{DBUSER} ) if $VARS{DBUSER};
-push( @dbargs, $VARS{DBPASS} ) if $VARS{DBPASS};
-
-my $dbh = DBI->connect( @dbargs );
+my $dbh = get_dbhandle();
 
 my $worker = Gearman::Worker->new();
-$worker->job_servers( $VARS{GEARMAN_SERVER} );
+$worker->job_servers( get_gearman_server() );
 $worker->register_function( run_collation => \&run_collation );
 $worker->work while 1;
 
