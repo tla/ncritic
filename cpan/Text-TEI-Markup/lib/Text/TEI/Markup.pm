@@ -4,7 +4,6 @@ use strict;
 use vars qw( $VERSION @EXPORT_OK );
 use Encode;
 use Exporter 'import';
-use Scalar::Util;
 use XML::LibXML;
 
 use utf8;
@@ -628,12 +627,16 @@ sub word_tag_wrap {
 		die "Passed argument is neither string, Document, or Element";
 	}
 		
-	my @textnodes = $root->getElementsByTagName( 'text' );
-	my %paragraphs;  # Cope with the fact that text nodes can be recursive
-	foreach my $t ( @textnodes ) {
-		map { $paragraphs{Scalar::Util::refaddr( $_ )} = $_ } $t->getElementsByTagName( 'p' );
+	my @paragraphs;
+	foreach my $t ( $root->getElementsByTagName( 'text' ) ) {
+		# Get the paragraphs in this text node; if it is already the same as
+		# a paragraph in our list, skip it.
+		foreach my $p ( $t->getElementsByTagName( 'p' ) ) {
+			next if grep { $_->isSameNode( $p ) } @paragraphs;
+			push( @paragraphs, $p );
+		}
 	}
-	foreach my $p ( values %paragraphs ) {
+	foreach my $p ( @paragraphs ) {
 		my $new_p = _wrap_children( $p );
 		# Remove the final whitespace from the paragraphs
 		my $lc = $new_p->lastChild;
