@@ -533,8 +533,8 @@ sub _open_tag {
 				'frac' => 'fraction', 
 				'perc' => 'percentage' );
 			( $nv, $nt ) = split( /,/, $arg );
-			$nt = $ntabbr{$nt} || $nt;
 			if( $nt ) {
+				$nt = $ntabbr{$nt} || $nt;
 				$opened_tag = sprintf( '<num value="%s" type="%s">%s', 
 					$nv, $nt, $text );
 			} else {
