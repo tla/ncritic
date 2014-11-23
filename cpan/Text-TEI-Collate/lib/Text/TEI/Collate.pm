@@ -68,6 +68,8 @@ has 'fuzziness_sub' => (
     predicate => 'has_fuzziness_sub',
     );
 
+=encoding utf-8
+
 =head1 NAME
 
 Text::TEI::Collate - a collation program for variant manuscript texts
@@ -292,6 +294,7 @@ Can also be read from a TEI <msdesc/> element.
 =begin testing
 
 use XML::LibXML;
+use Test::More::UTF8;
 
 my $aligner = Text::TEI::Collate->new();
 $aligner->language( 'Armenian' );
@@ -338,7 +341,7 @@ is( scalar( @{$mss[1]->words}), 263, "Got correct number of words in ms 2");
 is( $mss[0]->identifier, 'JSON 1', "Got correct identifier for ms 1");
 is( $mss[1]->identifier, 'JSON 2', "Got correct identifier for ms 2");
 
-# Test a manuscript with an XML source
+# Test a manuscript with an XML source. First directly from file...
 @mss = $aligner->read_source( 't/data/xml_plain/test3.xml' );
 is( scalar @mss, 1, "Got a single object from XML file" );
 $ms = pop @mss;
@@ -348,6 +351,7 @@ is( $ms->sigil, 'BL5260', "Got correct sigil BL5260");
 is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
 
+# ...and then from a parsed XML object.
 my $parser = XML::LibXML->new();
 my $doc = $parser->parse_file( 't/data/xml_plain/test3.xml' );
 @mss = $aligner->read_source( $doc );
@@ -358,6 +362,33 @@ is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" )
 is( $ms->sigil, 'BL5260', "Got correct sigil BL5260");
 is( scalar( @{$ms->words}), 178, "Got correct number of words in MsB");
 is( $ms->identifier, 'London OR 5260', "Got correct identifier for MsB");
+
+# Test different versions of a manuscript that has corrections.
+@mss = $aligner->read_source( 't/data/xml_plain/test4.xml' );
+is( scalar @mss, 1, "Got a single object from XML file" );
+$ms = pop @mss;
+
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'V887', "Got correct sigil V887");
+ok( !$ms->ac_version, "This is not a pre-correction version of the text" );
+is( scalar( @{$ms->words}), 182, "Got correct number of words in MsV");
+is( $ms->identifier, 'Venice 887', "Got correct identifier for MsV");
+my $text = join( " ", map { $_->word } @{$ms->words} );
+is( index( $text, 'քրիստոսի զորս յայնժամ' ), -1, "Did not find erroneous version of phrase in text" );
+
+# ...and now without the corrections.
+@mss = $aligner->read_source( 't/data/xml_plain/test4.xml', ac_version => 1 );
+is( scalar @mss, 1, "Got a single object from XML file" );
+$ms = pop @mss;
+
+is( ref( $ms ), 'Text::TEI::Collate::Manuscript', "Got manuscript object back" );
+is( $ms->sigil, 'V887', "Got correct sigil V887");
+ok( $ms->ac_version, "This is a pre-correction version of the text" );
+is( scalar( @{$ms->words}), 182, "Got correct number of words in MsV");
+is( $ms->identifier, 'Venice 887', "Got correct identifier for MsV");
+$text = join( " ", map { $_->word } @{$ms->words} );
+isnt( index( $text, 'քրիստոսի զորս յայնժամ' ), -1, "Found erroneous version of phrase in text" );
+
 
 ## The mss we will test the rest of the tests with.
 $aligner->language( 'Greek' );
@@ -1783,7 +1814,7 @@ $aligner->align( @mss );
 my $graph = $aligner->to_graph( @mss );
 
 is( ref( $graph ), 'Graph::Easy', "Got a graph object from to_graph" );
-is( scalar( $graph->nodes ), 380, "Got the right number of nodes" );
+is( scalar( $graph->nodes ), 382, "Got the right number of nodes" );
 is( scalar( $graph->edges ), 992, "Got the right number of edges" );
 }
 

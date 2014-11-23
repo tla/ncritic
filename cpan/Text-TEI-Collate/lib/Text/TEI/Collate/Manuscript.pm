@@ -66,6 +66,12 @@ has 'source' => (  # Can be XML obj, JSON data struct, or string.
 	writer => '_set_source',
 );
 
+has 'ac_version' => (
+	is => 'ro',
+	isa => 'Bool',
+	default => undef,
+	);
+
 has 'msdesc' => (  # if we started with a TEI doc
 	is => 'ro',
 	isa => 'XML::LibXML::Element',
@@ -123,6 +129,10 @@ B<source> - For sourcetype 'xmldesc', this should be an XML::LibXML object repre
 =item *
 
 B<sigil> - The sigil for this manuscript. See description in ACCESSORS below.
+
+=item *
+
+B<ac_version> - In the case of TEI XML documents, whether we want the a version of the text that includes no scribal corrections.
 
 =back
 
@@ -289,7 +299,7 @@ sub _read_paragraphs_or_lines {
 		# this paragraph, the whole thing needs to be processed.
 		if( my @textnodes = $xpc->findnodes( 'child::text()', $pg ) ) {
 			# We have to split the words by whitespace.
-			my $string = _get_text_from_node( $pg );
+			my $string = _get_text_from_node( $pg, $self->ac_version );
 			my @pg_words = $self->_split_words( $string );
 			# Set the relevant sectioning markers on the first word, if we
 			# are using word objects.
@@ -310,7 +320,7 @@ sub _read_paragraphs_or_lines {
 			foreach my $c ( $pg->childNodes() ) {
 				# Trickier.  Need to parse the component tags.
 				my $text;
-				$text = _get_text_from_node( $c );
+				$text = _get_text_from_node( $c, $self->ac_version );
 				# Some of the nodes might come back with multiple words.
 				# TODO: make a better check for this
 				my @textwords = split( /\s+/, $text );
@@ -343,19 +353,20 @@ sub _read_paragraphs_or_lines {
 # check it for lack of spaces.  
 
 sub _get_text_from_node {
-	my( $node ) = @_;
+	my( $node, $ac_version ) = @_;
 	my $text = '';
 	# We can have an lb or pb in the middle of a word; if we do, the
 	# whitespace (including \n) after the break becomes insignificant
 	# and we want to nuke it.
 	my $strip_leading_space = 0; 
 	my $word_excluded = $node->nodeName =~ /^(lb|pb|#comment)$/;
+	my $ignore_corr = $ac_version ? 'add' : 'del';
 	foreach my $c ($node->childNodes() ) {
 		if ( $c->nodeName =~ /^[lp]b$/ ) {
 			# Set a flag that strips leading whitespace until we
 			# get to the next bit of non-whitespace.
 			$strip_leading_space = 1;
-		} elsif ( $c->nodeName eq 'del'
+		} elsif ( $c->nodeName eq $ignore_corr
 				  || $c->nodeName eq 'fw'	 # for catchwords
 				  || $c->nodeName eq 'sic'
 				  || $c->nodeName eq 'note'	 #TODO: decide how to deal with notes
@@ -369,7 +380,7 @@ sub _get_text_from_node {
 				# A text node.
 				$tagtxt = $c->textContent;
 			} else {
-				$tagtxt = _get_text_from_node( $c );
+				$tagtxt = _get_text_from_node( $c, $ac_version );
 			}
 			if( $strip_leading_space ) {
 				$tagtxt =~ s/^[\s\n]+//s;
