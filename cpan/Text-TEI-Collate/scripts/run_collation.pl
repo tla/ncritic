@@ -10,11 +10,12 @@ use Text::TEI::Collate;
 
 binmode STDOUT, ':utf8';
 
-my( $debug, $fuzziness, $language, $outformat, $name_sigla, $show_help ) 
+my( $debug, $fuzziness, $language, $informat, $outformat, $name_sigla, $show_help ) 
 	= ( undef, 50, 'Default', 'csv', 0, undef );
 GetOptions( 
 	    'debug:i' => \$debug,
 	    'fuzziness=i' => \$fuzziness,
+	    'i|input=s' => \$informat,
 	    'l|language=s' => \$language,
 	    'o|output=s' => \$outformat,
 	    'fn|filename_sigla' => \$name_sigla,
@@ -33,6 +34,19 @@ if( $show_help ) {
 	exit;
 }
 
+my @input;
+if( $informat eq 'json' ) {
+	# We need to read the string, not the file.
+	scalar @ARGV == 1 or die 'JSON format takes only one file';
+	open( DATA, $ARGV[0] ) or die "Could not read @ARGV";
+	my $json = <DATA>;
+	close DATA;
+	chomp $json;
+	push( @input, $json );
+} else {
+	@input = @ARGV;
+}
+
 my $aligner = Text::TEI::Collate->new( 
 	'language' => $language,
 	'fuzziness' => $fuzziness,
@@ -41,7 +55,7 @@ my $aligner = Text::TEI::Collate->new(
 
 # Read the sources	
 my @mss;
-foreach my $source ( @ARGV ) {
+foreach my $source ( @input ) {
 	my %options;
 	if( $name_sigla ) {
 		my $sigil = fileparse( $source, qr/\.[^.]*$/ );
