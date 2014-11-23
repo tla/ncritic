@@ -44,18 +44,34 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback => 1,
 	default_view => 'TT',
 	'View::JSON' => {
-		expose_stash => 'result',
+		expose_stash => 'result'
 	},
 	'Plugin::Session' => {
         expires   => 3600,
         dbi_dsn   => 'dbi:SQLite:dbname=db/sessions.db',
-        dbi_table => 'sessions',
+        dbi_table => 'sessions'
+	},
+	'Model::WitnessSet' => {
+		connect_info => _witnesses_connectinfo()
 	}
 );
 
 # Start the application
 __PACKAGE__->setup();
 
+
+sub _witnesses_connectinfo {
+	my $fromconfig = eval { require Text::Tradition::WitnessSet::Util; };
+	$DB::single = 1;
+	my $cinfo;
+	if( $fromconfig ) {
+		$cinfo = Text::Tradition::WitnessSet::Util::get_db_connectinfo();
+	} 
+	unless( $cinfo ) {
+		$cinfo = { dsn => 'dbi:SQLite:dbname=db/witnesses.db' };
+	}
+	return $cinfo;
+}
 
 =head1 NAME
 

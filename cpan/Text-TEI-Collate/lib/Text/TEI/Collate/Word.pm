@@ -261,21 +261,29 @@ around add_variant => sub {
 sub _init_from_json {
 	my $hash = shift;
 	my %newhash;
-	foreach my $key ( keys %$hash ) {
-		if( $key eq 't' ) {
-			$newhash{word} = $hash->{$key};
-			$newhash{original_form} = _restore_punct( $hash )
-				unless defined $hash->{original_form}
-		} elsif( $key eq 'c' ) {
-			$newhash{canonical_form} = $hash->{$key};
-		} elsif( $key eq 'n' ) {
-			$newhash{comparison_form} = $hash->{$key};
-		} else {
-			$newhash{$key} = $hash->{$key};
+	if( $hash ) {
+		foreach my $key ( keys %$hash ) {
+			if( $key eq 't' ) {
+				$newhash{word} = $hash->{$key};
+				$newhash{original_form} = _restore_punct( $hash )
+					unless defined $hash->{original_form}
+			} elsif( $key eq 'c' ) {
+				$newhash{canonical_form} = $hash->{$key};
+			} elsif( $key eq 'n' ) {
+				$newhash{comparison_form} = $hash->{$key};
+			} else {
+				$newhash{$key} = $hash->{$key};
+			}
 		}
+		$newhash{canonical_form} ||= $hash->{'t'};
+		$newhash{comparison_form} ||= $hash->{'t'};
+	} else {
+		# It's the empty word.
+		$newhash{'is_empty'} = 1;
+		$newhash{'word'} = '';
+		$newhash{'ms_sigil'} = '';
+		$newhash{'invisible'} = 1;
 	}
-	$newhash{canonical_form} ||= $hash->{'t'};
-	$newhash{comparison_form} ||= $hash->{'t'};
 	return %newhash;
 }
 
@@ -452,6 +460,21 @@ sub unlink_variant {
     $self->_clear_variants();
     $self->add_variant( @v );
     $other->_clear_variant_of;
+}
+
+sub json_serialize {
+	my $self = shift;
+	if( $self->is_empty ) {
+		return undef;
+	}
+	my $word = { 't' => $self->word || '' };
+	$word->{'n'} = $self->comparison_form;
+	$word->{'c'} = $self->canonical_form;
+	$word->{'punctuation'} = [ $self->punctuation ]
+		if scalar( $self->punctuation );
+	$word->{'placeholders'} = [ $self->placeholders ] 
+		if scalar( $self->placeholders );
+	return $word;
 }
 
 sub throw {

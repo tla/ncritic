@@ -24,7 +24,8 @@ function makeProblemReport( problems ) {
 	$('#problemreport').empty();
 	$.each( problems, function( idx, data ) {
 		// Make a short formatted problem description of the data.
-		$('<span>').attr('class', 'problem').append( data ).appendTo('#problemreport');
+		$('<span>').attr('class', 'problem').append( 
+			data ).append('<br>').appendTo('#problemreport');
 	});
 }
 

@@ -80,17 +80,17 @@ sub return_texts :Local {
     my( $self, $c ) = @_;
     # TODO think about calling local method 'source' for this
     my $answer = [];
-    foreach my $id ( sort { $a <=> $b } keys %{$c->session->{'sources'}} ) {
+    foreach my $id ( sort { $a <=> $b } keys %{$c->session->{sources}} ) {
         my $textdata = {};
         # Get the manuscripts.   
-        my @mss = @{$c->session->{'sources'}->{$id}->{'mss'}};
+        my @mss = @{$c->session->{sources}->{$id}->{'mss'}};
         if( @mss == 1 ) {
             $textdata->{'text'} = $id;
             $textdata->{'autosigil'} = $mss[0]->sigil;
             my $title = $mss[0]->identifier;
             if( $title =~ /unidentified ms/i ) {
                 # Use the filename.
-                $title = $c->session->{'sources'}->{$id}->{'data'}->{'name'};
+                $title = $c->session->{sources}->{$id}->{'data'}->{'name'};
             }
             $textdata->{'title'} = $title;
         } else {
@@ -142,27 +142,24 @@ sub source :Local {
             # TODO Not sure what size is actually used for...
             my $data = { 'name' => $u->filename, 'size' => $u->size };
             my $collator = $c->model( 'Collate' );
-            my @manuscripts;
-            my $err;
-#             try { 
-                @manuscripts = $collator->read_source( $u->tempname ); 
-#             } catch ( $err ) {
-#                 # We were not successful.
-#                 # TODO try to say why
-#                 $data->{'errormsg'} = "Unable to read texts from source";
-#                 $c->response->code( 500 );
-#             }
+            my @manuscripts = $collator->read_source( $u->tempname ); 
             if( @manuscripts ) {
-                # We were successful.
-                # TODO make thumbnails for xml vs json vs plaintext sources?
+                # We were successful. Make the file data hash for the 
+                # file uploader...
                 my $sourceuri = $c->uri_for('source') . "/$key";
                 $data->{'url'} = $sourceuri;
                 $data->{'delete_url'} = $sourceuri;
                 $data->{'delete_type'} = 'DELETE';
+                
+                # Convert the sources into JSON for storage...
+                my @witnesses;
+                foreach my $ms ( @manuscripts ) {
+                	push( @witnesses, $ms->tokenize_as_json() );
+                }
                 # Push the complete $data hash onto our return array
                 # Save this file data into our session
-                $c->session->{'sources'}->{$key} = 
-                    { 'data' => $data, 'mss' => \@manuscripts };
+                $c->session->{sources}->{$key} = 
+                    { 'data' => $data, 'mss' => \@witnesses };
                 $c->response->code( 201 );
                 $c->response->headers->header( 'Location' => $sourceuri );
             }
@@ -171,7 +168,7 @@ sub source :Local {
     } elsif( $c->request->method eq 'GET' ) {
         if( $arg ) {
             # Return the data hash for the requested file.
-            my $sourcedata = $c->session->{'sources'}->{$arg};
+            my $sourcedata = $c->session->{sources}->{$arg};
             if( $sourcedata ) {
                 push( @answer, $sourcedata->{'data'} );
             } else {
@@ -179,11 +176,11 @@ sub source :Local {
             }
         } else {
             # Return the data hash for all files we have in this session.
-            my @ids = sort { $a <=> $b } keys %{$c->session->{'sources'}};
-            @answer = map { $c->session->{'sources'}->{$_}->{'data'} } @ids;
+            my @ids = sort { $a <=> $b } keys %{$c->session->{sources}};
+            @answer = map { $c->session->{sources}->{$_}->{'data'} } @ids;
         }
     } elsif( $c->request->method eq 'DELETE' ) {
-        my $gone = delete $c->session->{'sources'}->{$arg};
+        my $gone = delete $c->session->{sources}->{$arg};
         if( $gone ) {
             my $numtexts = scalar @{$gone->{'mss'}};
             push( @answer, { 'status' => "Deleted source with $numtexts texts" } );
@@ -297,20 +294,22 @@ sub collate_sources :Local {
     my( $self, $c ) = @_;
 
     # Grab the mss
-    my $manuscripts;
+    my @jsonwits;
     foreach my $id ( @{$c->request->params->{text}} ) {
-        # Set the sigil
         # TODO this assumes one text per ms
         # TODO check on the ordering that gets passed to us
         my $sigkey = 'sigil_' . $id;
         my $realsig = $c->request->params->{$sigkey};
-        my $ms = $c->session->{'sources'}->{$id}->{'mss'}->[0];
-        $ms->sigil( $realsig );
-        push( @$manuscripts, $ms );
+        my $msjson = $c->session->{sources}->{$id}->{'mss'}->[0];
+        # Change the sigil if necessary
+        $msjson->{id} = $realsig;
+        push( @jsonwits, $msjson );
     }
     
-    # Record which manuscripts we are collating
-    $c->session->{'texts'} = $manuscripts;
+    # Turn the JSON witnesses into Manuscript objects
+    my $jsonstr = encode_json( { witnesses => \@jsonwits } );
+    my @manuscripts = $c->model('Collate')->read_source( $jsonstr );
+    $c->stash->{texts} = \@manuscripts;
     
     # Run the collation
     my $answer = { 'status' => 'ok' };

@@ -1,3 +1,13 @@
+Version 1.9
+===========
+commit a1148fa10c0665bee0e8c5805f2aec6fc94f9433
+Author: tla <tla@mit.edu>
+Date:   Fri May 16 16:39:56 2014 +0200
+
+    use LibXML to detect node identity, not hash address
+    fix logic error in checkline
+    make more helpful warnings for possible markup problems
+
 Version 1.8.1
 ==========
 commit 0c70d0ec3f5a3bd06d324a34b5ed07acdc94c048

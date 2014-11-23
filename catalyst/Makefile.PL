@@ -12,6 +12,7 @@ all_from 'lib/ncritic.pm';
 # Outside requirements
 requires 'Text::TEI::Collate';
 requires 'Text::TEI::Markup';
+requires 'Text::Tradition::WitnessSet';
 requires 'Convert::Number::Armenian';
 requires 'Convert::Number::Coptic';
 requires 'Convert::Number::Greek';
@@ -29,6 +30,7 @@ requires 'namespace::autoclean';
 requires 'Catalyst::Runtime' => '5.80032';
 requires 'Catalyst::Action::RenderView';
 requires 'Catalyst::Model::Adaptor';
+requires 'Catalyst::Model::DBIC::Schema';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Session::Store::DBI';
 requires 'Catalyst::Plugin::Static::Simple';

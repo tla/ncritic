@@ -4,7 +4,6 @@ use strict;
 use vars qw( $VERSION @EXPORT_OK );
 use Encode;
 use Exporter 'import';
-use Scalar::Util;
 use XML::LibXML;
 
 use utf8;
@@ -384,7 +383,6 @@ sub _process_line {
 	chomp $line;	
 	my $checkline = $line; # This should be well-formed by the end
 	my $clopts = { %opts, 'nowarn' => 1 };
-	
 	# Look for paragraph and div markers, i.e. our tags that can span multiple lines
 	# and that should be disregarded in the checkline. 
 	my $sigils = $opts{'sigils'};
@@ -416,10 +414,13 @@ sub _process_line {
 	
 	# Add and delete tags.	Do this first so that we do not stomp later
 	# instances of the dash (e.g. in XML comments).
-	while( $line =~ m|([-+])(\(([^\)]+)\))?(.*?)\1|g ) {
+	my $add_del_re = qr/([-+])(\(([^\)]+)\))?(.*?)\1/;
+	while( $line =~ /$add_del_re/g ) {
 		my( $op, $attr, $word ) = ( $1, $3, $4 );
 		#  Calculate starting position.
 		my $pos = pos( $line ) - ( length( $word ) + 2 );
+		#  Also for the checkline.
+		$checkline =~ /$add_del_re/g;
 		my $cpos = pos( $checkline ) - ( length( $word ) + 2 );
 		$pos -= ( length( $attr ) + 2 ) if $attr;
 		$cpos -= ( length( $attr ) + 2 ) if $attr;
@@ -532,8 +533,8 @@ sub _open_tag {
 				'frac' => 'fraction', 
 				'perc' => 'percentage' );
 			( $nv, $nt ) = split( /,/, $arg );
-			$nt = $ntabbr{$nt} || $nt;
 			if( $nt ) {
+				$nt = $ntabbr{$nt} || $nt;
 				$opened_tag = sprintf( '<num value="%s" type="%s">%s', 
 					$nv, $nt, $text );
 			} else {
@@ -626,12 +627,16 @@ sub word_tag_wrap {
 		die "Passed argument is neither string, Document, or Element";
 	}
 		
-	my @textnodes = $root->getElementsByTagName( 'text' );
-	my %paragraphs;  # Cope with the fact that text nodes can be recursive
-	foreach my $t ( @textnodes ) {
-		map { $paragraphs{Scalar::Util::refaddr( $_ )} = $_ } $t->getElementsByTagName( 'p' );
+	my @paragraphs;
+	foreach my $t ( $root->getElementsByTagName( 'text' ) ) {
+		# Get the paragraphs in this text node; if it is already the same as
+		# a paragraph in our list, skip it.
+		foreach my $p ( $t->getElementsByTagName( 'p' ) ) {
+			next if grep { $_->isSameNode( $p ) } @paragraphs;
+			push( @paragraphs, $p );
+		}
 	}
-	foreach my $p ( values %paragraphs ) {
+	foreach my $p ( @paragraphs ) {
 		my $new_p = _wrap_children( $p );
 		# Remove the final whitespace from the paragraphs
 		my $lc = $new_p->lastChild;

@@ -1,0 +1,21 @@
+-- SQLite schema for collation table
+
+CREATE TABLE witness_set (
+	jobid 		INTEGER PRIMARY KEY AUTOINCREMENT,
+	request_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	update_time TIMESTAMP,
+	witnesses	BLOB NOT NULL,
+	algorithm	TEXT NOT NULL,
+	result_format TEXT NOT NULL,
+	status		TEXT NOT NULL,
+	process		INTEGER,
+	result		BLOB
+	);
+
+CREATE TRIGGER UpdateTime
+AFTER UPDATE
+ON witness_set
+FOR EACH ROW
+BEGIN
+UPDATE witness_set SET update_time = CURRENT_TIMESTAMP;
+END;

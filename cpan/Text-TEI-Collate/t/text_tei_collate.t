@@ -185,6 +185,31 @@ foreach( @mss ) {
 
 # =begin testing
 {
+use JSON qw/ encode_json /;
+my $aligner = Text::TEI::Collate->new();
+my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
+$aligner->align( @mss );
+my $jsondata = $aligner->to_json( @mss );
+
+my @newmss = $aligner->load_collation( encode_json( $jsondata ) );
+is( scalar @newmss, 28, "Got all manuscripts in collation reload" );
+my $spotwit = 'w30';
+foreach my $m ( @newmss ) {
+	if( $m->sigil eq $spotwit ) {
+		$spotwit = $m;
+		last;
+	}
+}
+is( ref( $spotwit ), 'Text::TEI::Collate::Manuscript', 
+	"load_collation: Found spot-check witness in mss" );
+is( $spotwit->words->[12]->word, "\x{03C0}\x{03B1}\x{03BB}\x{03B9}\x{00AF}",
+	"load_collation: Found correct spot-check word" );
+}
+
+
+
+# =begin testing
+{
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 my @orig_wordlists = map { $_->words } @mss;
@@ -435,14 +460,22 @@ my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
 my $jsondata = $aligner->to_json( @mss );
-ok( exists $jsondata->{alignment}, "to_json: Got alignment data structure back");
-my @wits = @{$jsondata->{alignment}};
+ok( exists $jsondata->{witnesses}, "to_json: Got alignment data structure back");
+my @wits = @{$jsondata->{witnesses}};
 is( scalar @wits, 28, "to_json: Got correct number of witnesses back");
 # Without the beginning and end marks, we have 75 word spots.
 my $columns = 73;
-foreach ( @wits ) {
-	is( scalar @{$_->{tokens}}, $columns, "to_json: Got correct number of words back for witness")
+is( scalar( @{$jsondata->{table}} ), $columns, "to_json: Got correct number of word rows back" );
+# Spot check of a word
+my $spotwit = 'w30';
+my $spotloc = 12;
+my $widx;
+foreach my $i ( 0 .. $#wits ) {
+	$widx = $i if $wits[$i] eq $spotwit;
 }
+ok( defined( $widx ), "Found a witness index for $spotwit" );
+is( $jsondata->{table}->[$spotloc]->[$widx]->[0]->{t}, "\x{03C0}\x{03B1}\x{03BB}\x{03B9}\x{00AF}",
+	"Found correct spot-checked witness word" );
 }
 
 
@@ -450,40 +483,50 @@ foreach ( @wits ) {
 # =begin testing
 {
 use IO::String;
+use JSON qw/ encode_json /;
 use Text::CSV;
 use Test::More::UTF8;
 
 my $aligner = Text::TEI::Collate->new();
 my @mss = $aligner->read_source( 't/data/cx/john18-2.xml' );
 $aligner->align( @mss );
-my $csvstring = $aligner->to_csv( @mss );
-ok( $csvstring, "Got a CSV string returned" );
-# Parse the CSV data and test that it parsed
-my $io = IO::String->new( $csvstring );
-my $csv = Text::CSV_XS->new( { binary => 1 } );
+my @strings;
+push( @strings, $aligner->to_csv( @mss ) );
+ok( $strings[0], "Got a CSV string returned" );
+my @newmss = $aligner->load_collation( 
+	encode_json( $aligner->to_json( @mss ) ) );
+push( @strings, $aligner->to_csv( @newmss ) );
+ok( $strings[1], "Got a CSV string from a reloaded collation" );
 
-# Test the number of columns in the first row
-my $sigilrow = $csv->getline( $io );
-ok( $sigilrow, "Got a row" );
-is( scalar @$sigilrow, 28, "Got the correct number of witnesses" );
+# In both cases, parse the CSV data and test that it parsed
+foreach my $csvstring( @strings ) {
+	my $io = IO::String->new( $csvstring );
+	my $csv = Text::CSV_XS->new( { binary => 1 } );
 
-# Test the number of rows in the table
-my $rowctr = 0;
-while( my $row = $csv->getline( $io ) ) {
-    is( scalar @$row, 28, "Got a reading for all columns" );
-    $rowctr++;
-    if( $rowctr == 1 ) {
-        # Test that we are getting our encoding right
-        is( $row->[0], "λέγει", "Got the right first word" );
-    }
+	# Test the number of columns in the first row
+	my $sigilrow = $csv->getline( $io );
+	ok( $sigilrow, "Got a row" );
+	is( scalar @$sigilrow, 28, "Got the correct number of witnesses" );
+
+	# Test the number of rows in the table
+	my $rowctr = 0;
+	while( my $row = $csv->getline( $io ) ) {
+		is( scalar @$row, 28, "Got a reading for all columns" );
+		$rowctr++;
+		if( $rowctr == 1 ) {
+			# Test that we are getting our encoding right
+			is( $row->[0], "λέγει", "Got the right first word" );
+		}
+	}
+	is( $rowctr, 73, "Got expected number of rows in CSV" );
 }
-is( $rowctr, 73, "Got expected number of rows in CSV" );
 }
 
 
 
 # =begin testing
 {
+use JSON qw/ encode_json /;
 use Text::TEI::Collate;
 use XML::LibXML::XPathContext;
 # Get an alignment to test with
@@ -502,31 +545,41 @@ foreach ( sort @files ) {
 }
 $aligner->align( @mss );
 
-my $doc = $aligner->to_tei( @mss );
-is( ref( $doc ), 'XML::LibXML::Document', "Made TEI document header" );
-my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
-$xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
+# Test with a reloaded alignment too
+my @reloadmss = $aligner->load_collation( encode_json( $aligner->to_json( @mss ) ) );
+is( scalar @reloadmss, 5, "Have a reloaded collation" );
 
-# Test the creation of a document header from TEI files
-my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
-is( scalar @witdesc, 5, "Found five msdesc nodes");
-my $title = $xpc->findvalue( '//tei:titleStmt/tei:title' );
-is( $title, $aligner->title, "TEI doc title set correctly" );
+my @docs;
+push( @docs, $aligner->to_tei( @mss ) );
+push( @docs, $aligner->to_tei( @reloadmss ) );
+my $idx = 0;
+foreach my $doc ( @docs ) {
+	my $label = $idx++ ? 'Reloaded' : 'Original';
+	is( ref( $doc ), 'XML::LibXML::Document', "$label: Made TEI document header" );
+	my $xpc = XML::LibXML::XPathContext->new( $doc->documentElement );
+	$xpc->registerNs( 'tei', $doc->documentElement->namespaceURI );
 
-# Test the creation of apparatus entries
-my @apps = $xpc->findnodes( '//tei:app' );
-is( scalar @apps, 107, "Got the correct number of app entries");
-my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
-is( scalar @words_not_in_app, 175, "Got the correct number of matching words");
-my @details = $xpc->findnodes( '//tei:witDetail' );
-my @detailwits;
-foreach ( @details ) {
-	my $witstr = $_->getAttribute( 'wit' );
-	push( @detailwits, split( /\s+/, $witstr ));
+	# Test the creation of a document header from TEI files
+	my @witdesc = $xpc->findnodes( '//tei:witness/tei:msDesc' );
+	is( scalar @witdesc, 5, "$label: Found five msdesc nodes");
+	my $title = $xpc->findvalue( '//tei:titleStmt/tei:title' );
+	is( $title, $aligner->title, "$label: TEI doc title set correctly" );
+
+	# Test the creation of apparatus entries
+	my @apps = $xpc->findnodes( '//tei:app' );
+	is( scalar @apps, 107, "$label: Got the correct number of app entries");
+	my @words_not_in_app = $xpc->findnodes( '//tei:body/tei:div/tei:p/tei:w' );
+	is( scalar @words_not_in_app, 175, "$label: Got the correct number of matching words");
+	my @details = $xpc->findnodes( '//tei:witDetail' );
+	my @detailwits;
+	foreach ( @details ) {
+		my $witstr = $_->getAttribute( 'wit' );
+		push( @detailwits, split( /\s+/, $witstr ));
+	}
+	is( scalar @detailwits, 13, "$label: Found the right number of witness-detail wits");
+
+	# TODO test the reconstruction of witnesses from the parallel-seg.
 }
-is( scalar @detailwits, 13, "Found the right number of witness-detail wits");
-
-# TODO test the reconstruction of witnesses from the parallel-seg.
 }
 
 

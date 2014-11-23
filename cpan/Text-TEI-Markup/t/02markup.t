@@ -175,10 +175,14 @@ is( $repo, 'Mekhitarist Library', "Repository got set correctly" );
 
 # Test number generation with meta tags
 my @numbers = $xpc2->findnodes( '//tei:num' );
+is( scalar @numbers, 5, "Found all expected numbers" );
 is( $numbers[0]->getAttribute('value'), 3, "Got correct value for number" );
 is( $numbers[0]->getAttribute('type'), 'ordinal', "Got correct type for number" );
 is( $numbers[1]->getAttribute('value'), 100, "Got correct value for number" );
-is( $numbers[2]->getAttribute('value'), 1, "Got correct value for number" );
+is( $numbers[2]->getAttribute('value'), 2, "Got correct value for number" );
+is( $numbers[3]->getAttribute('value'), 2, "Got correct value for number" );
+is( $numbers[3]->getAttribute('type'), 'ordinal', "Got correct type for number" );
+is( $numbers[4]->getAttribute('value'), 1, "Got correct value for number" );
 
 # Test empty hilight field
 my @hilights = $xpc2->findnodes( '//tei:hi' );

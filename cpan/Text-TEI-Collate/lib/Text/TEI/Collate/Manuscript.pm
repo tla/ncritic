@@ -421,7 +421,7 @@ sub _split_words {
 sub _init_from_json {
 	my( $self, $wit ) = @_;
 	$self->sigil( $wit->{'id'} );
-	$self->identifier( $wit->{'name'} );
+	$self->identifier( $wit->{'name'} || $wit->{'id'} );
 	my @words;
 	if( exists $wit->{'content'} ) {
 		# We need to tokenize the text ourselves.
@@ -436,6 +436,34 @@ sub _init_from_json {
 		}
 	}
 	$self->replace_words( \@words );
+}
+
+sub _init_from_plaintext {
+    my( $self, $str ) = @_;
+    my @words = _split_words( $self, $str );
+	$self->replace_words( \@words );
+}
+
+{
+	my $curr_auto_sigil = 0;
+	sub auto_assign_sigil {
+		my $curr_sig;
+		until( $curr_sig ) {
+			if( $curr_auto_sigil > 25 ) {
+				$curr_sig = chr( ( $curr_auto_sigil % 26 ) + 65 ) x int( $curr_auto_sigil / 26 + 1 );
+			} else {
+				$curr_sig = chr( $curr_auto_sigil + 65 );
+			}
+			# Make sure it isn't in use
+			if( grep( /^$curr_sig$/, keys( %assigned_sigla ) ) > 0 ) {
+				$curr_sig = undef;
+				$curr_auto_sigil++;
+			}
+		}
+		$curr_auto_sigil++;
+		return $curr_sig;
+	}
+	
 }
 
 =head1 OUTPUT METHODS
@@ -465,52 +493,13 @@ sub tokenize_as_json {
 	foreach my $i ( 0 .. $#{$self->words} ) {
 	    next if $skiprow{$i};
 	    my $w = $self->words->[$i];
-		if( $w->is_empty ) {
-			push( @wordlist, undef );
-		} else {
-			my $word = { 't' => $w->word || '' };
-			$word->{'n'} = $w->comparison_form;
-			$word->{'c'} = $w->canonical_form;
-			$word->{'punctuation'} = [ $w->punctuation ]
-				if scalar( $w->punctuation );
-			$word->{'placeholders'} = [ $w->placeholders ] 
-				if scalar( $w->placeholders );
-			push( @wordlist, $word );
-		}
+		push( @wordlist, $w->json_serialize );
     }
 	return { 
 		'id' => $self->sigil,
 		'tokens' => \@wordlist,
 		'name' => $self->identifier,
 	};
-}
-
-sub _init_from_plaintext {
-    my( $self, $str ) = @_;
-    my @words = _split_words( $self, $str );
-	$self->replace_words( \@words );
-}
-
-{
-	my $curr_auto_sigil = 0;
-	sub auto_assign_sigil {
-		my $curr_sig;
-		until( $curr_sig ) {
-			if( $curr_auto_sigil > 25 ) {
-				$curr_sig = chr( ( $curr_auto_sigil % 26 ) + 65 ) x int( $curr_auto_sigil / 26 + 1 );
-			} else {
-				$curr_sig = chr( $curr_auto_sigil + 65 );
-			}
-			# Make sure it isn't in use
-			if( grep( /^$curr_sig$/, keys( %assigned_sigla ) ) > 0 ) {
-				$curr_sig = undef;
-				$curr_auto_sigil++;
-			}
-		}
-		$curr_auto_sigil++;
-		return $curr_sig;
-	}
-	
 }
 
 sub throw {
