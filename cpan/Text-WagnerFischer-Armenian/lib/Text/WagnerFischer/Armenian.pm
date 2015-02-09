@@ -1,5 +1,7 @@
 package Text::WagnerFischer::Armenian;
 
+=encoding utf8
+
 =head1 NAME
 
 Text::WagnerFischer::Armenian - a variation on Text::WagnerFischer for Armenian-language strings
@@ -61,7 +63,7 @@ use utf8;
 
 my( %VocalicEquivalence, @Prefixes, @Suffixes, $REFC );
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 our @EXPORT_OK = qw( &distance &am_lc );
 
 # Set new default costs:
